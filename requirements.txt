@@ -1,0 +1,6 @@
+git+ssh://onedev.gts.org.ua:223/vezono/vegans-deluxe#egg=VegansDeluxe
+dnspython
+mongoengine
+pyTelegramBotAPI
+requests
+urllib3
