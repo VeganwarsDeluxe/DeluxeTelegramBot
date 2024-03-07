@@ -1,4 +1,4 @@
-git+ssh://onedev.gts.org.ua:223/vezono/vegans-deluxe#egg=VegansDeluxe
+git+https://onedev.gts.org.ua/vezono/vegans-deluxe#egg=VegansDeluxe
 dnspython
 mongoengine
 pyTelegramBotAPI
