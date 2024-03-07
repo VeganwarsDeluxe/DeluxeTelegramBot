@@ -1,7 +1,7 @@
 from VegansDeluxe import rebuild
 from VegansDeluxe.core.Actions.Action import DecisiveAction
 from VegansDeluxe.core import AttachedAction
-from VegansDeluxe.core import SkipActionGameEvent
+from VegansDeluxe.core.Actions.EntityActions import SkipActionGameEvent
 from VegansDeluxe.core.Entities.Entity import Entity
 
 from VegansDeluxe.core import OwnOnly
