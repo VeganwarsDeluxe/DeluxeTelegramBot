@@ -11,7 +11,6 @@ from config import admin
 from VegansDeluxe.core import Own
 from deluxe.startup import bot, cm, engine
 from deluxe.game.Entities.Cow import Cow
-from deluxe.game.Matches.RatFight import RatDungeon
 
 #print(deluxe.bot.rating, "loaded.")
 from deluxe.game.Matches.BasicMatch import BasicMatch
@@ -69,27 +68,6 @@ def vd_prepare_handler(m):
         return
 
     match = TestGameMatch(m.chat.id)
-    mm.attach_match(match)
-
-    kb = types.InlineKeyboardMarkup()
-    kb.add(types.InlineKeyboardButton(text='♿️Вступить в игру', url=bot.get_deep_link(f"jg_{m.chat.id}")))
-    kb.add(types.InlineKeyboardButton(text='▶️Запустить игру', callback_data="vd_go"))
-    m = bot.send_message(m.chat.id, f'Игра: {match.name}\n\nУчастники:', reply_markup=kb)
-    match.lobby_message = m
-
-
-@bot.message_handler(commands=['vd_rats'])
-def vd_prepare_handler(m):
-    match = mm.get_match(m.chat.id)
-
-    if match:
-        if match.lobby:
-            bot.reply_to(match.lobby_message, 'Игра уже запущена!')
-        else:
-            bot.reply_to(m, 'Игра уже идет!')
-        return
-
-    match = RatDungeon(m.chat.id)
     mm.attach_match(match)
 
     kb = types.InlineKeyboardMarkup()
@@ -288,7 +266,7 @@ def vd_join_handler(m):
     match.cowed = True
     for _ in range(count):
         cow = Cow(match.session.id)
-        match.session.entities.append(cow)
+        engine.attach_entity(match.session, cow)
     mm.update_message(match)
     bot.send_message(m.chat.id, f'{count} коров прибежало!')
 
