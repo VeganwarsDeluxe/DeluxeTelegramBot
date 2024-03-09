@@ -22,8 +22,6 @@ class TelegramEntity(Entity):
         self.chose_items = False
         self.ready = False
 
-        self.init_states()
-
     @property
     def user_id(self):
         return int(self.id)

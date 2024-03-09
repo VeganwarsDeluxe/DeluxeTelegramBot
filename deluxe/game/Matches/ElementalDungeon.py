@@ -17,4 +17,6 @@ class ElementalDungeon(BasicMatch):
             return
 
         self.elementals += 1
-        self.session.entities.append(Elemental(self.id, name=f'Веган Елементаль {self.elementals}|🌪'))
+        elemental = Elemental(self.id, name=f'Веган Елементаль {self.elementals}|🌪')
+        self.session.attach_entity(elemental)
+        elemental.init_states()

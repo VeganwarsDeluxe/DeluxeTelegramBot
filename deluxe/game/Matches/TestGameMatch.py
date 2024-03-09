@@ -12,7 +12,9 @@ class TestGameMatch(BasicMatch):
         self.skill_number = len(rebuild.all_skills)
         self.weapon_number = len(rebuild.all_weapons)
 
-        self.session.entities.append(Cow(self.id))
+        cow = Cow(self.id)
+        self.session.attach_entity(cow)
+        cow.init_states()
 
     def choose_items(self):
         for player in self.session.not_chosen_items:

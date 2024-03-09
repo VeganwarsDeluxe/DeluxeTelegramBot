@@ -38,7 +38,8 @@ class BasicMatch:
     def join_session(self, user_id, user_name) -> TelegramEntity:
         player = TelegramEntity(self.session.id, user_name, user_id)
         player.energy, player.max_energy, player.hp, player.max_hp = 5, 5, 4, 4
-        self.session.entities.append(player)
+        self.session.attach_entity(player)
+        player.init_states()
         return player
 
     def create_session(self, id: str):

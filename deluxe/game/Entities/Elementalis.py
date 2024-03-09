@@ -48,7 +48,7 @@ class Elemental(Dummy):
     def choose_act(self, session):
         super().choose_act(session)
         self.weapon = random.choice(rebuild.all_weapons)(session.id, self.id)
-        engine.engine.action_manager.update_entity_actions(session, self)
+        engine.action_manager.update_entity_actions(session, self)
 
         cost = False
         while not cost:
