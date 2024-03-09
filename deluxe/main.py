@@ -10,6 +10,8 @@ from VegansDeluxe import rebuild
 from config import admin
 
 from VegansDeluxe.core import Own
+
+from deluxe.game.Matches.SlimeDungeon import SlimeDungeon
 from deluxe.startup import bot, cm, engine
 from deluxe.game.Entities.Cow import Cow
 
@@ -90,6 +92,27 @@ def vd_prepare_handler(m):
         return
 
     match = ElementalDungeon(m.chat.id)
+    mm.attach_match(match)
+
+    kb = types.InlineKeyboardMarkup()
+    kb.add(types.InlineKeyboardButton(text='♿️Вступить в игру', url=bot.get_deep_link(f"jg_{m.chat.id}")))
+    kb.add(types.InlineKeyboardButton(text='▶️Запустить игру', callback_data="vd_go"))
+    m = bot.send_message(m.chat.id, f'Игра: {match.name}\n\nУчастники:', reply_markup=kb)
+    match.lobby_message = m
+
+
+@bot.message_handler(commands=['vd_slime'])
+def vd_prepare_handler(m):
+    match = mm.get_match(m.chat.id)
+
+    if match:
+        if match.lobby:
+            bot.reply_to(match.lobby_message, 'Игра уже запущена!')
+        else:
+            bot.reply_to(m, 'Игра уже идет!')
+        return
+
+    match = SlimeDungeon(m.chat.id)
     mm.attach_match(match)
 
     kb = types.InlineKeyboardMarkup()
@@ -441,5 +464,5 @@ def act_callback_handler(c):
     bot.edit_message_text('Дополнительно:', c.message.chat.id, c.message.message_id, reply_markup=kb)
 
 
-bot.send_message(-1001794913503, f"♻️{VegansDeluxe.core.__version__} | update-fix-cycle")
+bot.send_message(-1001794913503, f"♻️{VegansDeluxe.core.__version__} | publish slime dungeon (/vd_slime)")
 bot.infinity_polling()
