@@ -1,3 +1,4 @@
+import logging
 import random
 import traceback
 
@@ -464,5 +465,5 @@ def act_callback_handler(c):
     bot.edit_message_text('Дополнительно:', c.message.chat.id, c.message.message_id, reply_markup=kb)
 
 
-bot.send_message(-1001794913503, f"♻️{VegansDeluxe.core.__version__} | publish slime dungeon (/vd_slime)")
+bot.send_message(-1001794913503, f"♻️{VegansDeluxe.core.__version__} | double states fixed")
 bot.infinity_polling()
