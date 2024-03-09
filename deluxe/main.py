@@ -441,5 +441,5 @@ def act_callback_handler(c):
     bot.edit_message_text('Дополнительно:', c.message.chat.id, c.message.message_id, reply_markup=kb)
 
 
-bot.send_message(-1001794913503, f"♻️{VegansDeluxe.core.__version__}")
+bot.send_message(-1001794913503, f"♻️{VegansDeluxe.core.__version__} | update-fix-cycle")
 bot.infinity_polling()
