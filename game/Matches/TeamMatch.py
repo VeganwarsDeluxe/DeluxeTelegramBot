@@ -1,5 +1,4 @@
-from deluxe.game.Entities.Elementalis import Elemental
-from deluxe.game.Matches.BasicMatch import BasicMatch
+from game.Matches.BasicMatch import BasicMatch
 
 
 class ElementalDungeon(BasicMatch):

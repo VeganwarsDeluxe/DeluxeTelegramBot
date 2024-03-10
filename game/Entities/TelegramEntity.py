@@ -5,7 +5,7 @@ from VegansDeluxe.core.Actions.EntityActions import SkipActionGameEvent
 from VegansDeluxe.core.Entities.Entity import Entity
 
 from VegansDeluxe.core import OwnOnly
-from deluxe.startup import engine
+from startup import engine
 
 
 class TelegramEntity(Entity):

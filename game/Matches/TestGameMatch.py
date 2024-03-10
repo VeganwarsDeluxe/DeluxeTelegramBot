@@ -1,6 +1,6 @@
 from VegansDeluxe import rebuild
-from deluxe.game.Entities.Cow import Cow
-from deluxe.game.Matches.BasicMatch import BasicMatch
+from game.Entities.Cow import Cow
+from game.Matches.BasicMatch import BasicMatch
 
 
 class TestGameMatch(BasicMatch):

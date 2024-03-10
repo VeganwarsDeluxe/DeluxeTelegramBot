@@ -1,6 +1,6 @@
-from deluxe.startup import bot
+from startup import bot
 from config import admin
-from deluxe.db.Rating import RatingManager
+from db.Rating import RatingManager
 
 rm = RatingManager()
 

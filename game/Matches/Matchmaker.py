@@ -2,7 +2,7 @@ from typing import Optional
 
 from telebot import types
 
-from deluxe.game.Matches.BasicMatch import BasicMatch
+from game.Matches.BasicMatch import BasicMatch
 
 
 # TODO: Refactor

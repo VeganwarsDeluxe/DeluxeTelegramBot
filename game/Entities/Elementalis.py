@@ -11,7 +11,7 @@ from VegansDeluxe.core import PreDeathGameEvent
 from VegansDeluxe.core import Session
 from VegansDeluxe.core import OwnOnly
 from .Dummy import Dummy
-from ...startup import engine
+from startup import engine
 
 
 class Elemental(Dummy):

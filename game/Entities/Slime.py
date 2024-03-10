@@ -3,7 +3,7 @@ import random
 from VegansDeluxe.core.Actions.Action import DecisiveAction
 from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeAttack, MeleeWeapon, Entity, Enemies
 from VegansDeluxe.core import OwnOnly
-from deluxe.startup import engine
+from startup import engine
 from .Dummy import Dummy
 from ..Sessions.TelegramSession import TelegramSession
 from VegansDeluxe.core.utils import percentage_chance

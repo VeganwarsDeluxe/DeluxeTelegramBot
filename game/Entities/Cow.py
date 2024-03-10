@@ -5,7 +5,7 @@ from VegansDeluxe.core import AttachedAction
 from VegansDeluxe.core import FreeItem
 from VegansDeluxe.core import Item
 from VegansDeluxe.core import OwnOnly
-from deluxe.startup import engine
+from startup import engine
 from .Dummy import Dummy
 
 

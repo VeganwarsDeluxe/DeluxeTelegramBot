@@ -1,6 +1,6 @@
 from VegansDeluxe.core.Sessions.Session import Session
-from deluxe.game.Entities.TelegramEntity import TelegramEntity
-from deluxe.startup import engine
+from game.Entities.TelegramEntity import TelegramEntity
+from startup import engine
 
 
 class TelegramSession(Session):

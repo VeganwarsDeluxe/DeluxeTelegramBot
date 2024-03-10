@@ -1,5 +1,5 @@
-from deluxe.game.Entities.Slime import Slime
-from deluxe.game.Matches.BasicMatch import BasicMatch
+from game.Entities.Slime import Slime
+from game.Matches.BasicMatch import BasicMatch
 
 
 class SlimeDungeon(BasicMatch):

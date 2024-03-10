@@ -7,9 +7,9 @@ from VegansDeluxe import rebuild
 
 from VegansDeluxe.core import PreMoveGameEvent
 
-from deluxe.game.Entities.TelegramEntity import TelegramEntity
-from deluxe.game.Sessions.TelegramSession import TelegramSession
-from deluxe.startup import bot, engine
+from game.Entities.TelegramEntity import TelegramEntity
+from game.Sessions.TelegramSession import TelegramSession
+from startup import bot, engine
 
 
 class BasicMatch:
