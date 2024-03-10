@@ -1,7 +1,7 @@
-from game.Matches.BasicMatch import BasicMatch
+from game.Matches.BaseMatch import BaseMatch
 
 
-class ElementalDungeon(BasicMatch):
+class ElementalDungeon(BaseMatch):
     name = "Командная игра"
 
     def __init__(self, chat_id):

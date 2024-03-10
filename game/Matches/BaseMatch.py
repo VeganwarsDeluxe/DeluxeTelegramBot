@@ -12,7 +12,7 @@ from game.Sessions.TelegramSession import TelegramSession
 from startup import bot, engine
 
 
-class BasicMatch:
+class BaseMatch:
     name = "Basic"
 
     def __init__(self, chat_id):

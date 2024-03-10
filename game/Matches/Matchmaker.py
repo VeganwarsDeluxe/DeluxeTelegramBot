@@ -2,7 +2,7 @@ from typing import Optional
 
 from telebot import types
 
-from game.Matches.BasicMatch import BasicMatch
+from game.Matches.BaseMatch import BaseMatch
 
 
 # TODO: Refactor
@@ -20,12 +20,12 @@ class Matchmaker:
         self.session_manager = self.engine.session_manager
         self.event_manager = self.engine.event_manager
 
-        self.matches: dict[str, BasicMatch] = {}
+        self.matches: dict[str, BaseMatch] = {}
 
-    def attach_match(self, match: BasicMatch):
+    def attach_match(self, match: BaseMatch):
         self.matches.update({match.id: match})
 
-    def get_match(self, chat_id) -> Optional[BasicMatch]:
+    def get_match(self, chat_id) -> Optional[BaseMatch]:
         match = self.matches.get(str(chat_id))
         if not match:
             return
@@ -39,7 +39,7 @@ class Matchmaker:
         match.join_session(user_id, user_name)
         self.update_message(match)
 
-    def update_message(self, match: BasicMatch):
+    def update_message(self, match: BaseMatch):
         tts = f"Игра: {match.name}\n\nУчастники: {', '.join([player.name for player in match.session.entities])}"
         kb = types.InlineKeyboardMarkup()
         kb.add(types.InlineKeyboardButton(text='♿️Вступить в игру', url=self.bot.get_deep_link(f"jg_{match.id}")))

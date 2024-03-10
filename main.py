@@ -1,6 +1,5 @@
 import random
 import traceback
-from telebot import types
 import config
 
 import VegansDeluxe
@@ -8,25 +7,19 @@ from VegansDeluxe import rebuild
 from VegansDeluxe.core import Own
 from VegansDeluxe.core.ContentManager import content_manager as cm
 
-from game.Matches.SlimeDungeon import SlimeDungeon
-from startup import bot, engine
-from game.Entities import Cow
-from game.Matches.BasicMatch import BasicMatch
-from game.Matches.ElementalDungeon import ElementalDungeon
 from game.Matches.Matchmaker import Matchmaker
-from game.Matches.TestGameMatch import TestGameMatch
+from startup import bot, engine
+from game.Entities.Cow import Cow
 
-#       Handler imports
-# import deluxe.bot.rating
-# print(deluxe.bot.rating, "loaded.")
-
+import handlers.matches
 
 mm = Matchmaker(bot, engine)
+handlers.matches.initialize_module(bot, mm)
 
 
 @bot.message_handler(commands=['do'])
 def vd_prepare_handler(m):
-    if m.from_user.id != config.admin:
+    if m.from_user.id not in config.admin_ids:
         return
     if not m.text.count(' '):
         return
@@ -36,90 +29,6 @@ def vd_prepare_handler(m):
     except:
         result = traceback.format_exc()
     bot.reply_to(m, f"Code: {code}\n\nResult: {result}")
-
-
-@bot.message_handler(commands=['vd_prepare'])
-def vd_prepare_handler(m):
-    match = mm.get_match(m.chat.id)
-
-    if match:
-        if match.lobby and match.lobby_message:
-            bot.reply_to(match.lobby_message, 'Игра уже запущена!')
-        else:
-            bot.reply_to(m, 'Игра уже идет!')
-        return
-
-    match = BasicMatch(m.chat.id)
-    mm.attach_match(match)
-
-    kb = types.InlineKeyboardMarkup()
-    kb.add(types.InlineKeyboardButton(text='♿️Вступить в игру', url=bot.get_deep_link(f"jg_{m.chat.id}")))
-    kb.add(types.InlineKeyboardButton(text='▶️Запустить игру', callback_data="vd_go"))
-    m = bot.send_message(m.chat.id, f'Игра: {match.name}\n\nУчастники:', reply_markup=kb)
-    match.lobby_message = m
-
-
-@bot.message_handler(commands=['vd_testgame'])
-def vd_prepare_handler(m):
-    match = mm.get_match(m.chat.id)
-
-    if match:
-        if match.lobby:
-            bot.reply_to(match.lobby_message, 'Игра уже запущена!')
-        else:
-            bot.reply_to(m, 'Игра уже идет!')
-        return
-
-    match = TestGameMatch(m.chat.id)
-    mm.attach_match(match)
-
-    kb = types.InlineKeyboardMarkup()
-    kb.add(types.InlineKeyboardButton(text='♿️Вступить в игру', url=bot.get_deep_link(f"jg_{m.chat.id}")))
-    kb.add(types.InlineKeyboardButton(text='▶️Запустить игру', callback_data="vd_go"))
-    m = bot.send_message(m.chat.id, f'Игра: {match.name}\n\nУчастники:', reply_markup=kb)
-    match.lobby_message = m
-
-
-@bot.message_handler(commands=['vd_elemental'])
-def vd_prepare_handler(m):
-    match = mm.get_match(m.chat.id)
-
-    if match:
-        if match.lobby:
-            bot.reply_to(match.lobby_message, 'Игра уже запущена!')
-        else:
-            bot.reply_to(m, 'Игра уже идет!')
-        return
-
-    match = ElementalDungeon(m.chat.id)
-    mm.attach_match(match)
-
-    kb = types.InlineKeyboardMarkup()
-    kb.add(types.InlineKeyboardButton(text='♿️Вступить в игру', url=bot.get_deep_link(f"jg_{m.chat.id}")))
-    kb.add(types.InlineKeyboardButton(text='▶️Запустить игру', callback_data="vd_go"))
-    m = bot.send_message(m.chat.id, f'Игра: {match.name}\n\nУчастники:', reply_markup=kb)
-    match.lobby_message = m
-
-
-@bot.message_handler(commands=['vd_slime'])
-def vd_prepare_handler(m):
-    match = mm.get_match(m.chat.id)
-
-    if match:
-        if match.lobby:
-            bot.reply_to(match.lobby_message, 'Игра уже запущена!')
-        else:
-            bot.reply_to(m, 'Игра уже идет!')
-        return
-
-    match = SlimeDungeon(m.chat.id)
-    mm.attach_match(match)
-
-    kb = types.InlineKeyboardMarkup()
-    kb.add(types.InlineKeyboardButton(text='♿️Вступить в игру', url=bot.get_deep_link(f"jg_{m.chat.id}")))
-    kb.add(types.InlineKeyboardButton(text='▶️Запустить игру', callback_data="vd_go"))
-    m = bot.send_message(m.chat.id, f'Игра: {match.name}\n\nУчастники:', reply_markup=kb)
-    match.lobby_message = m
 
 
 @bot.message_handler(commands=['vd_delete'])
@@ -160,7 +69,7 @@ def vd_join_handler(m):
         bot.reply_to(m, 'Игра не запущена! Запустите командой /vd_prepare.')
         return
     if str(m.from_user.id) not in match.session.player_ids:
-        if m.from_user.id != config.admin:
+        if m.from_user.id not in config.admin_ids:
             bot.reply_to(m, 'Вас нет в игре, не вам и запускать!')
             return
     if not match.lobby:
@@ -179,7 +88,7 @@ def act_callback_handler(c):
         bot.answer_callback_query(c.id, "Игра не запущена!")
         return
     if str(c.from_user.id) not in match.session.player_ids:
-        if c.from_user.id != config.admin:
+        if c.from_user.id not in config.admin_ids:
             bot.answer_callback_query(c.id, "Вас нет в игре!")
             return
     if not match.lobby:

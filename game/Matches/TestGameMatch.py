@@ -1,9 +1,9 @@
 from VegansDeluxe import rebuild
 from game.Entities.Cow import Cow
-from game.Matches.BasicMatch import BasicMatch
+from game.Matches.BaseMatch import BaseMatch
 
 
-class TestGameMatch(BasicMatch):
+class TestGameMatch(BaseMatch):
     name = "Тестовая игра"
 
     def __init__(self, chat_id):

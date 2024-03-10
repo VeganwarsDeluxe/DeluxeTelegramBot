@@ -1,5 +1,5 @@
+import config
 from startup import bot
-from config import admin
 from db.Rating import RatingManager
 
 rm = RatingManager()
@@ -56,7 +56,7 @@ def h(m):
 @bot.message_handler(commands=['vs'])
 def h(m):
     rm.get_user(m.from_user.id, m.from_user.full_name, m.from_user.username)
-    if m.from_user.id != admin:
+    if m.from_user.id not in config.admin_ids:
         return
     if m.text.count(' ') != 4:
         return

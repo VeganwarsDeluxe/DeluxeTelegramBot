@@ -1,8 +1,8 @@
 from game.Entities.Slime import Slime
-from game.Matches.BasicMatch import BasicMatch
+from game.Matches.BaseMatch import BaseMatch
 
 
-class SlimeDungeon(BasicMatch):
+class SlimeDungeon(BaseMatch):
     name = "Данж со Слаймами"
 
     def __init__(self, chat_id):
