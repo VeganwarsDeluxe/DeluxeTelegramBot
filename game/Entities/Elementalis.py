@@ -2,7 +2,7 @@ import random
 
 from VegansDeluxe import rebuild
 from VegansDeluxe.core.Actions.Action import DecisiveAction
-from VegansDeluxe.core import AttachedAction
+from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeWeapon
 from VegansDeluxe.core import EventContext
 from VegansDeluxe.core import RegisterEvent
 
@@ -17,6 +17,8 @@ from startup import engine
 class Elemental(Dummy):
     def __init__(self, session_id: str, name='Веган Елементаль|🌪'):
         super().__init__(session_id, name=name)
+
+        self.weapon = ElementalWeapon(self.session_id, self.id)
 
         self.hp = 9
         self.max_hp = 9
@@ -66,6 +68,18 @@ class Elemental(Dummy):
                 cost = random.choice([True, False, False, False])
             else:
                 cost = action.cost
+
+
+@RegisterWeapon
+class ElementalWeapon(MeleeWeapon):
+    id = 'elemental_weapon'
+    name = 'Ессенция веганки'
+    description = 'Сама суть веганварса.'
+
+    cubes = 0
+    damage_bonus = 0
+    energy_cost = 0
+    accuracy_bonus = 0
 
 
 @AttachedAction(Elemental)

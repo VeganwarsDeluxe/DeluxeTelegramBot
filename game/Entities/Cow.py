@@ -1,7 +1,7 @@
 import random
 
 from VegansDeluxe.core.Actions.Action import DecisiveAction
-from VegansDeluxe.core import AttachedAction
+from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeWeapon
 from VegansDeluxe.core import FreeItem
 from VegansDeluxe.core import Item
 from VegansDeluxe.core import OwnOnly
@@ -12,6 +12,8 @@ from .Dummy import Dummy
 class Cow(Dummy):
     def __init__(self, session_id: str):
         super().__init__(session_id, name='Корова|🐮')
+
+        self.weapon = CowWeapon(self.session_id, self.id)
 
         self.hp = 3
         self.max_hp = 1
@@ -92,6 +94,18 @@ class EatGrassReload(DecisiveAction):
         source.energy = source.max_energy
 
 
+@RegisterWeapon
+class CowWeapon(MeleeWeapon):
+    id = 'cow_weapon'
+    name = 'Коровий хвост'
+    description = 'Просто хвост.'
+
+    cubes = 0
+    damage_bonus = 0
+    energy_cost = 0
+    accuracy_bonus = 0
+
+
 class MilkItem(Item):
     id = 'milk'
     name = 'Молоко'
@@ -109,3 +123,4 @@ class Milk(FreeItem):
         self.target.energy = self.target.max_energy
         self.session.say(f'🥛|{self.source.name} пьет молоко! '
                          f'Его енергия восстановлена!')
+
