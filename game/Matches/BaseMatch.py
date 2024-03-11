@@ -10,6 +10,7 @@ from VegansDeluxe.core import PreMoveGameEvent
 from game.Entities.TelegramEntity import TelegramEntity
 from game.Sessions.TelegramSession import TelegramSession
 from startup import bot, engine
+from utils.LineMerger import LineMerger
 
 
 class BaseMatch:
@@ -17,6 +18,8 @@ class BaseMatch:
 
     def __init__(self, chat_id):
         self.bot = bot
+
+        self.lm = LineMerger()
 
         self.id = str(chat_id)
         self.session = self.create_session(self.id)
@@ -66,7 +69,7 @@ class BaseMatch:
             tts = 'Игра окончена! Все погибли!'
         self.notify_players(tts)
         bot.send_message(self.session.chat_id, tts)
-        engine.session_manager.delete_session(self.session.id)
+        engine.detach_session(self.session)
 
     def choose_target(self, player, targets, index=0):
         kb = types.InlineKeyboardMarkup()
@@ -108,20 +111,7 @@ class BaseMatch:
                     self.notify_players(tts)
 
     def merge_lines(self, text):
-        new_message = ''
-
-        previous_line = ''
-        counter = 0
-        for line in text.split('\n'):
-            if line == previous_line:
-                counter += 1
-                continue
-            elif counter > 1:
-                new_message += f'Сообщение сверху повторилось {counter} раз.\n'
-            previous_line = line
-            counter = 0
-            new_message += line + '\n'
-        return new_message
+        return self.lm.merge(text)
 
     def send_act_buttons(self, player):
         kb = self.get_act_buttons(player)
