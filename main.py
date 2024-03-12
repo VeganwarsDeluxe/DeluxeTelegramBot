@@ -332,6 +332,6 @@ def act_callback_handler(c):
 
 
 bot.send_message(config.boot_chat, f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
-                                   f"🤖Latest bot patch: `slime fixes, flamethrower 4->3, minor core patches`",
+                                   f"🤖Latest bot patch: `chain patches`",
                  parse_mode="Markdown")
 bot.infinity_polling()

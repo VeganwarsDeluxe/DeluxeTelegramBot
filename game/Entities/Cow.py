@@ -25,8 +25,9 @@ class Cow(Dummy):
         super().choose_act(session)
 
         while True:
-            action = engine.action_manager.get_action(session, self, random.choice(["cow_approach", "cow_silence", "cow_dodge",
-                                                                             "cow_walk_away", "reload"]))
+            action = engine.action_manager.get_action(
+              #  session, self, random.choice(["cow_approach", "cow_silence","cow_dodge", "cow_walk_away", "reload"]))
+                 session, self, random.choice(["cow_silence"]))
             if not action:
                 continue
             if not action.targets:
@@ -118,8 +119,8 @@ class Milk(FreeItem):
     target_type = OwnOnly()
 
     def use(self):
-        if self.source.team == 'cows':
-            return
+      #  if self.source.team == 'cows':
+    #        return
         self.target.energy = self.target.max_energy
         self.session.say(f'🥛|{self.source.name} пьет молоко! '
                          f'Его енергия восстановлена!')
