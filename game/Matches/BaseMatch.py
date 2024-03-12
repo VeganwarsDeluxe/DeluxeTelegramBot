@@ -47,7 +47,7 @@ class BaseMatch:
 
     def create_session(self, id: str):
         session = TelegramSession(id)
-        engine.session_manager.attach_session(session)
+        engine.attach_session(session)
         return session
 
     def notify_players(self, message):

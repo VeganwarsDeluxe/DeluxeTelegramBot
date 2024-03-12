@@ -38,7 +38,7 @@ def vd_prepare_handler(m):
         bot.reply_to(m, 'Игра и так не запущена!')
         return
     del mm.matches[match.id]
-    engine.session_manager.delete_session(match.session.id)
+    engine.detach_session(match.session.id)
     bot.reply_to(m, 'Игра удалена.')
 
 
@@ -332,6 +332,6 @@ def act_callback_handler(c):
 
 
 bot.send_message(config.boot_chat, f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
-                                   f"🤖Latest bot patch: `now all nps have weapons`",
+                                   f"🤖Latest bot patch: `slime fixes, flamethrower 4->3, minor core patches`",
                  parse_mode="Markdown")
 bot.infinity_polling()

@@ -1,8 +1,12 @@
 import random
 
+import VegansDeluxe.core.Events.Events
 from VegansDeluxe.core.Actions.Action import DecisiveAction
-from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeAttack, MeleeWeapon, Entity, Enemies
+from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeAttack, MeleeWeapon, Entity, Enemies, RegisterEvent, \
+    EventContext
 from VegansDeluxe.core import OwnOnly
+from VegansDeluxe.rebuild import DamageThreshold, Aflame
+
 from startup import engine
 from .Dummy import Dummy
 from ..Sessions.TelegramSession import TelegramSession
@@ -21,13 +25,20 @@ class Slime(Dummy):
 
         self.team = 'slimes'
 
+        @RegisterEvent(self.session_id, event=VegansDeluxe.core.Events.PostActionsGameEvent)
+        def post_actions(context: EventContext[VegansDeluxe.core.Events.PostActionsGameEvent]):
+            self.get_state(Aflame.id).extinguished = True
+
     def choose_act(self, session: TelegramSession):
+        if session.turn == 1:
+            self.get_state(DamageThreshold.id).threshold = 5
+
         if not self.weapon:
             self.weapon = SlimeWeapon(self.session_id, self.id)
 
         super().choose_act(session)
 
-        if self.nearby_entities != list(filter(lambda t: t != self, session.entities)):
+        if self.nearby_entities != list(filter(lambda t: t != self, session.entities)) and percentage_chance(75):
             engine.action_manager.queue_action(session, self, SlimeApproach.id)
             return
 
@@ -115,10 +126,12 @@ class SlimeAttack(MeleeAttack):
     target_type = Enemies()
 
     def func(self, source: Slime, target: Entity):
-        super().func(source, target)
-        target.energy = max(0, target.energy - 1)
+        damage = super().func(source, target)
+        if not damage:
+            return
 
+        target.energy = max(0, target.energy - 1)
         if target.energy == 0:
             source.max_energy += 1
             source.energy = source.max_energy
-            self.session.say(f"🩲|{source.name} радостью дрожит, энергия востановлена и увеличена на 1!")
+            self.session.say(f"🩲|{source.name} радостно дрожит, энергия увеличена и востановлена ({source.energy})!")
