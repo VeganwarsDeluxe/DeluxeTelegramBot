@@ -1,24 +1,13 @@
-version: 27
+version: 30
 imports:
 - projectPath: public/ci-templates
   revision: master
 jobs:
 - name: build-docker-image
   steps:
-  - !CheckoutStep
-    name: checkout
-    cloneCredential: !DefaultCredential {}
-    withLfs: false
-    withSubmodules: false
-    cloneDepth: 1
-    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   - !UseTemplateStep
-    name: build-version
-    templateName: Get build version
-    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-  - !UseTemplateStep
-    name: build-docker-image
-    templateName: Build docker Image
+    name: Build docker image
+    templateName: Full docker image CI
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   - !PublishArtifactStep
     name: Publish artifacts
