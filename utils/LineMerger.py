@@ -18,6 +18,9 @@ class LineMerger:
         o_merge_a = self.trim(self.merge_oneline(t_merge_a))
         o_merge_b = self.trim(self.merge_oneline(t_merge_b))
 
+        print(o_merge_a)
+        print(o_merge_b)
+
         if len(o_merge_a) >= len(o_merge_b):
             return o_merge_b
         else:
@@ -40,10 +43,10 @@ class LineMerger:
             if switch:
                 part = lines[index]
                 if index + 1 == len(lines):
-                    new_text.append(part+self.salt)
+                    new_text.append(part + self.salt)
                 continue
             else:
-                new_text.append(part+self.salt+lines[index])
+                new_text.append(part + self.salt + lines[index])
 
         return new_text
 
@@ -58,7 +61,7 @@ class LineMerger:
             if pair[0] == pair[1]:
                 new_text.extend(pair)
             else:
-                if index+2 <= len(text) and text[index] == text[index+1]:
+                if index + 2 <= len(text) and text[index] == text[index + 1]:
                     counter += 1
                 else:
                     if counter == 1:
@@ -79,8 +82,8 @@ class LineMerger:
             if i == 0:
                 continue
 
-            if text[i] != text[i-1]:
-                new_line = f"{text[i-1]}" if counter == 1 else f"[{text[i-1]}]✖{counter}"
+            if text[i] != text[i - 1]:
+                new_line = f"{text[i - 1]}" if counter == 1 else f"[{text[i - 1]}]✖{counter}"
                 new_text.append(new_line)
                 counter = 1
             else:

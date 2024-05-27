@@ -1,8 +1,8 @@
 import config
 from startup import bot
-from db.Rating import RatingManager
+from db.RatingRepository import RatingRepository
 
-rm = RatingManager()
+rm = RatingRepository()
 
 
 @bot.message_handler(func=lambda m: rm.process_lambda(m))

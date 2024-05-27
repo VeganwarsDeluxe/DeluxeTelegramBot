@@ -11,7 +11,7 @@ class MatchCreationFlow:
         self.mm = mm
         self.match = match
 
-    def execute(self):
+    def execute(self, locale=""):
         match = self.mm.get_match(self.chat_id)
 
         if match:
@@ -20,6 +20,7 @@ class MatchCreationFlow:
             return
 
         match = self.match(self.chat_id)
+        match.locale = locale
         self.mm.attach_match(match)
 
         view = MatchCreationView(match)

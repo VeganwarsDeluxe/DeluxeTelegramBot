@@ -2,7 +2,7 @@ import math
 from .Player import Player
 
 
-class RatingManager:
+class RatingRepository:
     def __init__(self):
         pass
 

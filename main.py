@@ -1,12 +1,16 @@
 import random
 import traceback
+
+from telebot.types import Message
+
 import config
 
 import VegansDeluxe
 from VegansDeluxe import rebuild
-from VegansDeluxe.core import Own
+from VegansDeluxe.core import Own, ls
 from VegansDeluxe.core.ContentManager import content_manager as cm
 
+from flow.MatchStartFlow import MatchStartFlow
 from game.Matches.Matchmaker import Matchmaker
 from startup import bot, engine
 from game.Entities.Cow import Cow
@@ -35,11 +39,35 @@ def vd_prepare_handler(m):
 def vd_prepare_handler(m):
     match = mm.get_match(m.chat.id)
     if not match:
-        bot.reply_to(m, 'Игра и так не запущена!')
+        bot.reply_to(m, ls("bot.delete.game_not_started"))
         return
     del mm.matches[match.id]
     engine.detach_session(match.session.id)
-    bot.reply_to(m, 'Игра удалена.')
+    bot.reply_to(m, ls("bot.delete.success"))
+
+
+@bot.message_handler(commands=['vd_join'])
+def vd_join_handler(m: Message):
+    match = mm.get_match(m.chat.id)
+    if not match:
+        bot.reply_to(m, ls("bot.join.game_not_started"))
+        return
+    if str(m.from_user.id) in match.session.player_ids:
+        bot.reply_to(m, ls("bot.join.already_joined"))
+        return
+    if not match.lobby:
+        bot.reply_to(m, ls("bot.join.game_already_started"))
+        return
+    try:
+        bot.send_message(m.from_user.id, ls("bot.join.success"),
+                         locale_code=m.from_user.language_code)
+    except:
+        bot.reply_to(m, ls("bot.join.open_pm"))
+        return
+    match.join_session(m.from_user.id, m.from_user.full_name)
+
+    bot.send_message(m.chat.id, ls("bot.join.text").format(m.from_user.full_name),
+                     locale_code=m.from_user.language_code)
 
 
 @bot.message_handler(commands=['start'], func=lambda m: " jg_" in m.text)
@@ -48,77 +76,33 @@ def vd_prepare_handler(m):
     match = mm.get_match(game_id)
 
     if not match:
-        bot.reply_to(m, 'Данная игра не запущена!')
+        bot.reply_to(m, ls("bot.callback.join.game_not_started"))
         return
     if str(m.from_user.id) in match.session.player_ids:
-        bot.reply_to(m, 'Вы уже в игре!')
+        bot.reply_to(m, ls("bot.join.already_joined"))
         return
     if not match.lobby:
-        bot.reply_to(m, 'Игра уже идет!')
+        bot.reply_to(m, ls("bot.join.game_already_started"))
         return
     match.join_session(m.from_user.id, m.from_user.full_name)
 
-    bot.send_message(m.from_user.id, 'Вы вступили в игру! Осторжно, бот в бета тесте!')
-    bot.send_message(game_id, f'{m.from_user.full_name} вступил в игру!')
+    bot.send_message(m.from_user.id, ls("bot.join.success"), locale_code=m.from_user.language_code)
+    bot.send_message(m.chat.id, ls("bot.join.text").format(m.from_user.full_name),
+                     locale_code=m.from_user.language_code)
 
 
 @bot.message_handler(commands=['vd_go'])
 def vd_join_handler(m):
-    match = mm.get_match(m.chat.id)
-    if not match:
-        bot.reply_to(m, 'Игра не запущена! Запустите командой /vd_prepare.')
-        return
-    if str(m.from_user.id) not in match.session.player_ids:
-        if m.from_user.id not in config.admin_ids:
-            bot.reply_to(m, 'Вас нет в игре, не вам и запускать!')
-            return
-    if not match.lobby:
-        bot.reply_to(m, 'Игра уже идет!')
-        return
-    match.lobby = False
-    match.choose_items()
-    match.choose_weapons()
-    bot.reply_to(m, 'Игра начинается!')
+    msf = MatchStartFlow(m.chat.id, m.from_user.id, mm)
+    result = msf.execute()
+    bot.reply_to(m, result) if result else None
 
 
 @bot.callback_query_handler(func=lambda c: c.data == 'vd_go')
 def act_callback_handler(c):
-    match = mm.get_match(c.message.chat.id)
-    if not match:
-        bot.answer_callback_query(c.id, "Игра не запущена!")
-        return
-    if str(c.from_user.id) not in match.session.player_ids:
-        if c.from_user.id not in config.admin_ids:
-            bot.answer_callback_query(c.id, "Вас нет в игре!")
-            return
-    if not match.lobby:
-        bot.answer_callback_query(c.id, "Игра уже идет!")
-        return
-    match.lobby = False
-    match.choose_items()
-    match.choose_weapons()
-    bot.reply_to(c.message, 'Игра начинается!')
-
-
-@bot.message_handler(commands=['vd_join'])
-def vd_join_handler(m):
-    match = mm.get_match(m.chat.id)
-    if not match:
-        bot.reply_to(m, 'Игра не запущена! Запустите командой /vd_prepare.')
-        return
-    if str(m.from_user.id) in match.session.player_ids:
-        bot.reply_to(m, 'Вы уже в игре!')
-        return
-    if not match.lobby:
-        bot.reply_to(m, 'Игра уже идет!')
-        return
-    try:
-        bot.send_message(m.from_user.id, 'Вы вступили в игру! Осторжно, бот в бета тесте!')
-    except:
-        bot.reply_to(m, 'Сначала напишите мне в ЛС!')
-        return
-    bot.send_message(m.chat.id, f'{m.from_user.full_name} вступил в игру!')
-    match.join_session(m.from_user.id, m.from_user.full_name)
+    msf = MatchStartFlow(c.message.chat.id, c.from_user.id, mm)
+    result = msf.execute()
+    bot.answer_callback_query(c.id, result) if result else None
 
 
 @bot.message_handler(commands=['vd_suicide'])
@@ -134,32 +118,8 @@ def vd_join_handler(m):
     player.dead = True
     player.hp = 0
     if not match.session.unready_players:
-        match.session.say(f'☠️|{player.name} совершает суицид.')
+        match.session.say(ls("bot.suicide.text").format(player.name))
         match.cycle()
-
-
-@bot.message_handler(commands=['add_cow'])
-def vd_join_handler(m):
-    match = mm.get_match(m.chat.id)
-    if not m.text.count(' ') or not m.text.split(' ')[1].isdigit():
-        bot.reply_to(m, 'Так нельзя. Напиши /add_cow число.')
-        return
-    count = int(m.text.split(' ')[1])
-    if not (0 <= count <= 15):
-        bot.reply_to(m, 'Неправильно. Введи число от 0 до 15')
-        return
-    if not match:
-        bot.reply_to(m, 'Игра не запущена! Запустите командой /vd_prepare.')
-        return
-    if match.cowed:
-        bot.reply_to(m, 'МУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУ.')
-        return
-    match.cowed = True
-    for _ in range(count):
-        cow = Cow(match.session.id)
-        engine.attach_entity(match.session, cow)
-    mm.update_message(match)
-    bot.send_message(m.chat.id, f'{count} коров прибежало!')
 
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith('cw'))
@@ -167,17 +127,21 @@ def act_callback_handler(c):
     _, game_id, weapon_id = c.data.split('_', 2)
     match = mm.get_match(game_id)
     if not match:
-        bot.edit_message_text('Игра уже закончилась!', c.message.chat.id, c.message.message_id)
+        bot.edit_message_text(ls("bot.cw.game_is_finished").localize(c.from_user.language_code),
+                              c.message.chat.id, c.message.message_id)
         return
     if match.lobby:
-        bot.edit_message_text('Хватит спешить.', c.message.chat.id, c.message.message_id)
+        bot.edit_message_text(ls("bow.cw.do_not_hurry").localize(c.from_user.language_code),
+                              c.message.chat.id, c.message.message_id)
         return
     player = match.session.get_player(c.from_user.id)
     if not player:
-        bot.edit_message_text('Вы не в игре!', c.message.chat.id, c.message.message_id)
+        bot.edit_message_text(ls("bot.cw.not_in_game").localize(c.from_user.language_code),
+                              c.message.chat.id, c.message.message_id)
         return
     if player.chose_weapon:
-        bot.edit_message_text(f'Хватит так поступать.', c.message.chat.id, c.message.message_id)
+        bot.edit_message_text(ls("bot.cw.stop_doing_that").localize(c.from_user.language_code),
+                              c.message.chat.id, c.message.message_id)
         return
     if weapon_id == 'random':
         weapon = random.choice(rebuild.all_weapons)(game_id, player.id)
@@ -186,10 +150,11 @@ def act_callback_handler(c):
     player.weapon = weapon
     player.chose_weapon = True
     if not match.session.not_chosen_weapon:
-        bot.send_message(match.session.chat_id, f'Оружие выбрано.')
+        bot.send_message(match.session.chat_id, ls("bot.cw.weapons_chosen"), locale_code=match.locale)
         match.choose_skills()
 
-    bot.edit_message_text(f'Выбрано оружие: {weapon.name}', c.message.chat.id, c.message.message_id)
+    bot.edit_message_text(ls("bot.cw.weapon_chosen").format(weapon.name).localize(c.from_user.language_code),
+                          c.message.chat.id, c.message.message_id)
 
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith('cs'))
@@ -197,17 +162,21 @@ def act_callback_handler(c):
     _, cycle, game_id, skill_id = c.data.split('_', 3)
     match = mm.get_match(int(game_id))
     if not match:
-        bot.edit_message_text('Игра уже закончилась!', c.message.chat.id, c.message.message_id)
+        bot.edit_message_text(ls("bot.cw.game_is_finished").localize(c.from_user.language_code),
+                              c.message.chat.id, c.message.message_id)
         return
     if match.lobby:
-        bot.edit_message_text('Хватит спешить.', c.message.chat.id, c.message.message_id)
+        bot.edit_message_text(ls("bow.cw.do_not_hurry").localize(c.from_user.language_code),
+                              c.message.chat.id, c.message.message_id)
         return
     player = match.session.get_player(c.from_user.id)
     if not player:
-        bot.edit_message_text('Вы не в игре!', c.message.chat.id, c.message.message_id)
+        bot.edit_message_text(ls("bot.cw.not_in_game").localize(c.from_user.language_code),
+                              c.message.chat.id, c.message.message_id)
         return
     if player.chose_skills or player.skill_cycle == int(cycle):
-        bot.edit_message_text(f'Хватит так поступать.', c.message.chat.id, c.message.message_id)
+        bot.edit_message_text(ls("bot.cw.stop_doing_that").localize(c.from_user.language_code),
+                              c.message.chat.id, c.message.message_id)
         return
     skill = cm.get_state(skill_id)
     if skill_id == 'random':
@@ -223,10 +192,11 @@ def act_callback_handler(c):
     else:
         match.send_skill_choice_buttons(player, int(cycle) + 1)
 
-    bot.edit_message_text(f'Выбран скилл: {skill.name}', c.message.chat.id, c.message.message_id)
+    bot.edit_message_text(ls("bot.cs.skill_chosen").format(skill.name),
+                          c.message.chat.id, c.message.message_id)
 
     if not match.session.not_chosen_skills:
-        tts = f'Способности выбраны, игра начинается! Выбор оружия:'
+        tts = ls("bot.common.game_is_starting").localize(match.locale)
         for player in match.session.alive_entities:
             tts += f'\n{player.name}: {player.weapon.name}'
         bot.send_message(match.session.chat_id, tts)
@@ -250,15 +220,18 @@ def act_callback_handler(c):
     _, game_id, act_id = c.data.split('_', 2)
     match = mm.get_match(game_id)
     if not match:
-        bot.edit_message_text('Игра стухла!', c.message.chat.id, c.message.message_id)
+        bot.edit_message_text('Игра стухла!',
+                              c.message.chat.id, c.message.message_id)
         return
     player = match.session.get_player(c.from_user.id)
     if not player:
-        bot.edit_message_text('Игрок стух!', c.message.chat.id, c.message.message_id)
+        bot.edit_message_text(ls("bot.error.player_not_found").localize(c.from_user.language_code),
+                              c.message.chat.id, c.message.message_id)
         return
     action = engine.action_manager.get_action(match.session, player, act_id)
     if not action:
-        bot.edit_message_text('Кнопка стухла!', c.message.chat.id, c.message.message_id)
+        bot.edit_message_text('Кнопка стухла!',
+                              c.message.chat.id, c.message.message_id)
         return
     if action.blocked:
         bot.answer_callback_query(c.id, "Кнопка заблокирована!", show_alert=True)
@@ -285,7 +258,8 @@ def act_callback_handler(c):
         return
     player = match.session.get_player(c.from_user.id)
     if not player:
-        bot.edit_message_text('Игрок стух!', c.message.chat.id, c.message.message_id)
+        bot.edit_message_text(ls("bot.error.player_not_found").localize(c.from_user.language_code),
+                              c.message.chat.id, c.message.message_id)
         return
     target = match.session.get_player(target_id)
     if not target:
@@ -309,7 +283,8 @@ def act_callback_handler(c):
         return
     player = match.session.get_player(c.from_user.id)
     if not player:
-        bot.edit_message_text('Игрок стух!', c.message.chat.id, c.message.message_id)
+        bot.edit_message_text(ls("bot.error.player_not_found").localize(c.from_user.language_code),
+                              c.message.chat.id, c.message.message_id)
         return
     kb = match.get_act_buttons(player)
     tts = match.get_act_text(player)
@@ -325,13 +300,14 @@ def act_callback_handler(c):
         return
     player = match.session.get_player(c.from_user.id)
     if not player:
-        bot.edit_message_text('Игрок стух!', c.message.chat.id, c.message.message_id)
+        bot.edit_message_text(ls("bot.error.player_not_found").localize(c.from_user.language_code),
+                              c.message.chat.id, c.message.message_id)
         return
     kb = match.get_additional_buttons(player)
     bot.edit_message_text('Дополнительно:', c.message.chat.id, c.message.message_id, reply_markup=kb)
 
 
 bot.send_message(config.boot_chat, f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
-                                   f"🤖Latest bot patch: `chain patches`",
+                                   f"🤖Latest bot patch: `major overhaul (may not work)`",
                  parse_mode="Markdown")
 bot.infinity_polling()

@@ -23,6 +23,7 @@ class BaseMatch:
 
         self.id = str(chat_id)
         self.session = self.create_session(self.id)
+        self.locale = ""
 
         self.lobby_message = None
         self.lobby = True
@@ -45,8 +46,8 @@ class BaseMatch:
         player.init_states()
         return player
 
-    def create_session(self, id: str):
-        session = TelegramSession(id)
+    def create_session(self, chat_id: str):
+        session = TelegramSession(chat_id)
         engine.attach_session(session)
         return session
 
@@ -279,7 +280,7 @@ class BaseMatch:
             if player.npc:
                 continue
             bot.send_message(player.user_id, f'Ваши предметы: '
-                                             f'{", ".join([item.name for item in player.items])}')
+                                             f'{", ".join([str(item.name) for item in player.items])}')
 
     def choose_weapons(self):
         for player in self.session.not_chosen_weapon:
@@ -314,7 +315,7 @@ class BaseMatch:
 
         kb = types.InlineKeyboardMarkup()
         for weapon in weapons:
-            kb.add(types.InlineKeyboardButton(weapon.name, callback_data=f"cw_{self.session.chat_id}_{weapon.id}"),
+            kb.add(types.InlineKeyboardButton(str(weapon.name), callback_data=f"cw_{self.session.chat_id}_{weapon.id}"),
                    types.InlineKeyboardButton('Информация', callback_data=f"wi_{weapon.id}"))
         kb.add(types.InlineKeyboardButton(text='Случайное оружие',
                                           callback_data=f"cw_{self.session.chat_id}_random"))

@@ -52,7 +52,7 @@ class TelegramSession(Session):
         return [p for p in self.entities if not p.chose_items]
 
     def say(self, text, n=True):
-        self.texts[0] += text + ("\n" if n else '')
+        self.texts[0] += str(text) + ("\n" if n else '')
 
     def pre_move(self):
         super().pre_move()
