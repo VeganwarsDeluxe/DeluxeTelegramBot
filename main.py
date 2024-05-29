@@ -309,6 +309,6 @@ def act_callback_handler(c):
 
 
 bot.send_message(config.boot_chat, f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
-                                   f"🤖Latest bot patch: `major overhaul (may not work)`",
+                                   f"🤖Latest bot patch: `localization patches`",
                  parse_mode="Markdown")
 bot.infinity_polling()
