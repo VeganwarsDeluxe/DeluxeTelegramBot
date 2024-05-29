@@ -2,7 +2,7 @@ from telebot import types
 
 from game.Matches.BaseMatch import BaseMatch
 from startup import bot
-from views.View import View
+from core.View import View
 
 
 class MatchCreationView(View):

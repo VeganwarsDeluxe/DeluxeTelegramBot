@@ -13,9 +13,10 @@ from VegansDeluxe.core.ContentManager import content_manager as cm
 from flow.MatchStartFlow import MatchStartFlow
 from game.Matches.Matchmaker import Matchmaker
 from startup import bot, engine
-from game.Entities.Cow import Cow
 
 import handlers.matches
+from VegansDeluxe.core.Translator.Translator import translator
+translator.default_locale = 'ru'
 
 mm = Matchmaker(bot, engine)
 handlers.matches.initialize_module(bot, mm)

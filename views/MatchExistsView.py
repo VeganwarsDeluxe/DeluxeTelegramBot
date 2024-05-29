@@ -1,5 +1,5 @@
 from game.Matches.BaseMatch import BaseMatch
-from views.View import View
+from core.View import View
 
 
 class MatchExistsView(View):

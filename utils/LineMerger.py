@@ -18,9 +18,6 @@ class LineMerger:
         o_merge_a = self.trim(self.merge_oneline(t_merge_a))
         o_merge_b = self.trim(self.merge_oneline(t_merge_b))
 
-        print(o_merge_a)
-        print(o_merge_b)
-
         if len(o_merge_a) >= len(o_merge_b):
             return o_merge_b
         else:

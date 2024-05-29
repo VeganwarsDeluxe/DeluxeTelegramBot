@@ -167,7 +167,7 @@ class BaseMatch:
             'skip_row': []
         }
         for action in engine.action_manager.get_available_actions(self.session, player):
-            name = action.name
+            name = str(action.name) # TODO: LOCALIZE
             button = types.InlineKeyboardButton(text=name, callback_data=f"act_{self.session.chat_id}_{action.id}")
             if action.id in ['attack', 'reload']:
                 buttons['first_row'].append(button)
@@ -280,7 +280,7 @@ class BaseMatch:
             if player.npc:
                 continue
             bot.send_message(player.user_id, f'Ваши предметы: '
-                                             f'{", ".join([str(item.name) for item in player.items])}')
+                                             f'{", ".join([str(item.name) for item in player.items])}') # TODO: LOCALIZE
 
     def choose_weapons(self):
         for player in self.session.not_chosen_weapon:
@@ -336,7 +336,7 @@ class BaseMatch:
         kb = types.InlineKeyboardMarkup()
         for skill in skills:
             kb.add(
-                types.InlineKeyboardButton(skill.name, callback_data=f"cs_{cycle}_{self.session.chat_id}_{skill.id}"),
+                types.InlineKeyboardButton(str(skill.name), callback_data=f"cs_{cycle}_{self.session.chat_id}_{skill.id}"),
                 types.InlineKeyboardButton('Информация', callback_data=f"ci_{skill.id}"))
         kb.add(types.InlineKeyboardButton(text='Случайный скилл',
                                           callback_data=f"cs_{cycle}_{self.session.chat_id}_random"))

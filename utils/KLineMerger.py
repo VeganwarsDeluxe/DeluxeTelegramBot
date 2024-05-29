@@ -71,9 +71,3 @@ def get_repeating_sequence(strings):
                 return True, strings[:sequence_length], n // sequence_length
 
     return False, '', 0
-
-
-b = ["A", "B", "C", "D",
-     "Line1", "Line2", "Line1", "Line2", "A", "B"]
-
-print(merge_lines(b))
