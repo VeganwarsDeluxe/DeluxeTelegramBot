@@ -17,7 +17,7 @@ import game.content
 
 import handlers.matches
 from VegansDeluxe.core.Translator.Translator import translator
-translator.default_locale = 'ru'
+
 
 mm = Matchmaker(bot, engine)
 handlers.matches.initialize_module(bot, mm)
@@ -243,8 +243,8 @@ def act_callback_handler(c):
     if not action.target_type.own == Own.SELF_ONLY:
         match.action_indexes.append(action)
         index = len(match.action_indexes) - 1
-        match.choose_target(player, action.targets, index)
-        bot.delete_message(c.message.chat.id, c.message.message_id)
+        kb = match.choose_target(action.targets, index)
+        bot.edit_message_text('Выбор цели:', c.message.chat.id, c.message.message_id, reply_markup=kb)
         return
 
     bot.edit_message_text(f"Выбрано: {action.name} на {action.target.name}", c.message.chat.id, c.message.message_id)
@@ -311,7 +311,8 @@ def act_callback_handler(c):
 
 bot.send_message(config.boot_chat, f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
                                    f"🤖Latest bot patch: ```"
-                                   f"\n - BaseMatch hotfix (additional buttons)"
+                                   f"\n - fixed issue #12"
+                                   f"\n - fixed multiple localization issues"
                                    f"```",
                  parse_mode="Markdown")
 bot.infinity_polling()

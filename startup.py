@@ -10,4 +10,6 @@ connect(host=mongo_url, db='viro')
 
 translator.load_folder("localizations")
 translator.load_folder("game/localizations")
+
+translator.default_locale = 'ru'
 engine = Engine()

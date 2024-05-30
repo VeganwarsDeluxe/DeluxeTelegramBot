@@ -73,7 +73,7 @@ class BaseMatch:
         bot.send_message(self.session.chat_id, tts)
         engine.detach_session(self.session)
 
-    def choose_target(self, player, targets, index=0):
+    def choose_target(self, targets, index=0):
         kb = types.InlineKeyboardMarkup()
         for target in targets:
             kb.add(types.InlineKeyboardButton(
@@ -82,7 +82,7 @@ class BaseMatch:
         kb.add(types.InlineKeyboardButton(
             text='Назад', callback_data=f"back_{self.session.chat_id}"
         ))
-        bot.send_message(player.user_id, 'Выбор цели:', reply_markup=kb)
+        return kb
 
     def choose_act(self, user_id, target_id, act_id):
         player = self.session.get_player(user_id)
