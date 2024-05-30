@@ -44,7 +44,7 @@ def vd_prepare_handler(m):
         bot.reply_to(m, ls("bot.delete.game_not_started"))
         return
     del mm.matches[match.id]
-    engine.detach_session(match.session.id)
+    engine.detach_session(match.session)
     bot.reply_to(m, ls("bot.delete.success"))
 
 
@@ -311,8 +311,7 @@ def act_callback_handler(c):
 
 bot.send_message(config.boot_chat, f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
                                    f"🤖Latest bot patch: ```"
-                                   f"\n - fixed issue #12"
-                                   f"\n - fixed multiple localization issues"
+                                   f"\n - fixed /vd_delete"
                                    f"```",
                  parse_mode="Markdown")
 bot.infinity_polling()

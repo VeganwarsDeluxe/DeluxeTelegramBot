@@ -71,7 +71,6 @@ class BaseMatch:
             tts = 'Игра окончена! Все погибли!'
         self.notify_players(tts)
         bot.send_message(self.session.chat_id, tts)
-        engine.detach_session(self.session)
 
     def choose_target(self, targets, index=0):
         kb = types.InlineKeyboardMarkup()
@@ -246,6 +245,7 @@ class BaseMatch:
         """Checks the status of the game and sends end game messages if needed."""
         if not self.session.active:
             self.send_end_game_messages()
+            engine.detach_session(self.session)
             return False
         return True
 
