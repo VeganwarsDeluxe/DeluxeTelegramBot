@@ -210,7 +210,7 @@ class BaseMatch:
             if action.type == 'item':
                 items.append(action)
                 continue
-            button = types.InlineKeyboardButton(text=name, callback_data=f"act_{self.session.chat_id}_{action.id}")
+            button = types.InlineKeyboardButton(text=str(name), callback_data=f"act_{self.session.chat_id}_{action.id}")
             if action.id in ['attack', 'reload', 'approach', 'dodge', 'skip', 'extinguish']:
                 pass
             else:
@@ -228,7 +228,7 @@ class BaseMatch:
             if action.item.id in added_items:
                 continue
             name = f"{action.name} ({item_count[action.item.id]})"
-            button = types.InlineKeyboardButton(text=name, callback_data=f"act_{self.session.chat_id}_{action.id}")
+            button = types.InlineKeyboardButton(text=str(name), callback_data=f"act_{self.session.chat_id}_{action.id}")
             item_buttons.append(button)
             added_items.append(action.item.id)
 

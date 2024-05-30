@@ -311,9 +311,7 @@ def act_callback_handler(c):
 
 bot.send_message(config.boot_chat, f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
                                    f"🤖Latest bot patch: ```"
-                                   f"\n - Alex&Tuman mod integrated (new content)"
-                                   f"\n - Log anomalies fixed"
-                                   f"\n - Minor bugs fixed"
+                                   f"\n - BaseMatch hotfix (additional buttons)"
                                    f"```",
                  parse_mode="Markdown")
 bot.infinity_polling()
