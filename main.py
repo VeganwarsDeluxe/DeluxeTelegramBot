@@ -1,6 +1,8 @@
 import random
 import traceback
 
+import game.content
+
 from telebot.types import Message
 
 import config
@@ -13,7 +15,6 @@ from flow.MatchStartFlow import MatchStartFlow
 from game.Matches.Matchmaker import Matchmaker
 from startup import bot, engine
 
-import game.content
 
 import handlers.matches
 from VegansDeluxe.core.Translator.Translator import translator
@@ -207,13 +208,13 @@ def act_callback_handler(c):
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith('ci'))
 def act_callback_handler(c):
-    _, skill_id = c.data.split('_', 3)
+    _, skill_id = c.data.split('_', 1)
     bot.answer_callback_query(c.id, cm.get_state(skill_id).description, show_alert=True)
 
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith('wi'))
 def act_callback_handler(c):
-    _, weapon_id = c.data.split('_', 3)
+    _, weapon_id = c.data.split('_', 1)
     bot.answer_callback_query(c.id, cm.get_weapon(weapon_id).description, show_alert=True)
 
 
@@ -311,7 +312,8 @@ def act_callback_handler(c):
 
 bot.send_message(config.boot_chat, f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
                                    f"🤖Latest bot patch: ```"
-                                   f"\n - fixed /vd_delete"
+                                   f"\n - fixed issue #18"
                                    f"```",
                  parse_mode="Markdown")
+print(engine.stats())
 bot.infinity_polling()
