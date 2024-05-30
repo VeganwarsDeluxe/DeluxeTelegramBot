@@ -3,14 +3,15 @@ import random
 import telebot.util
 from telebot import types
 
-from VegansDeluxe import rebuild
-
 from VegansDeluxe.core import PreMoveGameEvent
 
 from game.Entities.TelegramEntity import TelegramEntity
 from game.Sessions.TelegramSession import TelegramSession
 from startup import bot, engine
+from utils import KLineMerger
 from utils.LineMerger import LineMerger
+
+import game.content
 
 
 class BaseMatch:
@@ -112,7 +113,7 @@ class BaseMatch:
                     self.notify_players(tts)
 
     def merge_lines(self, text):
-        return self.lm.merge(text)
+        return KLineMerger.merge_lines(text.split("\n"))
 
     def send_act_buttons(self, player):
         kb = self.get_act_buttons(player)
@@ -270,8 +271,8 @@ class BaseMatch:
         for player in self.session.not_chosen_items:
             given = []
             for _ in range(self.items_given):
-                item = random.choice(rebuild.game_items_pool)()
-                pool = list(filter(lambda i: i.id not in given, rebuild.game_items_pool))
+                item = random.choice(game.content.game_items_pool)()
+                pool = list(filter(lambda i: i.id not in given, game.content.game_items_pool))
                 if pool:
                     item = random.choice(pool)()
                 given.append(item.id)
@@ -305,7 +306,7 @@ class BaseMatch:
     def send_weapon_choice_buttons(self, player):
         weapons = []
         for _ in range(self.weapon_number):
-            variants = list(filter(lambda w: w.id not in [w.id for w in weapons], rebuild.all_weapons))
+            variants = list(filter(lambda w: w.id not in [w.id for w in weapons], game.content.all_weapons))
             if not variants:
                 break
             choice = random.choice(variants)
@@ -324,7 +325,7 @@ class BaseMatch:
     def send_skill_choice_buttons(self, player, cycle=1):
         skills = []
         for _ in range(self.skill_number):
-            variants = list(filter(lambda s: s.id not in [s.id for s in skills], rebuild.all_skills))
+            variants = list(filter(lambda s: s.id not in [s.id for s in skills], game.content.all_skills))
             variants = list(filter(lambda s: s.id not in [s.id for s in player.states], variants))
             if not variants:
                 break

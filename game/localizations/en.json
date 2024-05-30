@@ -1,0 +1,15 @@
+{
+  "state_emptiness_energy_loss": "\uD83C\uDF86|{0} is losing energy from being empty. {1} energy left.",
+  "state_emptiness_timer": "\uD83C\uDF86| Feels empty. ({1})",
+
+
+  "weapon_abyssal_blade_name": "Abyssal Blade",
+  "weapon_abyssal_blade_description": "Melee, damage 1-3, high accuracy. Has a chance to inflict emptiness on the target, after which she can lower her maximum energy.",
+  "weapon_abyssal_blade_increase": "\uD83C\uDF86|emptiness is intensifying!",
+  "weapon_abyssal_blade_effect": "\uD83C\uDF86|{0} emptiness!",
+
+  "weapon_cursed_sword_name": "Cursed Sword",
+  "weapon_cursed_sword_description": "Melee, 1-3 damage, high accuracy. Has a chance to inflict a weakness on the target.",
+  "weapon_cursed_sword_effect": "\uD83E\uDEE0|{0} weakened!"
+
+}

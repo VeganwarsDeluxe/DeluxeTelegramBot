@@ -6,13 +6,14 @@ from telebot.types import Message
 import config
 
 import VegansDeluxe
-from VegansDeluxe import rebuild
 from VegansDeluxe.core import Own, ls
 from VegansDeluxe.core.ContentManager import content_manager as cm
 
 from flow.MatchStartFlow import MatchStartFlow
 from game.Matches.Matchmaker import Matchmaker
 from startup import bot, engine
+
+import game.content
 
 import handlers.matches
 from VegansDeluxe.core.Translator.Translator import translator
@@ -145,7 +146,7 @@ def act_callback_handler(c):
                               c.message.chat.id, c.message.message_id)
         return
     if weapon_id == 'random':
-        weapon = random.choice(rebuild.all_weapons)(game_id, player.id)
+        weapon = random.choice(game.content.all_weapons)(game_id, player.id)
     else:
         weapon = cm.get_weapon(weapon_id)(game_id, player.id)
     player.weapon = weapon
@@ -181,9 +182,9 @@ def act_callback_handler(c):
         return
     skill = cm.get_state(skill_id)
     if skill_id == 'random':
-        variants = list(filter(lambda s: s.id not in [s.id for s in player.states], rebuild.all_skills))
+        variants = list(filter(lambda s: s.id not in [s.id for s in player.states], game.content.all_skills))
         if not variants:
-            variants = rebuild.all_skills
+            variants = game.content.all_skills
         skill = random.choice(variants)
     engine.attach_states(player, [skill])
     player.skill_cycle = int(cycle)
@@ -309,6 +310,10 @@ def act_callback_handler(c):
 
 
 bot.send_message(config.boot_chat, f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
-                                   f"🤖Latest bot patch: `localization patches`",
+                                   f"🤖Latest bot patch: ```"
+                                   f"\n - Alex&Tuman mod integrated (new content)"
+                                   f"\n - Log anomalies fixed"
+                                   f"\n - Minor bugs fixed"
+                                   f"```",
                  parse_mode="Markdown")
 bot.infinity_polling()

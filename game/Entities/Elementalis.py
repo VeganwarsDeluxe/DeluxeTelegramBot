@@ -1,6 +1,5 @@
 import random
 
-from VegansDeluxe import rebuild
 from VegansDeluxe.core.Actions.Action import DecisiveAction
 from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeWeapon
 from VegansDeluxe.core import EventContext
@@ -10,6 +9,9 @@ from VegansDeluxe.core import PreDeathGameEvent
 
 from VegansDeluxe.core import Session
 from VegansDeluxe.core import OwnOnly
+
+import game.content
+
 from .Dummy import Dummy
 from startup import engine
 
@@ -25,8 +27,8 @@ class Elemental(Dummy):
         self.energy = 7
         self.max_energy = 7
 
-        self.items = [item() for item in rebuild.all_items]
-        self.states.extend([skill() for skill in rebuild.all_skills])
+        self.items = [item() for item in game.content.all_items]
+        self.states.extend([skill() for skill in game.content.all_skills])
 
         self.team = 'elemental'
 
@@ -49,7 +51,7 @@ class Elemental(Dummy):
 
     def choose_act(self, session):
         super().choose_act(session)
-        self.weapon = random.choice(rebuild.all_weapons)(session.id, self.id)
+        self.weapon = random.choice(game.content.all_weapons)(session.id, self.id)
         engine.action_manager.update_entity_actions(session, self)
 
         cost = False

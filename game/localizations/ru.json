@@ -1,0 +1,26 @@
+{
+  "state_emptiness_energy_loss": "\uD83C\uDF86|{0} теряет энергию от опустошенности. Осталось {1} энергии.",
+  "state_emptiness_timer": "\uD83C\uDF86| Чуствует опустошенность. ({1})",
+
+  "state_recovery_from_weakness": "\uD83E\uDEE0|{0} восстанавливается от слабости.",
+  "state_weakness_applied": "*буль-буль*",
+  "state_weakness_action_name": "работай",
+
+
+  "weapon_abyssal_blade_name": "Клинок бездны",
+  "weapon_abyssal_blade_description": "Ближний бой, урон 1-3, точность высокая. Имеет шанс наложить опустошенность на цель, после чего ей можно понизить максимальную энергию.",
+  "weapon_abyssal_blade_increase": "\uD83C\uDF86|Опустошенность усиливается!",
+  "weapon_abyssal_blade_effect": "\uD83C\uDF86|{0} Опустошен!",
+
+  "weapon_cursed_sword_name": "Проклятый меч",
+  "weapon_cursed_sword_description": "Ближний бой, урон 1-3, точность высокая. Имеет шанс наложить на цель слабость.",
+  "weapon_cursed_sword_effect": "\uD83E\uDEE0|{0} ослаблен!",
+
+  "weapon_grenade_launcher_name": "Гранатомёт",
+  "weapon_grenade_launcher_description": "Дальний бой, урон 1-4 стреляет гранатами атакуя две цели",
+  "item_grenade_launcher_text": "\uD83D\uDCA3|{0} стреляет из гранатомета! Нанесено {1} урона следующим целям: {2}.",
+  "item_grenade_launcher_molotov_text": "\uD83C\uDF78|{0} стреляет из гранатомета! {1} в огне!",
+
+  "weapon_lance_name": "Пика",
+  "weapon_lance_description": "Ближний бой, урон 1-3, точность средняя. Атакуя цель, находящуюся далеко от вас, вы получаете +1 к урону."
+}

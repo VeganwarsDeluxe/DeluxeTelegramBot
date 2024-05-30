@@ -1,0 +1,15 @@
+{
+  "state_emptiness_energy_loss": "\uD83C\uDF86|{0} втрачає енергію від спустошеності. Залишилося {1} енергії.",
+  "state_emptiness_timer": "\uD83C\uDF86| Відчуває спустошеність. ({1})",
+
+
+  "weapon_abyssal_blade_name": "Клинок безодні",
+  "weapon_abyssal_blade_description": "Ближній бій, шкода 1-3, точність висока. Має шанс накласти спустошеність на ціль, після чого їй можна знизити максимальну енергію.",
+  "weapon_abyssal_blade_increase": "\uD83C\uDF86|Спустошеність посилюється!",
+  "weapon_abyssal_blade_effect": "\uD83C\uDF86|{0} Спустошений!",
+
+  "weapon_cursed_sword_name": "Проклятий меч",
+  "weapon_cursed_sword_description": "Ближній бій, шкода 1-3, точність висока. Має шанс накласти на ціль слабкість.",
+  "weapon_cursed_sword_effect": "\uD83E\uDEE0|{0} ослаблений!"
+
+}

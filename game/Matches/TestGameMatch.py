@@ -1,6 +1,6 @@
-from VegansDeluxe import rebuild
 from game.Entities.Cow import Cow
 from game.Matches.BaseMatch import BaseMatch
+import game.content
 
 
 class TestGameMatch(BaseMatch):
@@ -9,8 +9,8 @@ class TestGameMatch(BaseMatch):
     def __init__(self, chat_id):
         super().__init__(chat_id)
 
-        self.skill_number = len(rebuild.all_skills)
-        self.weapon_number = len(rebuild.all_weapons)
+        self.skill_number = len(game.content.all_skills)
+        self.weapon_number = len(game.content.all_weapons)
 
         cow = Cow(self.id)
         self.session.attach_entity(cow)
@@ -18,7 +18,7 @@ class TestGameMatch(BaseMatch):
 
     def choose_items(self):
         for player in self.session.not_chosen_items:
-            for item_type in rebuild.all_items:
+            for item_type in game.content.all_items:
                 item = item_type()
                 for _ in range(100):
                     player.items.append(item)

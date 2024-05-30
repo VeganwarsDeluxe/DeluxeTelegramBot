@@ -4,6 +4,8 @@ from game.Matches.ElementalDungeon import ElementalDungeon
 from game.Matches.Matchmaker import Matchmaker
 from game.Matches.SlimeDungeon import SlimeDungeon
 from game.Matches.TestGameMatch import TestGameMatch
+from game.Matches.TumanDungeon import TumanDungeon
+
 from handlers.bot import ExtendedBot
 
 
@@ -26,4 +28,9 @@ def initialize_module(bot: ExtendedBot, mm: Matchmaker):
     @bot.message_handler(commands=['vd_slime'])
     def vd_prepare_handler(m):
         flow = MatchCreationFlow(m.chat.id, mm, SlimeDungeon)
+        flow.execute()
+
+    @bot.message_handler(commands=['vd_tuman'])
+    def vd_prepare_handler(m):
+        flow = MatchCreationFlow(m.chat.id, mm, TumanDungeon)
         flow.execute()

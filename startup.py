@@ -9,4 +9,5 @@ bot = ExtendedBot(bot_token, skip_pending=True)
 connect(host=mongo_url, db='viro')
 
 translator.load_folder("localizations")
+translator.load_folder("game/localizations")
 engine = Engine()

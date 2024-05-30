@@ -1,4 +1,3 @@
-from VegansDeluxe import rebuild
 from VegansDeluxe.core.Actions.Action import DecisiveAction
 from VegansDeluxe.core import AttachedAction
 from VegansDeluxe.core.Actions.EntityActions import SkipActionGameEvent
@@ -6,6 +5,8 @@ from VegansDeluxe.core.Entities.Entity import Entity
 
 from VegansDeluxe.core import OwnOnly
 from startup import engine
+
+import game.content
 
 
 class TelegramEntity(Entity):
@@ -30,7 +31,7 @@ class TelegramEntity(Entity):
         pass
 
     def init_states(self):
-        engine.attach_states(self, rebuild.all_states)
+        engine.attach_states(self, game.content.all_states)
 
     def pre_move(self):
         super().pre_move()
