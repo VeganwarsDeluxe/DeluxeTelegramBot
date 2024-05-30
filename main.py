@@ -311,9 +311,7 @@ def act_callback_handler(c):
 
 
 bot.send_message(config.boot_chat, f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
-                                   f"🤖Latest bot patch: ```"
-                                   f"\n - fixed issue #18"
-                                   f"```",
+                                   f"🤖Latest bot patch: `Момоделы жамкают делюкс - жамкание делюкса`",
                  parse_mode="Markdown")
 print(engine.stats())
 bot.infinity_polling()
