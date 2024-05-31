@@ -9,7 +9,6 @@ from game.Entities.TelegramEntity import TelegramEntity
 from game.Sessions.TelegramSession import TelegramSession
 from startup import bot, engine
 from utils import KLineMerger
-from utils.LineMerger import LineMerger
 
 import game.content
 
@@ -19,8 +18,6 @@ class BaseMatch:
 
     def __init__(self, chat_id):
         self.bot = bot
-
-        self.lm = LineMerger()
 
         self.id = str(chat_id)
         self.session = self.create_session(self.id)

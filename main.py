@@ -311,8 +311,12 @@ def act_callback_handler(c):
 
 
 bot.send_message(config.boot_chat, f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
-                                   f"🤖Latest bot patch: ```"
-                                   f"\n - fixed issue #18"
+                                   f"🤖Latest changelog: ```"
+                                   f"\n - 'Action Tags' release!"
+                                   f"\n - New action tags: ATTACK, HARMFUL, MEDICINE, SKIP, RELOAD, ITEM"
+                                   f"\n - Possible Inquisitor fix"
+                                   f"\n - RageSerum is now more stable"
+                                   f"\n - New LineMerger by meowK"
                                    f"```",
                  parse_mode="Markdown")
 print(engine.stats())
