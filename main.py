@@ -339,6 +339,7 @@ bot.send_message(config.boot_chat, f"♻️Core: `{VegansDeluxe.core.__version__
                                    f"\n - 1.4.0 'Deep Localization' release!"
                                    f"\n - Text system overhaul for better localization support"
                                    f"\n - 65% of game content is now localized (you won't see it until 1.5.0)"
+                                   f"\n - new dungeon (/vd_bots)"
                                    f"\n - fixed stockpile skill bug"
                                    f"\n - removed Lance for now"
                                    f"```",
