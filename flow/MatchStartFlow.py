@@ -16,7 +16,7 @@ class MatchStartFlow:
         if not match:
             return ls("bot.join.game_not_started")
 
-        if str(self.user_id) not in match.session.player_ids:
+        if str(self.user_id) not in match.player_ids:
             if self.user_id not in config.admin_ids:
                 return ls("bot.start.not_in_game")
 

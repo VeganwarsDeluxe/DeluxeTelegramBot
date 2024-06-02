@@ -17,7 +17,7 @@ class TestGameMatch(BaseMatch):
         cow.init_states()
 
     def choose_items(self):
-        for player in self.session.not_chosen_items:
+        for player in self.not_chosen_items:
             for item_type in game.content.all_items:
                 item = item_type()
                 for _ in range(100):

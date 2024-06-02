@@ -1,6 +1,32 @@
 {
+  "match_end_winner_team": "Game over! Team {0} is the winner.",
+  "match_end_no_winner": "Game over! Everyone is dead!",
+  "match_turn_number": "Turn {0}:",
+  "match_your_items": "Your items: {0}",
+  "match_weapons_chosen": "Weapons selected.",
+  "match_start": "Abilities selected, game starts! Weapon selection:{0}",
+  "match_choose_weapon": "Choose a weapon;",
+  "match_choose_skill": "Choose an ability ({0} of {1}):",
+
+
+  "buttons_back": "Back",
+  "buttons_info": "Info",
+  "buttons_information": "Information",
+  "buttons_additional": "Additional",
+  "buttons_random_weapon": "Random weapon",
+  "buttons_random_skill": "Random skill",
+
+
+  "action_info_turn": "Turn {0}",
+  "action_info_hp": "{0}|{1} HP. Max: {2}",
+  "action_info_energy": "{0}|{1} energy. Max: {2}",
+  "action_info_hit_chance": "\uD83C\uDFAF|Hit probability is {0}%",
+
+  
   "state_emptiness_energy_loss": "\uD83C\uDF86|{0} is losing energy from being empty. {1} energy left.",
-  "state_emptiness_timer": "\uD83C\uDF86| Feels empty. ({1})",
+  "state_emptiness_timer": "\uD83C\uDF86|{0} feels empty. ({1})",
+
+  "state_recovery_from_weakness": "\uD83E\uDEE0|{0} recovers from weakness.",
 
 
   "weapon_abyssal_blade_name": "Abyssal Blade",

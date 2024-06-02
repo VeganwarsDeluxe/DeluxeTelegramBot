@@ -1,10 +1,64 @@
 {
+  "match_end_winner_team": "Игра окончена! Победила команда {0}",
+  "match_end_no_winner": "Игра окончена! Все погибли!",
+  "match_turn_number": "Ход {0}:",
+  "match_your_items": "Ваши предметы: {0}",
+  "match_weapons_chosen": "Оружие выбрано.",
+  "match_start": "Способности выбраны, игра начинается! Выбор оружия:{0}",
+  "match_choose_weapon": "Выберите оружие:",
+  "match_choose_skill": "Выберите скилл ({0} из {1}):",
+
+
+  "buttons_back": "Назад",
+  "buttons_info": "Инфо",
+  "buttons_information": "Информация",
+  "buttons_additional": "Дополнительно",
+  "buttons_random_weapon": "Случайное оружие",
+  "buttons_random_skill": "Случайный скилл",
+
+
+  "action_info_turn": "Ход {0}",
+  "action_info_hp": "{0}|{1} жизней. Максимум: {2}",
+  "action_info_energy": "{0}|{1} энергии. Максимум: {2}",
+  "action_info_hit_chance": "\uD83C\uDFAF|Вероятность попасть - {0}%",
+
+
+  "dungeons.elemental": "Данж с Елементалем",
+
+  "entity.approach.name": "Подойти",
+  "entity.approach.text": "\uD83D\uDC63|{0} подходит к противнику вплотную.",
+  "entity.reload.name": "Перезарядка",
+  "entity.skip.name": "Пропустить",
+  "entity.skip.text": "⬇|{0} пропускает ход.",
+
+  "cow.name": "Корова|\uD83D\uDC2E",
+  "cow.name_number": "Корова {0}|\uD83D\uDC2E",
+  "cow.approach.text": "\uD83D\uDC63|{0} с интересом подходит.",
+  "cow.silence.name": "Тихо стоять",
+  "cow.dodge.name": "Перебегать поле",
+  "cow.dodge.text": "\uD83D\uDCA8|{0} перебегает поле!",
+  "cow.walk_away.name": "Отойти",
+  "cow.walk_away.text": "\uD83D\uDC63|{0} отходит подальше.",
+  "cow.eat_grass.name": "Пощипать травку",
+  "cow.eat_grass.text": "\uD83C\uDF3F|{0} щипает травку. Енергия восстановлена ({1})!",
+  "cow.weapon.name": "Коровий хвост",
+  "cow.item.milk": "Молоко",
+  "cow.item.milk.text": "\uD83E\uDD5B|{0} пьет молоко! Его енергия восстановлена!",
+
+  "elemental.name": "Веган Елементаль|\uD83C\uDF2A",
+  "elemental.name_number": "Веган Елементаль {0}|\uD83C\uDF2A",
+  "elemental.anger": "\uD83C\uDF2A|Елементаль в ЯРОСТИ!",
+  "elemental.weapon.name": "Ессенция веганварса",
+  "elemental.warp_reality.name": "Искривить пространство",
+  "elemental.warp_reality.text": "\uD83C\uDF0C|{0} искривляет пространство.",
+  "elemental.reload_singularity.name": "Перезагрузить сингулярность",
+  "elemental.reload_singularity.text": "⚫\uFE0F|{0} перезагружает сингулярность. Енергия восстановлена ({1})!",
+
+
   "state_emptiness_energy_loss": "\uD83C\uDF86|{0} теряет энергию от опустошенности. Осталось {1} энергии.",
-  "state_emptiness_timer": "\uD83C\uDF86| Чуствует опустошенность. ({1})",
+  "state_emptiness_timer": "\uD83C\uDF86|{0} чуствует опустошенность. ({1})",
 
   "state_recovery_from_weakness": "\uD83E\uDEE0|{0} восстанавливается от слабости.",
-  "state_weakness_applied": "*буль-буль*",
-  "state_weakness_action_name": "работай",
 
 
   "weapon_abyssal_blade_name": "Клинок бездны",

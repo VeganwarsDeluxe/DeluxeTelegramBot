@@ -25,6 +25,12 @@
   "bot.cs.skill_chosen": "Выбран скилл: {0}",
 
   "bot.common.game_is_starting": "Способности выбраны, игра начинается! Выбор оружия:",
+  "bot.common.button_is_blocked": "Кнопка заблокирована!",
+  "bot.common.target_choice": "Выбор цели:",
+  "bot.common.chosen_action": "Выбрано: {0} на {1}",
+  "bot.common.additional": "Дополнительно:",
 
-  "bot.error.player_not_found": "Игрок не найден!"
+  "bot.error.player_not_found": "Игрок не найден!",
+  "bot.error.game_not_found": "Игра не найдена.",
+  "bot.error.invalid_button": "Кнопка некорректна!"
 }

@@ -3,13 +3,13 @@ import random
 import VegansDeluxe.core.Events.Events
 from VegansDeluxe.core.Actions.Action import DecisiveAction
 from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeAttack, MeleeWeapon, Entity, Enemies, RegisterEvent, \
-    EventContext
+    EventContext, Session
 from VegansDeluxe.core import OwnOnly
 from VegansDeluxe.rebuild import DamageThreshold, Aflame
 
 from startup import engine
 from .Dummy import Dummy
-from ..Sessions.TelegramSession import TelegramSession
+from .TelegramEntity import TelegramEntity
 from VegansDeluxe.core.utils import percentage_chance
 
 
@@ -29,7 +29,7 @@ class Slime(Dummy):
         def post_actions(context: EventContext[VegansDeluxe.core.Events.PostActionsGameEvent]):
             self.get_state(Aflame.id).extinguished = True
 
-    def choose_act(self, session: TelegramSession):
+    def choose_act(self, session: Session[TelegramEntity]):
         if session.turn == 1:
             self.get_state(DamageThreshold.id).threshold = 5
 

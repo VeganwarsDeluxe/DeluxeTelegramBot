@@ -1,5 +1,5 @@
 from VegansDeluxe.core.Actions.Action import DecisiveAction
-from VegansDeluxe.core import AttachedAction
+from VegansDeluxe.core import AttachedAction, ls
 from VegansDeluxe.core.Actions.EntityActions import SkipActionGameEvent
 from VegansDeluxe.core.Entities.Entity import Entity
 
@@ -42,7 +42,7 @@ class TelegramEntity(Entity):
 @AttachedAction(TelegramEntity)
 class ApproachAction(DecisiveAction):
     id = 'approach'
-    name = 'Подойти'
+    name = ls("entity.approach.name")
     target_type = OwnOnly()
 
     @property
@@ -53,13 +53,13 @@ class ApproachAction(DecisiveAction):
         source.nearby_entities = list(filter(lambda t: t != source, self.session.entities))
         for entity in source.nearby_entities:
             entity.nearby_entities.append(source) if source not in entity.nearby_entities else None
-        self.session.say(f'👣|{source.name} подходит к противнику вплотную.')
+        self.session.say(ls("entity.approach.text").format(source.name))
 
 
 @AttachedAction(TelegramEntity)
 class ReloadAction(DecisiveAction):
     id = 'reload'
-    name = 'Перезарядка'
+    name = ls("entity.reload.name")
     target_type = OwnOnly()
 
     def func(self, source, target):
@@ -70,11 +70,11 @@ class ReloadAction(DecisiveAction):
 @AttachedAction(TelegramEntity)
 class SkipTurnAction(DecisiveAction):
     id = 'skip'
-    name = 'Пропустить'
+    name = ls('entity.skip.name')
     target_type = OwnOnly()
     priority = 2
 
     def func(self, source, target):
         message = self.event_manager.publish(SkipActionGameEvent(self.session.id, self.session.turn, source.id))
         if not message.no_text:
-            self.session.say(f"⬇|{source.name} пропускает ход.")
+            self.session.say(ls("entity.skip.text").format(source.name))

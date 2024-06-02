@@ -9,7 +9,7 @@ from game.Weapons.Lance import Lance
 
 all_states += [Weakness, Emptiness]
 all_items += []
-all_weapons += [AbyssalBlade, CursedSword, GrenadeLauncher, Lance]
+all_weapons += [AbyssalBlade, CursedSword, GrenadeLauncher]
 all_skills += []
 
 game_items_pool += []
