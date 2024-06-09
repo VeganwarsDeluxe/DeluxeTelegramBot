@@ -93,7 +93,7 @@ async def h(m: Message) -> None:
     code = ''  # TODO: PASS CODE HERE
 
     msf = MatchStartFlow(m.chat.id, m.from_user.id, mm)
-    result = msf.execute()
+    result = await msf.execute()
     if result:
         await m.reply(**Text(result.localize(code)).as_kwargs())
 
@@ -112,4 +112,4 @@ async def h(m: Message) -> None:
     player.hp = 0
     if not match.unready_players:
         match.session.say(ls("bot.suicide.text").format(player.name))
-        match.cycle()
+        await match.cycle()

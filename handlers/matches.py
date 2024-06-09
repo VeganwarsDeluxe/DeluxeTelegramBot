@@ -16,34 +16,34 @@ r = Router()
 @r.message(Command("vd_prepare"))
 async def echo_handler(m: Message) -> None:
     flow = MatchCreationFlow(m.chat.id, BaseMatch)
-    flow.execute()
+    await flow.execute(m.bot)
 
 
 @r.message(Command("vd_testgame"))
 async def echo_handler(m: Message) -> None:
     flow = MatchCreationFlow(m.chat.id, TestGameMatch)
-    flow.execute()
+    await flow.execute(m.bot)
 
 
 @r.message(Command("vd_elemental"))
 async def echo_handler(m: Message) -> None:
     flow = MatchCreationFlow(m.chat.id, ElementalDungeon)
-    flow.execute()
+    await flow.execute(m.bot)
 
 
 @r.message(Command("vd_slime"))
 async def echo_handler(m: Message) -> None:
     flow = MatchCreationFlow(m.chat.id, SlimeDungeon)
-    flow.execute()
+    await flow.execute(m.bot)
 
 
 @r.message(Command("vd_beast"))
 async def echo_handler(m: Message) -> None:
     flow = MatchCreationFlow(m.chat.id, BeastDungeon)
-    flow.execute()
+    await flow.execute(m.bot)
 
 
 @r.message(Command("vd_bots"))
 async def echo_handler(m: Message) -> None:
     flow = MatchCreationFlow(m.chat.id, BotDungeon)
-    flow.execute()
+    await flow.execute(m.bot)

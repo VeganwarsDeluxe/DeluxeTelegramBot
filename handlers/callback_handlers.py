@@ -62,7 +62,7 @@ async def echo_handler(query: CallbackQuery, callback_data: ChooseWeapon) -> Non
     player.chose_weapon = True
     if not match.not_chosen_weapon:
         await bot.send_message(match.chat_id, ls("bot.cw.weapons_chosen").localize(match.locale))
-        match.choose_skills()
+        await match.choose_skills()
 
     await bot.edit_message_text(ls("bot.cw.weapon_chosen").format(weapon.name).localize(code),
                                 query.message.chat.id, query.message.message_id)
@@ -103,7 +103,7 @@ async def h(query: CallbackQuery, callback_data: ChooseSkill) -> None:
     if callback_data.cycle >= match.skill_cycles:
         player.chose_skills = True
     else:
-        match.send_skill_choice_buttons(player, callback_data.cycle + 1)
+        await match.send_skill_choice_buttons(player, callback_data.cycle + 1)
 
     await bot.edit_message_text(ls("bot.cs.skill_chosen").format(skill.name).localize(code),
                                 query.message.chat.id, query.message.message_id)
@@ -113,7 +113,7 @@ async def h(query: CallbackQuery, callback_data: ChooseSkill) -> None:
         for player in match.session.alive_entities:
             tts += f'\n{player.name}: {player.weapon.name}'
         await bot.send_message(match.chat_id, tts)
-        match.start_game()
+        await match.start_game()
 
 
 @r.callback_query(Additional.filter())
@@ -171,7 +171,7 @@ async def h(query: CallbackQuery, callback_data: ActionChoice) -> None:
 
     await bot.edit_message_text(ls("bot.common.chosen_action").format(action.name, action.target.name).localize(code),
                                 query.message.chat.id, query.message.message_id)
-    match.choose_act(query.from_user.id, target.id, callback_data.action_id)
+    await match.choose_act(query.from_user.id, target.id, callback_data.action_id)
 
 
 @r.callback_query(TargetChoice.filter())
@@ -203,7 +203,7 @@ async def h(query: CallbackQuery, callback_data: TargetChoice) -> None:
     await bot.edit_message_text(
         ls("bot.common.chosen_action").format(action.name, action.target.name).localize(code),
         query.message.chat.id, query.message.message_id)
-    match.choose_act(query.from_user.id, target.id, action.id)
+    await match.choose_act(query.from_user.id, target.id, action.id)
 
 
 @r.callback_query(Back.filter())
@@ -231,6 +231,6 @@ async def h(query: CallbackQuery):
     code = ''  # TODO: PASS CODE HERE
 
     msf = MatchStartFlow(query.message.chat.id, query.from_user.id, mm)
-    result = msf.execute()
+    result = await msf.execute()
     if result:
         await query.message.reply(**Text(result.localize(code)).as_kwargs())

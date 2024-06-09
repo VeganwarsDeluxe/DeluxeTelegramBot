@@ -1,36 +1,34 @@
 import random
 from typing import Union
 
-import telebot.util
 from VegansDeluxe.core.States import State
 from VegansDeluxe.core.Translator.LocalizedString import LocalizedString, ls
 
 from VegansDeluxe.core import PreMoveGameEvent, Weapon, Session
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram import Bot
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 
 from handlers.callbacks.other import (WeaponInfo, StateInfo, ChooseWeapon, ChooseSkill,
                                       Additional, ActionChoice, TargetChoice, Back)
 from game.Entities.TelegramEntity import TelegramEntity
-from old.old_handlers.bot import ExtendedBot
 from startup import engine
-from utils import KLineMerger
+from utils import KLineMerger, smartsplit
 
 import game.content
-from utils.converters import aio_to_telebot_inline_keyboard
 
 
 class BaseMatch:
     name: str | LocalizedString = ls("matches.basic")
 
-    def __init__(self, chat_id: int, bot: ExtendedBot):
-        self.bot = bot
+    def __init__(self, chat_id: int, bot: Bot):
+        self.bot: Bot = bot
 
         self.id: str = str(chat_id)
         self.chat_id = chat_id
         self.session: Session[TelegramEntity] = self.create_session(self.id)
         self.locale = ""
 
-        self.lobby_message = None
+        self.lobby_message: Message | None = None
         self.lobby = True
 
         self.skill_cycles = 2
@@ -83,14 +81,14 @@ class BaseMatch:
         engine.attach_session(session)
         return session
 
-    def send_end_game_messages(self):
+    async def send_end_game_messages(self):
         """Sends messages when the game ends."""
         if list(self.session.alive_entities):
             tts = ls("match_end_winner_team").format(list(self.session.alive_entities)[0].name)
         else:
             tts = ls("match_end_no_winner")
-        self.broadcast_to_players(tts)
-        self.send_message_to_chat(tts)
+        await self.broadcast_to_players(tts)
+        await self.send_message_to_chat(tts)
 
     def get_target_choice_buttons(self, targets, index: int, player: TelegramEntity):
         code = player.locale
@@ -110,7 +108,7 @@ class BaseMatch:
         kb = InlineKeyboardMarkup(inline_keyboard=kb)
         return kb
 
-    def choose_act(self, user_id, target_id, act_id):
+    async def choose_act(self, user_id, target_id, act_id):
         player = self.get_player(user_id)
         target = self.session.get_entity(target_id)
         action = engine.action_manager.get_action(self.session, player, act_id)
@@ -121,61 +119,61 @@ class BaseMatch:
             player.items.remove(action.item)
 
         if queue:
-            self.send_act_buttons(player)
+            await self.send_act_buttons(player)
             return
         player.ready = True
         if not self.unready_players:
-            self.cycle()
+            await self.cycle()
 
-    def broadcast_logs(self):
-        self.send_logs_to_chat(self.session.texts)
-        self.broadcast_logs_to_players(self.session.texts)
+    async def broadcast_logs(self):
+        await self.send_logs_to_chat(self.session.texts)
+        await self.broadcast_logs_to_players(self.session.texts)
 
-    def send_logs_to_chat(self, logs: list[str, LocalizedString]):
+    async def send_logs_to_chat(self, logs: list[str, LocalizedString]):
         log = self.localize_logs(logs, self.locale)
 
         for message in log.split('\n\n'):
             message = self.merge_lines(message)
-            for tts in telebot.util.smart_split(message):
-                self.send_message_to_chat(tts)
+            for tts in smartsplit.smart_split(message):
+                await self.send_message_to_chat(tts)
 
-    def send_logs_to_player(self, logs: list[str, LocalizedString], player: TelegramEntity):
+    async def send_logs_to_player(self, logs: list[str, LocalizedString], player: TelegramEntity):
         code = player.locale
         log = self.localize_logs(logs, code)
 
         for message in log.split('\n\n'):
             new_message = self.merge_lines(message)
-            self.send_message_to_player(new_message, player)
+            await self.send_message_to_player(new_message, player)
 
-    def send_message_to_chat(self, text: Union[str, LocalizedString]):
+    async def send_message_to_chat(self, text: Union[str, LocalizedString]):
         text = self.localize_text(text, code=self.locale)
 
-        for tts in telebot.util.smart_split(text):
+        for tts in smartsplit.smart_split(text):
             try:
-                self.bot.send_message(self.chat_id, tts)
+                await self.bot.send_message(self.chat_id, tts)
             except Exception as e:
                 print(f"Failed to send message to chat {self.chat_id}. Error: {str(e)}")
 
-    def send_message_to_player(self, text: Union[str, LocalizedString], player: TelegramEntity):
+    async def send_message_to_player(self, text: Union[str, LocalizedString], player: TelegramEntity):
         text = self.localize_text(text, code=player.locale)
 
-        for tts in telebot.util.smart_split(text):
+        for tts in smartsplit.smart_split(text):
             try:
                 # Skip if the player is an NPC or if the game is in DMs
                 if player.user_id == self.chat_id or player.npc:
                     return
-                self.bot.send_message(player.user_id, tts)
+                await self.bot.send_message(player.user_id, tts)
             except Exception as e:
                 print(f"Failed to send message to player {player.user_id}. Error: {str(e)}")
 
-    def broadcast_logs_to_players(self, logs: list[str, LocalizedString]):
+    async def broadcast_logs_to_players(self, logs: list[str, LocalizedString]):
         for player in self.session.entities:
-            self.send_logs_to_player(logs, player)
+            await self.send_logs_to_player(logs, player)
 
-    def broadcast_to_players(self, message: Union[str, LocalizedString]):
+    async def broadcast_to_players(self, message: Union[str, LocalizedString]):
         """Notifies all players in the game."""
         for player in self.session.entities:
-            self.send_message_to_player(message, player)
+            await self.send_message_to_player(message, player)
 
     def localize_logs(self, logs: list[str, LocalizedString], code: str = '') -> str:
         return "".join([self.localize_text(log, code) for log in logs])
@@ -188,11 +186,11 @@ class BaseMatch:
     def merge_lines(self, text):
         return KLineMerger.merge_lines(text.split("\n"))
 
-    def send_act_buttons(self, player):
+    async def send_act_buttons(self, player):
         kb = self.get_act_buttons(player)
         tts = self.get_act_text(player)
-        kb = aio_to_telebot_inline_keyboard(kb)
-        self.bot.send_message(player.user_id, tts, reply_markup=kb)
+
+        await self.bot.send_message(player.user_id, tts, reply_markup=kb)
 
     def get_act_text(self, player: TelegramEntity):
         code = player.locale
@@ -211,10 +209,10 @@ class BaseMatch:
 
         return tts
 
-    def start_game(self):
+    async def start_game(self):
         """Starts a game."""
         self.session.start()
-        self.pre_move()
+        await self.pre_move()
 
     def update_game_actions(self):
         """Updates actions for a game."""
@@ -225,18 +223,18 @@ class BaseMatch:
         """Handles events before a move."""
         self.session.pre_move(), engine.event_manager.publish(PreMoveGameEvent(self.session.id, self.session.turn))
 
-    def execute_actions(self):
+    async def execute_actions(self):
         """Executes actions for all alive entities."""
         for player in self.session.alive_entities:
             if player.get_state('stun').stun:  # TODO: Hardcoded. It can be done better
                 engine.action_manager.queue_action(self.session, player, 'lay_stun')
                 player.ready = True
                 if not self.unready_players:
-                    self.cycle()
+                    await self.cycle()
             elif player.npc:
                 player.choose_act(self.session)
             else:
-                self.send_act_buttons(player)
+                await self.send_act_buttons(player)
 
     def map_buttons(self, player: TelegramEntity):  # TODO: Rethink this function. Maybe we can use action tags here?
         code = player.locale
@@ -337,33 +335,33 @@ class BaseMatch:
         kb = InlineKeyboardMarkup(inline_keyboard=kb)
         return kb
 
-    def check_game_status(self):
+    async def check_game_status(self):
         """Checks the status of the game and sends end game messages if needed."""
         if not self.session.active:
-            self.send_end_game_messages()
+            await self.send_end_game_messages()
             engine.detach_session(self.session)
             return False
         return True
 
-    def pre_move(self):
+    async def pre_move(self):
         """Handles pre-move procedures."""
         self.update_game_actions()
         self.handle_pre_move_events()
-        if not self.check_game_status():
+        if not await self.check_game_status():
             return
-        self.execute_actions()
+        await self.execute_actions()
         if not self.unready_players:
-            self.cycle()
+            await self.cycle()
 
-    def cycle(self):
-        if not self.check_game_status():
+    async def cycle(self):
+        if not await self.check_game_status():
             return
         self.session.say(ls('match_turn_number').format(self.session.turn))
         self.session.move()
-        self.broadcast_logs()
-        self.pre_move()
+        await self.broadcast_logs()
+        await self.pre_move()
 
-    def choose_items(self):
+    async def choose_items(self):
         for player in self.not_chosen_items:
             code = player.locale
 
@@ -379,30 +377,30 @@ class BaseMatch:
             if player.npc:
                 continue
             items = ", ".join([self.localize_text(item.name, code) for item in player.items])
-            self.send_message_to_player(ls("match_your_items").format(items), player)
+            await self.send_message_to_player(ls("match_your_items").format(items), player)
 
-    def choose_weapons(self):
+    async def choose_weapons(self):
         for player in self.not_chosen_weapon:
             if player.npc:
                 continue
-            self.send_weapon_choice_buttons(player)
+            await self.send_weapon_choice_buttons(player)
         if not self.not_chosen_weapon:
-            self.send_message_to_chat(ls("match_weapons_chosen"))
-            self.choose_skills()
+            await self.send_message_to_chat(ls("match_weapons_chosen"))
+            await self.choose_skills()
 
-    def choose_skills(self):
+    async def choose_skills(self):
         for player in self.not_chosen_skills:
             if player.npc:
                 continue
-            self.send_skill_choice_buttons(player)
+            await self.send_skill_choice_buttons(player)
         if not self.not_chosen_skills:
             weapons_text = '\n' + '\n'.join([f'{player.name}: {self.localize_text(player.weapon.name, self.locale)}'
                                              for player in self.session.alive_entities])
             text = ls('match_start').format(weapons_text)
-            self.send_message_to_chat(text)
-            self.pre_move()
+            await self.send_message_to_chat(text)
+            await self.pre_move()
 
-    def send_weapon_choice_buttons(self, player):
+    async def send_weapon_choice_buttons(self, player):
         code = player.locale
 
         weapons: list[Weapon] = []
@@ -429,10 +427,10 @@ class BaseMatch:
                                                                    weapon_id="random").pack())])
 
         kb = InlineKeyboardMarkup(inline_keyboard=kb)
-        kb = aio_to_telebot_inline_keyboard(kb)
-        self.bot.send_message(player.user_id, ls("match_choose_weapon").localize(code), reply_markup=kb)
 
-    def send_skill_choice_buttons(self, player, cycle=1):
+        await self.bot.send_message(player.user_id, ls("match_choose_weapon").localize(code), reply_markup=kb)
+
+    async def send_skill_choice_buttons(self, player, cycle=1):
         code = player.locale
 
         skills: list[State] = []
@@ -459,7 +457,7 @@ class BaseMatch:
                                         .pack())])
 
         kb = InlineKeyboardMarkup(inline_keyboard=kb)
-        kb = aio_to_telebot_inline_keyboard(kb)
-        self.bot.send_message(player.user_id,
+
+        await self.bot.send_message(player.user_id,
                               ls("match_choose_skill").format(cycle, self.skill_cycles).localize(code),
                               reply_markup=kb)
