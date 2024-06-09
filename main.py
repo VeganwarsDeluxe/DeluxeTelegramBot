@@ -10,7 +10,7 @@ from aiogram.enums import ParseMode
 import config
 
 from handlers.matches import r as match_router
-from handlers.callbacks import r as callbacks_router
+from handlers.callback_handlers import r as callbacks_router
 from handlers.other import r as other_router
 from startup import engine, version
 
