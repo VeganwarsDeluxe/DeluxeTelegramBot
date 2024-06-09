@@ -3,7 +3,7 @@
 MAX_MESSAGE_LENGTH = 4096
 
 
-def smart_split(text: str, chars_per_string: int = MAX_MESSAGE_LENGTH) -> List[str]:
+def smart_split(text: str, chars_per_string: int = MAX_MESSAGE_LENGTH) -> list[str]:
     r"""
     Splits one string into multiple strings, with a maximum amount of `chars_per_string` characters per string.
     This is very useful for splitting one giant message into multiples.
@@ -16,7 +16,7 @@ def smart_split(text: str, chars_per_string: int = MAX_MESSAGE_LENGTH) -> List[s
     :param chars_per_string: The number of maximum characters per part the text is split to.
     :type chars_per_string: :obj:`int`
 
-    :return: The splitted text as a list of strings.
+    :return: The split text as a list of strings.
     :rtype: :obj:`list` of :obj:`str`
     """
 
