@@ -2,5 +2,6 @@ git+https://onedev.gts.org.ua/vezono/vegans-deluxe#egg=VegansDeluxe
 dnspython
 mongoengine
 pyTelegramBotAPI
+aiogram
 requests
 urllib3

@@ -4,9 +4,6 @@ from VegansDeluxe.core.Actions.EntityActions import SkipActionGameEvent
 from VegansDeluxe.core.Entities.Entity import Entity
 
 from VegansDeluxe.core import OwnOnly
-from startup import engine
-
-import game.content
 
 
 class TelegramEntity(Entity):
@@ -16,6 +13,7 @@ class TelegramEntity(Entity):
 
         self.name = user_name
         self.npc = False  # to differentiate humans and bots
+        self.locale = ''  # TODO: PASS CODE HERE
 
         self.chose_weapon = False
         self.chose_skills = False
@@ -29,9 +27,6 @@ class TelegramEntity(Entity):
 
     def choose_act(self, session):  # method for AI
         pass
-
-    def init_states(self):
-        engine.attach_states(self, game.content.all_states)
 
     def pre_move(self):
         super().pre_move()

@@ -3,7 +3,7 @@ import random
 import VegansDeluxe.core.Events.Events
 from VegansDeluxe.core.Actions.Action import DecisiveAction
 from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeAttack, MeleeWeapon, Entity, Enemies, RegisterEvent, \
-    EventContext, Session
+    EventContext, Session, ls
 from VegansDeluxe.core import OwnOnly
 from VegansDeluxe.rebuild import DamageThreshold, Aflame
 
@@ -14,7 +14,7 @@ from VegansDeluxe.core.utils import percentage_chance
 
 
 class Slime(Dummy):
-    def __init__(self, session_id: str, name='Слизень|🥗'):
+    def __init__(self, session_id: str, name=ls("slime.name")):
         super().__init__(session_id, name)
 
         self.weapon = SlimeWeapon(session_id, self.id)
@@ -61,53 +61,52 @@ class Slime(Dummy):
 @AttachedAction(Slime)
 class SlimeApproach(DecisiveAction):
     id = 'slime_approach'
-    name = 'Подпрыгнуть'
+    name = ls("slime.approach.name")
     target_type = OwnOnly()
 
     def func(self, source, target):
         source.nearby_entities = list(filter(lambda t: t != source, self.session.entities))
         for entity in source.nearby_entities:
             entity.nearby_entities.append(source) if source not in entity.nearby_entities else None
-        self.session.say(f'👣|{source.name} подпрыгивает ближе!')
+        self.session.say(ls("slime.approach.text").format(source.name))
 
 
 @AttachedAction(Slime)
 class SlimeReload(DecisiveAction):
     id = 'slime_reload'
-    name = 'Устало похлюпать'
+    name = ls('slime.reload.name')
     target_type = OwnOnly()
 
     def func(self, source, target):
-        self.session.say(f'💧️|{source.name} устало хлюпает. Енергия восстановлена ({source.max_energy})!')
+        self.session.say(ls("slime.reload.text").format(source.name, source.max_energy))
         source.energy = source.max_energy
 
 
 @AttachedAction(Slime)
 class SlimeEvade(DecisiveAction):
     id = 'slime_evade'
-    name = 'Ускользнуть'
+    name = ls("slime.evade.name")
     target_type = OwnOnly()
 
     def func(self, source, target):
         self.source.inbound_accuracy_bonus = -5
-        self.session.say(f'🩲|{source.name} ускользает.')
+        self.session.say(ls("slime.evade.text").format(source.name))
 
 
 @AttachedAction(Slime)
 class SlimeSlop(DecisiveAction):
     id = 'slime_slop'
-    name = 'Хлюпать'
+    name = ls("slime.slop.name")
     target_type = OwnOnly()
 
     def func(self, source, target):
-        self.session.say(f"🩲|{source.name} хлюпает.")
+        self.session.say(ls("slime.slop.text").format(source.name))
 
 
 @RegisterWeapon
 class SlimeWeapon(MeleeWeapon):
     id = 'slime_weapon'
-    name = 'Слизь'
-    description = 'Хлюпанье слизня.'
+    name = ls('slime.weapon.name')
 
     cubes = 3
     damage_bonus = 0
@@ -117,13 +116,15 @@ class SlimeWeapon(MeleeWeapon):
 
 @AttachedAction(SlimeWeapon)
 class SlimeAttack(MeleeAttack):
-    ATTACK_MESSAGE = "🩲|{source_name} нахлюпал на {target_name}! " \
-                     "Нанесено {damage} урона."
-    MISS_MESSAGE = "💨|{source_name} хлюпает на {target_name}, но не попадает."
-
     id = 'slime_attack'
-    name = 'Хлюпнуть'
+    name = ls("slime.attack.name")
     target_type = Enemies()
+
+    def __init__(self, *args):
+
+        super().__init__(*args)
+        self.ATTACK_MESSAGE = ls("slime.weapon.attack")
+        self.MISS_MESSAGE = ls("slime.weapon.miss")
 
     def func(self, source: Slime, target: Entity):
         damage = super().func(source, target)
@@ -134,4 +135,4 @@ class SlimeAttack(MeleeAttack):
         if target.energy == 0:
             source.max_energy += 1
             source.energy = source.max_energy
-            self.session.say(f"🩲|{source.name} радостно дрожит, энергия увеличена и востановлена ({source.energy})!")
+            self.session.say(ls("slime.growth.text").format(source.name, source.max_energy))

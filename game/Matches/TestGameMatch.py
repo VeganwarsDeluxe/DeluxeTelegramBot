@@ -1,20 +1,23 @@
+from VegansDeluxe.core import ls
+
 from game.Entities.Cow import Cow
 from game.Matches.BaseMatch import BaseMatch
 import game.content
+from startup import engine
 
 
 class TestGameMatch(BaseMatch):
-    name = "Тестовая игра"
+    name = ls("matches.test_game")
 
-    def __init__(self, chat_id):
-        super().__init__(chat_id)
+    def __init__(self, chat_id, bot):
+        super().__init__(chat_id, bot)
 
         self.skill_number = len(game.content.all_skills)
         self.weapon_number = len(game.content.all_weapons)
 
         cow = Cow(self.id)
         self.session.attach_entity(cow)
-        cow.init_states()
+        engine.attach_states(cow, game.content.all_states)
 
     def choose_items(self):
         for player in self.not_chosen_items:
@@ -26,4 +29,4 @@ class TestGameMatch(BaseMatch):
             player.chose_items = True
             if player.npc:
                 continue
-            self.bot.send_message(player.user_id, f'Ваши предметы: по 100 каждого.')
+            self.bot.send_message(player.user_id, ls("test_game.items"))

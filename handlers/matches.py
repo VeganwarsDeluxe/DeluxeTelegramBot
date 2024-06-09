@@ -1,42 +1,49 @@
+from aiogram import Router
+from aiogram.filters import Command
+from aiogram.types import Message
+
 from flow.MatchCreationFlow import MatchCreationFlow
 from game.Matches.BaseMatch import BaseMatch
+from game.Matches.BeastDungeon import BeastDungeon
 from game.Matches.BotDungeon import BotDungeon
 from game.Matches.ElementalDungeon import ElementalDungeon
-from game.Matches.Matchmaker import Matchmaker
 from game.Matches.SlimeDungeon import SlimeDungeon
 from game.Matches.TestGameMatch import TestGameMatch
-from game.Matches.TumanDungeon import TumanDungeon
 
-from handlers.bot import ExtendedBot
+r = Router()
 
 
-def initialize_module(bot: ExtendedBot, mm: Matchmaker):
-    @bot.message_handler(commands=['vd_prepare'])
-    def vd_prepare_handler(m):
-        flow = MatchCreationFlow(m.chat.id, mm, BaseMatch)
-        flow.execute()
+@r.message(Command("vd_prepare"))
+async def echo_handler(m: Message) -> None:
+    flow = MatchCreationFlow(m.chat.id, BaseMatch)
+    flow.execute()
 
-    @bot.message_handler(commands=['vd_testgame'])
-    def vd_prepare_handler(m):
-        flow = MatchCreationFlow(m.chat.id, mm, TestGameMatch)
-        flow.execute()
 
-    @bot.message_handler(commands=['vd_elemental'])
-    def vd_prepare_handler(m):
-        flow = MatchCreationFlow(m.chat.id, mm, ElementalDungeon)
-        flow.execute()
+@r.message(Command("vd_testgame"))
+async def echo_handler(m: Message) -> None:
+    flow = MatchCreationFlow(m.chat.id, TestGameMatch)
+    flow.execute()
 
-    @bot.message_handler(commands=['vd_slime'])
-    def vd_prepare_handler(m):
-        flow = MatchCreationFlow(m.chat.id, mm, SlimeDungeon)
-        flow.execute()
 
-    @bot.message_handler(commands=['vd_tuman'])
-    def vd_prepare_handler(m):
-        flow = MatchCreationFlow(m.chat.id, mm, TumanDungeon)
-        flow.execute()
+@r.message(Command("vd_elemental"))
+async def echo_handler(m: Message) -> None:
+    flow = MatchCreationFlow(m.chat.id, ElementalDungeon)
+    flow.execute()
 
-    @bot.message_handler(commands=['vd_bots'])
-    def vd_prepare_handler(m):
-        flow = MatchCreationFlow(m.chat.id, mm, BotDungeon)
-        flow.execute()
+
+@r.message(Command("vd_slime"))
+async def echo_handler(m: Message) -> None:
+    flow = MatchCreationFlow(m.chat.id, SlimeDungeon)
+    flow.execute()
+
+
+@r.message(Command("vd_beast"))
+async def echo_handler(m: Message) -> None:
+    flow = MatchCreationFlow(m.chat.id, BeastDungeon)
+    flow.execute()
+
+
+@r.message(Command("vd_bots"))
+async def echo_handler(m: Message) -> None:
+    flow = MatchCreationFlow(m.chat.id, BotDungeon)
+    flow.execute()
