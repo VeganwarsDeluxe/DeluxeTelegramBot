@@ -4,7 +4,7 @@ from typing import Union
 from VegansDeluxe.core.States import State
 from VegansDeluxe.core.Translator.LocalizedString import LocalizedString, ls
 
-from VegansDeluxe.core import PreMoveGameEvent, Weapon, Session
+from VegansDeluxe.core import PreMoveGameEvent, Weapon, Session, ActionTag
 from aiogram import Bot
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 
@@ -236,6 +236,12 @@ class BaseMatch:
             else:
                 await self.send_act_buttons(player)
 
+    def get_info_for_player(self, player: TelegramEntity):
+        code = player.locale
+
+        text = f"{self.localize_text(player.name)}\n"
+        text += f""
+
     def map_buttons(self, player: TelegramEntity):  # TODO: Rethink this function. Maybe we can use action tags here?
         code = player.locale
 
@@ -248,17 +254,19 @@ class BaseMatch:
             'approach_row': [],
             'skip_row': []
         }
+
         for action in engine.action_manager.get_available_actions(self.session, player):
-            name = self.localize_text(action.name, code)
-            button = InlineKeyboardButton(text=name,
-                                          callback_data=ActionChoice(game_id=self.id, action_id=action.id).pack())
-            if action.id in ['attack', 'reload']:
+            action_name = self.localize_text(action.name, code)
+            action_selection = ActionChoice(game_id=self.id, action_id=action.id).pack()
+            button = InlineKeyboardButton(text=action_name, callback_data=action_selection)
+
+            if ActionTag.ATTACK in action.tags or ActionTag.RELOAD in action.tags:
                 buttons['first_row'].append(button)
             elif action.id in ['dodge']:
                 buttons['second_row'].append(button)
             elif action.id in ['approach']:
                 buttons['approach_row'].append(button)
-            elif action.id in ['skip', 'extinguish']:
+            elif action.id in ['skip', 'extinguish'] or ActionTag.SKIP in action.tags:
                 buttons['skip_row'].append(button)
             else:
                 buttons['additional'].append(button)

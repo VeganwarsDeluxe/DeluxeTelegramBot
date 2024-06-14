@@ -19,7 +19,7 @@ class TestGameMatch(BaseMatch):
         self.session.attach_entity(cow)
         engine.attach_states(cow, game.content.all_states)
 
-    def choose_items(self):
+    async def choose_items(self):
         for player in self.not_chosen_items:
             for item_type in game.content.all_items:
                 item = item_type()
@@ -29,4 +29,4 @@ class TestGameMatch(BaseMatch):
             player.chose_items = True
             if player.npc:
                 continue
-            self.bot.send_message(player.user_id, ls("test_game.items"))
+            await self.bot.send_message(player.user_id, ls("test_game.items").localize(player.locale))

@@ -1,6 +1,6 @@
 from VegansDeluxe.core.Actions.Action import DecisiveAction
 from VegansDeluxe.core import AttachedAction, ls
-from VegansDeluxe.core.Actions.EntityActions import SkipActionGameEvent
+from VegansDeluxe.core.Actions.EntityActions import SkipActionGameEvent, ReloadAction, SkipTurnAction, ApproachAction
 from VegansDeluxe.core.Entities.Entity import Entity
 
 from VegansDeluxe.core import OwnOnly
@@ -35,41 +35,15 @@ class TelegramEntity(Entity):
 
 
 @AttachedAction(TelegramEntity)
-class ApproachAction(DecisiveAction):
-    id = 'approach'
-    name = ls("entity.approach.name")
-    target_type = OwnOnly()
-
-    @property
-    def hidden(self) -> bool:
-        return self.source.nearby_entities == list(filter(lambda t: t != self.source, self.session.entities))
-
-    def func(self, source, target):
-        source.nearby_entities = list(filter(lambda t: t != source, self.session.entities))
-        for entity in source.nearby_entities:
-            entity.nearby_entities.append(source) if source not in entity.nearby_entities else None
-        self.session.say(ls("entity.approach.text").format(source.name))
+class ApproachAction(ApproachAction):
+    pass
 
 
 @AttachedAction(TelegramEntity)
-class ReloadAction(DecisiveAction):
-    id = 'reload'
+class ReloadAction(ReloadAction):
     name = ls("entity.reload.name")
-    target_type = OwnOnly()
-
-    def func(self, source, target):
-        source.energy = source.max_energy
-        self.session.say(source.weapon.reload_text(source))
 
 
 @AttachedAction(TelegramEntity)
-class SkipTurnAction(DecisiveAction):
-    id = 'skip'
-    name = ls('entity.skip.name')
-    target_type = OwnOnly()
-    priority = 2
-
-    def func(self, source, target):
-        message = self.event_manager.publish(SkipActionGameEvent(self.session.id, self.session.turn, source.id))
-        if not message.no_text:
-            self.session.say(ls("entity.skip.text").format(source.name))
+class SkipTurnAction(SkipTurnAction):
+    pass

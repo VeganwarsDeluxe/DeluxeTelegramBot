@@ -32,8 +32,7 @@ async def main() -> None:
                            f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
                            f"🤖Bot: `{version}`\n\n"
                            f"📄Latest changelog: ```"
-                           f"\n - aio revolution is complete"
-                           f"\n - fixed the bug with skills"
+                           f"\n - hot fix"
                            f"```",
                            parse_mode="Markdown")
     print(engine.stats())
