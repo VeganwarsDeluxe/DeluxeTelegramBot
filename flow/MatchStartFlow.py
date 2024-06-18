@@ -1,8 +1,9 @@
 from VegansDeluxe.core.Translator.LocalizedString import LocalizedString, ls
+from aiogram import Bot
 
 import config
+from game.Matches.BaseMatch import BaseMatch
 from game.Matches.Matchmaker import Matchmaker
-from startup import bot
 
 
 class MatchStartFlow:
@@ -11,12 +12,14 @@ class MatchStartFlow:
         self.user_id = user_id
         self.mm = mm
 
-    def execute(self) -> LocalizedString:
+    async def execute(self) -> LocalizedString:
         match = self.mm.get_match(self.chat_id)
+        match: BaseMatch
+
         if not match:
             return ls("bot.join.game_not_started")
 
-        if str(self.user_id) not in match.session.player_ids:
+        if str(self.user_id) not in match.player_ids:
             if self.user_id not in config.admin_ids:
                 return ls("bot.start.not_in_game")
 
@@ -24,6 +27,8 @@ class MatchStartFlow:
             return ls("bot.join.game_already_started")
 
         match.lobby = False
-        match.choose_items()
-        match.choose_weapons()
-        bot.reply_to(match.lobby_message, ls("bot.start.success").localize())
+        print(match.id)
+        await match.choose_items()
+        await match.choose_weapons()
+
+        await match.lobby_message.reply(ls("bot.start.success").localize())

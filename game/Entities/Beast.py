@@ -3,21 +3,18 @@ import random
 import VegansDeluxe.core.Events.Events
 from VegansDeluxe.core.Actions.Action import DecisiveAction
 from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeAttack, MeleeWeapon, Entity, Enemies, RegisterEvent, \
-    EventContext
+    EventContext, Session, ls
 from VegansDeluxe.core import OwnOnly
 from VegansDeluxe.rebuild import DamageThreshold, Aflame
 
 from startup import engine
 from .Dummy import Dummy
-from ..Sessions.TelegramSession import TelegramSession
+from .TelegramEntity import TelegramEntity
 from VegansDeluxe.core.utils import percentage_chance
 
 
-# Наведіть тут порядок будь ласка.
-
-
 class Beast(Dummy):
-    def __init__(self, session_id: str, name='Зверь|🐺'):
+    def __init__(self, session_id: str, name=ls("beast.name")):
         super().__init__(session_id, name)
 
         self.weapon = BeastWeapon(session_id, self.id)
@@ -26,13 +23,13 @@ class Beast(Dummy):
         self.max_hp = 4
         self.max_energy = 6
 
-        self.team = 'Beast'
+        self.team = 'beast'
 
         @RegisterEvent(self.session_id, event=VegansDeluxe.core.Events.PostActionsGameEvent)
         def post_actions(context: EventContext[VegansDeluxe.core.Events.PostActionsGameEvent]):
             self.get_state(Aflame.id).extinguished = True
 
-    def choose_act(self, session: TelegramSession):
+    def choose_act(self, session: Session[TelegramEntity]):
         if session.turn == 1:
             self.get_state(DamageThreshold.id).threshold = 6
 
@@ -49,93 +46,84 @@ class Beast(Dummy):
             engine.action_manager.queue_action(session, self, BeastGrowl.id)
             return
 
-        def some_function(session, target):
-            # Проверяем, что у цели остался только 1 HP
-            if target.hp == 1:
-                # Если это так, добавляем дополнительное действие к объекту engine.action_manager
-                engine.action_manager.queue_action(session, self, BeastBite.id)
-
-        if percentage_chance(40):
+        if percentage_chance(15):
             engine.action_manager.queue_action(session, self, BeastReload.id)
             return
 
         if self.energy == 0:
             engine.action_manager.queue_action(session, self, BeastReload.id)
+            return
 
         if percentage_chance(30):
             engine.action_manager.queue_action(session, self, BeastEvade.id)
             return
-        else:
-            attack = engine.action_manager.get_action(session, self, BeastAttack.id)
-            attack.target = random.choice(attack.targets)
-            engine.action_manager.queue_action_instance(attack)
-            return
 
-        # engine.action_manager.queue_action(session, self, BeastSlop.id)
+        targets = [entity for entity in self.nearby_entities if entity != self and entity.hp > 0]
+        if targets:
+            target = random.choice(targets)
+            if target.hp == 1:
+                attack = engine.action_manager.get_action(session, self, BeastBite.id)
+                attack.target = target
+                engine.action_manager.queue_action_instance(attack)
+            else:
+                attack = engine.action_manager.get_action(session, self, BeastAttack.id)
+                attack.target = target
+                engine.action_manager.queue_action_instance(attack)
+        else:
+            # If no valid targets, the beast reloads
+            engine.action_manager.queue_action(session, self, BeastReload.id)
 
 
 @AttachedAction(Beast)
 class BeastApproach(DecisiveAction):
-    id = 'Beast_approach'
-    name = 'Крастца'
+    id = 'beast_approach'
+    name = ls("beast.approach.name")
     target_type = OwnOnly()
 
     def func(self, source, target):
         source.nearby_entities = list(filter(lambda t: t != source, self.session.entities))
         for entity in source.nearby_entities:
-            entity.nearby_entities.append(source) if source not in entity.nearby_entities else None
-        self.session.say(f'🐾|{source.name} крадётся к своей жертве ближе...')
+            if source not in entity.nearby_entities:
+                entity.nearby_entities.append(source)
+        self.session.say(ls("beast.approach.text").format(source.name))
 
 
 @AttachedAction(Beast)
 class BeastReload(DecisiveAction):
-    id = 'Beast_reload'
-    name = 'Перевести дух'
+    id = 'beast_reload'
+    name = ls("beast.reload.name")
     target_type = OwnOnly()
 
     def func(self, source, target):
-        self.session.say(f'😤|{source.name} Переводит дух. Енергия восстановлена ({source.max_energy})!')
+        self.session.say(ls('beast.reload.text').format(source.name, source.max_energy))
         source.energy = source.max_energy
 
 
 @AttachedAction(Beast)
 class BeastEvade(DecisiveAction):
-    id = 'Beast_evade'
-    name = 'Резко отпрыгнуть'
+    id = 'beast_evade'
+    name = ls("beast.evade.name")
     target_type = OwnOnly()
 
     def func(self, source, target):
-        self.source.inbound_accuracy_bonus = -6
-        self.session.say(f'💨|{source.name} Резко отпрыгивает назад!')
+        source.inbound_accuracy_bonus = -6
+        self.session.say(ls("beast.evade.text").format(source.name))
 
 
 @AttachedAction(Beast)
 class BeastGrowl(DecisiveAction):
-    id = 'Beast_slop'
-    name = 'Рычать'
+    id = 'beast_growl'
+    name = ls("beast.growl.name")
     target_type = OwnOnly()
 
     def func(self, source, target):
-        self.session.say(f"💢|{source.name} Рычит.")
-
-
-@AttachedAction(Beast)
-class BeastBite(DecisiveAction):
-    def func(self, source: Beast, target: Entity):
-        damage = super().func(source, target)
-        if not damage:
-            return
-        target.hp = max(0, target.hp - 1)
-        if target.hp == 1:
-            target.hp -= 1
-            self.session.say(f"❕❕|{source.name} делает стримительный прыжок к {target.name} и кусает его! Цель теряет 1♥️.")
+        self.session.say(ls("beast.growl.text").format(source.name))
 
 
 @RegisterWeapon
 class BeastWeapon(MeleeWeapon):
-    id = 'Beast_weapon'
-    name = 'Клыки и когти'
-    description = 'Рычанье Зверя.'
+    id = 'beast_weapon'
+    name = ls("beast.weapon.name")
 
     cubes = 3
     damage_bonus = 0
@@ -145,19 +133,22 @@ class BeastWeapon(MeleeWeapon):
 
 @AttachedAction(BeastWeapon)
 class BeastAttack(MeleeAttack):
-    ATTACK_MESSAGE = "❕|{source_name} кусает {target_name}! " \
-                     "Нанесено {damage} урона."
-    MISS_MESSAGE = "💨|{source_name} кусает {target_name}, но не попадает."
-
-    id = 'Beast_attack'
-    name = 'Кусать'
+    id = 'beast_attack'
+    name = ls("beast.attack.name")
     target_type = Enemies()
 
-    def func(self, source: Beast, target: Entity):
-        damage = super().func(source, target)
-        if not damage:
-            return
+    def __init__(self, *args):
+
+        super().__init__(*args)
+        self.ATTACK_MESSAGE = ls("beast.weapon.attack")
+        self.MISS_MESSAGE = ls("beast.weapon.miss")
+
+
+@AttachedAction(BeastWeapon)
+class BeastBite(MeleeAttack):
+    id = 'beast_bite'
+    name = ls("beast.bite.name")
+
+    def func(self, source, target):
         target.hp = max(0, target.hp - 1)
-        if target.hp == 1:
-            target.hp -= 1
-            self.session.say(f"❕❕|{source.name} делает стримительный прыжок к {target.name} и кусает его! Цель теряет 1♥️.")
+        self.session.say(ls("beast.bite.text").format(source.name, target.name))

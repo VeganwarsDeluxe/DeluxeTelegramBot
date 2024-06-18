@@ -39,20 +39,3 @@ def register(root_context: StateContext[Weakness]):
             session.say(ls("state_recovery_from_weakness").format(source.name))
         state.weakness -= 1
 
-
-@AttachedAction(Weakness)
-class LayWeakness(DecisiveStateAction):
-    id = 'lay_weakness'
-    name = ls("state_weakness_action_name")
-
-    def __init__(self, session: Session, source: Entity, skill: Weakness):
-        super().__init__(session, source, skill)
-        self.state = skill
-
-    @property
-    def hidden(self) -> bool:
-        return not self.state.weakness
-
-    def func(self, source, target):
-        target.state_manager.attach_state(Weakness())
-        self.session.say(ls("state_weakness_applied").format(target.name))

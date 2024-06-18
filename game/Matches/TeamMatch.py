@@ -1,11 +1,13 @@
+from VegansDeluxe.core import ls
+
 from game.Matches.BaseMatch import BaseMatch
 
 
-class ElementalDungeon(BaseMatch):
-    name = "Командная игра"
+class TeamMatch(BaseMatch):
+    name = ls("matches.teams")
 
-    def __init__(self, chat_id):
-        super().__init__(chat_id)
+    def __init__(self, chat_id, bot):
+        super().__init__(chat_id, bot)
 
         self.elementals = 0
 

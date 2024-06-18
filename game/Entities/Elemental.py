@@ -1,7 +1,7 @@
 import random
 
 from VegansDeluxe.core.Actions.Action import DecisiveAction
-from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeWeapon
+from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeWeapon, ls
 from VegansDeluxe.core import EventContext
 from VegansDeluxe.core import RegisterEvent
 
@@ -17,7 +17,7 @@ from startup import engine
 
 
 class Elemental(Dummy):
-    def __init__(self, session_id: str, name='Веган Елементаль|🌪'):
+    def __init__(self, session_id: str, name=ls("elemental.name")):
         super().__init__(session_id, name=name)
 
         self.weapon = ElementalWeapon(self.session_id, self.id)
@@ -46,7 +46,7 @@ class Elemental(Dummy):
             self.hp = 5
             self.max_hp = 5
             self.anger = True
-            session.say("🌪|Елементаль в ЯРОСТИ!")
+            session.say(ls("elemental.anger"))
             context.event.canceled = True
 
     def choose_act(self, session):
@@ -75,8 +75,7 @@ class Elemental(Dummy):
 @RegisterWeapon
 class ElementalWeapon(MeleeWeapon):
     id = 'elemental_weapon'
-    name = 'Ессенция веганки'
-    description = 'Сама суть веганварса.'
+    name = ls("elemental.weapon.name")
 
     cubes = 0
     damage_bonus = 0
@@ -87,20 +86,20 @@ class ElementalWeapon(MeleeWeapon):
 @AttachedAction(Elemental)
 class WarpReality(DecisiveAction):
     id = 'warp_reality'
-    name = 'Искривить пространство'
+    name = ls("elemental.warp_reality.name")
     target_type = OwnOnly()
 
     def func(self, source, target):
         self.source.inbound_accuracy_bonus = -5
-        self.session.say(f'🌌|{source.name} искривляет пространство.')
+        self.session.say(ls("elemental.warp_reality.text").format(source.name))
 
 
 @AttachedAction(Elemental)
 class Singularity(DecisiveAction):
     id = 'reload_singularity'
-    name = 'Перезагрузить сингулярность'
+    name = ls("elemental.reload_singularity.name")
     target_type = OwnOnly()
 
     def func(self, source, target):
-        self.session.say(f'⚫️|{source.name} перезагружает сингулярность. Енергия восстановлена ({source.max_energy})!')
+        self.session.say(ls("elemental.reload_singularity.text").format(source.name, source.max_energy))
         source.energy = source.max_energy

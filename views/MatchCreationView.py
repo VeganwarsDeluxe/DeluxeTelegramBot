@@ -1,8 +1,11 @@
-from telebot import types
+from VegansDeluxe.core import ls
+from aiogram import Bot
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.utils import deep_linking
 
 from game.Matches.BaseMatch import BaseMatch
-from startup import bot
-from core.View import View
+from handlers.callbacks.other import StartGame
+from views.View import View
 
 
 class MatchCreationView(View):
@@ -12,11 +15,17 @@ class MatchCreationView(View):
         self.match = match
 
     def get_text(self):
-        return f'Игра: {self.match.name}\n\nУчастники:'
+        return (f'{ls("bot.lobby.game").localize(self.match.locale)} {self.match.name}\n\n'
+                f'{ls("bot.lobby.players").localize(self.match.locale)}')
 
-    def get_keyboard(self):
-        kb = types.InlineKeyboardMarkup()
-        kb.add(types.InlineKeyboardButton(text='♿️Вступить в игру', url=bot.get_deep_link(f"jg_{self.match.id}")))
-        kb.add(types.InlineKeyboardButton(text='▶️Запустить игру', callback_data="vd_go"))
+    async def get_keyboard(self, bot: Bot):
+        link = deep_linking.create_deep_link((await bot.get_me()).username, "start", f"jg_{self.match.id}")
 
+        kb = [[], []]
+        kb[0].append(InlineKeyboardButton(text=ls("bot.button.join").localize(self.match.locale),
+                                          url=link))
+        kb[1].append(InlineKeyboardButton(text=ls("bot.button.start").localize(self.match.locale),
+                                          callback_data=StartGame().pack()))
+
+        kb = InlineKeyboardMarkup(inline_keyboard=kb)
         return kb

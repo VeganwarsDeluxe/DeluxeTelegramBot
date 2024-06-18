@@ -1,5 +1,7 @@
+from VegansDeluxe.core import ls
+
 from game.Matches.BaseMatch import BaseMatch
-from core.View import View
+from views.View import View
 
 
 class MatchExistsView(View):
@@ -10,6 +12,6 @@ class MatchExistsView(View):
 
     def get_text(self):
         if self.match.lobby:
-            return 'Игра уже запущена!'
+            return ls("bot.error.game_already_launched").localize(self.match.locale)
         else:
-            return 'Игра уже идет!'
+            return ls("bot.join.game_already_started").localize(self.match.locale)
