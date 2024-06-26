@@ -310,8 +310,10 @@ def act_callback_handler(c):
     bot.edit_message_text('Дополнительно:', c.message.chat.id, c.message.message_id, reply_markup=kb)
 
 
-bot.send_message(config.boot_chat, f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
-                                   f"🤖Latest bot patch: `Момоделы жамкают делюкс - жамкание делюкса`",
+bot.send_message(config.boot_chat,
+                 f"♻️Core: `{VegansDeluxe.core.__version__}-modder-1.3`\n"
+                 f"🤖Latest bot patch: `Мододелы жамкают делюкс - потихоньку переписываю гранатомёт, фикс не удался`",
                  parse_mode="Markdown")
+
 print(engine.stats())
 bot.infinity_polling()
