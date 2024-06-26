@@ -1,12 +1,16 @@
+from VegansDeluxe.core import ls
+
 from game.Entities.Slime import Slime
 from game.Matches.BaseMatch import BaseMatch
+from startup import engine
+import game.content
 
 
 class SlimeDungeon(BaseMatch):
-    name = "Данж со Слаймами"
+    name = ls("matches.slimes")
 
-    def __init__(self, chat_id):
-        super().__init__(chat_id)
+    def __init__(self, chat_id, bot):
+        super().__init__(chat_id, bot)
 
         self.slimes = 0
 
@@ -17,6 +21,6 @@ class SlimeDungeon(BaseMatch):
         #     return
         for _ in range(2):
             self.slimes += 1
-            slime = Slime(self.id, name=f'Слизень {self.slimes}|🥗')
+            slime = Slime(self.id, name=ls("slime.number").format(self.slimes))
             self.session.attach_entity(slime)
-            slime.init_states()
+            engine.attach_states(slime, game.content.all_states)

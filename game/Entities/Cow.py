@@ -1,7 +1,7 @@
 import random
 
 from VegansDeluxe.core.Actions.Action import DecisiveAction
-from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeWeapon
+from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeWeapon, ls
 from VegansDeluxe.core import FreeItem
 from VegansDeluxe.core import Item
 from VegansDeluxe.core import OwnOnly
@@ -11,7 +11,7 @@ from .Dummy import Dummy
 
 class Cow(Dummy):
     def __init__(self, session_id: str):
-        super().__init__(session_id, name='Корова|🐮')
+        super().__init__(session_id, name=ls('cow.name'))
 
         self.weapon = CowWeapon(self.session_id, self.id)
 
@@ -25,9 +25,7 @@ class Cow(Dummy):
         super().choose_act(session)
 
         while True:
-            action = engine.action_manager.get_action(
-                #  session, self, random.choice(["cow_approach", "cow_silence","cow_dodge", "cow_walk_away", "reload"]))
-                session, self, random.choice(["cow_silence"]))
+            action = engine.action_manager.get_action(session, self, "cow_silence")
             if not action:
                 continue
             if not action.targets:
@@ -40,20 +38,20 @@ class Cow(Dummy):
 @AttachedAction(Cow)
 class CowApproach(DecisiveAction):
     id = 'cow_approach'
-    name = 'Подойти'
+    name = ls("entity.approach.name")
     target_type = OwnOnly()
 
     def func(self, source, target):
         source.nearby_entities = list(filter(lambda t: t != source, self.session.entities))
         for entity in source.nearby_entities:
             entity.nearby_entities.append(source) if source not in entity.nearby_entities else None
-        self.session.say(f'👣|{source.name} с интересом подходит.')
+        self.session.say(ls("cow.approach.text").format(source.name))
 
 
 @AttachedAction(Cow)
 class Silence(DecisiveAction):
     id = 'cow_silence'
-    name = 'Тихо стоять'
+    name = ls("cow.silence.name")
     target_type = OwnOnly()
 
     def func(self, source, target):
@@ -63,43 +61,42 @@ class Silence(DecisiveAction):
 @AttachedAction(Cow)
 class Run(DecisiveAction):
     id = 'cow_dodge'
-    name = 'Перебегать поле'
+    name = ls("cow.dodge.name")
     target_type = OwnOnly()
 
     def func(self, source, target):
         self.source.inbound_accuracy_bonus = -5
-        self.session.say(f'💨|{source.name} перебегает поле!')
+        self.session.say(ls('cow.dodge.text').format(source.name))
 
 
 @AttachedAction(Cow)
 class WalkAway(DecisiveAction):
     id = 'cow_walk_away'
-    name = 'Отойти'
+    name = ls("cow.walk_away.name")
     target_type = OwnOnly()
 
     def func(self, source, target):
         for entity in source.nearby_entities:
             entity.nearby_entities.remove(source) if source in entity.nearby_entities else None
         source.nearby_entities = []
-        self.session.say(f'👣|{source.name} отходит подальше.')
+        self.session.say(ls('cow.walk_away.text').format(source.name))
 
 
 @AttachedAction(Cow)
 class EatGrassReload(DecisiveAction):
     id = 'eat_grass'
-    name = 'Пощипать травку'
+    name = ls("cow.eat_grass.name")
     target_type = OwnOnly()
 
     def func(self, source, target):
-        self.session.say(f'🌿|{source.name} щипает травку. Енергия восстановлена ({source.max_energy})!')
         source.energy = source.max_energy
+        self.session.say(ls("cow.eat_grass.text").format(source.name, source.max_energy))
 
 
 @RegisterWeapon
 class CowWeapon(MeleeWeapon):
     id = 'cow_weapon'
-    name = 'Коровий хвост'
-    description = 'Просто хвост.'
+    name = ls("cow.weapon.name")
 
     cubes = 0
     damage_bonus = 0
@@ -109,18 +106,15 @@ class CowWeapon(MeleeWeapon):
 
 class MilkItem(Item):
     id = 'milk'
-    name = 'Молоко'
+    name = ls("cow.item.milk")
 
 
 @AttachedAction(MilkItem)
 class Milk(FreeItem):
     id = 'milk'
-    name = 'Молоко'
+    name = ls("cow.item.milk")
     target_type = OwnOnly()
 
     def use(self):
-        #  if self.source.team == 'cows':
-        #        return
         self.target.energy = self.target.max_energy
-        self.session.say(f'🥛|{self.source.name} пьет молоко! '
-                         f'Его енергия восстановлена!')
+        self.session.say(ls("cow.item.milk.text").format(self.source.name))

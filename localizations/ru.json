@@ -2,13 +2,19 @@
   "bot.delete.game_not_started": "Игра и так не запущена!",
   "bot.delete.success": "Игра удалена.",
 
-  "bot.join.game_not_started": "Игра не запущена! Запустите командой /vd_prepare.",
+  "bot.join.game_not_started": "Игра не запущена!",
   "bot.join.already_joined": "Вы уже в игре!",
   "bot.join.game_already_started": "Игра уже идет!",
   "bot.join.success": "Вы вступили в игру! Осторжно, бот в бета тесте!",
   "bot.join.open_pm": "Сначала напишите мне в ЛС!",
   "bot.join.text": "{0} вступил в игру!",
   "bot.callback.join.game_not_started": "Данная игра не запущена!",
+
+  "bot.button.join": "♿\uFE0FВступить в игру",
+  "bot.button.start": "▶\uFE0FЗапустить игру",
+
+  "bot.lobby.game": "Игра:",
+  "bot.lobby.players": "Участники:",
 
   "bot.start.not_in_game": "Вас нет в игре, не вам и запускать!",
   "bot.start.success": "Игра начинается!",
@@ -25,6 +31,13 @@
   "bot.cs.skill_chosen": "Выбран скилл: {0}",
 
   "bot.common.game_is_starting": "Способности выбраны, игра начинается! Выбор оружия:",
+  "bot.common.button_is_blocked": "Кнопка заблокирована!",
+  "bot.common.target_choice": "Выбор цели:",
+  "bot.common.chosen_action": "Выбрано: {0} на {1}",
+  "bot.common.additional": "Дополнительно:",
 
-  "bot.error.player_not_found": "Игрок не найден!"
+  "bot.error.player_not_found": "Игрок не найден!",
+  "bot.error.game_not_found": "Игра не найдена.",
+  "bot.error.invalid_button": "Кнопка некорректна!",
+  "bot.error.game_already_launched": "Игра уже запущена!"
 }

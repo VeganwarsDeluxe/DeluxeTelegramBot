@@ -1,12 +1,16 @@
-from game.Entities.Elementalis import Elemental
+from VegansDeluxe.core import ls
+
+from game.Entities.Elemental import Elemental
 from game.Matches.BaseMatch import BaseMatch
+from startup import engine
+import game.content
 
 
 class ElementalDungeon(BaseMatch):
-    name = "Данж с Елементалем"
+    name = ls("matches.elemental")
 
-    def __init__(self, chat_id):
-        super().__init__(chat_id)
+    def __init__(self, chat_id, bot):
+        super().__init__(chat_id, bot)
 
         self.elementals = 0
 
@@ -17,6 +21,6 @@ class ElementalDungeon(BaseMatch):
             return
 
         self.elementals += 1
-        elemental = Elemental(self.id, name=f'Веган Елементаль {self.elementals}|🌪')
+        elemental = Elemental(self.id, name=ls("elemental.name_number").format(self.elementals))
         self.session.attach_entity(elemental)
-        elemental.init_states()
+        engine.attach_states(elemental, game.content.all_states)

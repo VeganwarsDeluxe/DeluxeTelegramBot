@@ -1,3 +1,6 @@
+from aiogram import Bot
+
+
 class View:
     def __init__(self, parse_mode="Markdown"):
         self.parse_mode = parse_mode
@@ -6,5 +9,5 @@ class View:
     def get_text(self):
         pass
 
-    def get_keyboard(self):
+    def get_keyboard(self, bot: Bot):
         pass
