@@ -34,10 +34,7 @@ async def main() -> None:
                            f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
                            f"🤖Bot: `{version}`\n\n"
                            f"📄Latest changelog: ```"
-                           f"\n - fixed necromancer localization (but not the skill itself)"
-                           f"\n - nothing is crashing again! try out new matches!"
-                           f"\n/vd_bots is stable"
-                           f"\ninitial work at deathmatch"
+                           f"\n - nothing worked. but now it does!"
                            f"```",
                            parse_mode="Markdown")
     print(engine.stats())
