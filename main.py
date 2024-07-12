@@ -36,8 +36,8 @@ async def main() -> None:
                            f"📄Latest changelog: ```"
                            f"\n - fixed necromancer localization (but not the skill itself)"
                            f"\n - nothing is crashing again! try out new matches!"
-                           f"/vd_bots is stable"
-                           f"initial work at deathmatch"
+                           f"\n/vd_bots is stable"
+                           f"\ninitial work at deathmatch"
                            f"```",
                            parse_mode="Markdown")
     print(engine.stats())
