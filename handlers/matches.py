@@ -9,6 +9,7 @@ from game.Matches.BotDungeon import BotDungeon
 from game.Matches.ElementalDungeon import ElementalDungeon
 from game.Matches.SlimeDungeon import SlimeDungeon
 from game.Matches.TestGameMatch import TestGameMatch
+from game.Matches.DeathMatch import DeathMatch
 
 r = Router()
 
@@ -17,6 +18,13 @@ r = Router()
 async def echo_handler(m: Message) -> None:
     flow = MatchCreationFlow(m.chat.id, BaseMatch)
     await flow.execute(m.bot)
+
+
+@r.message(Command("vd_deathmatch"))
+async def echo_handler(m: Message) -> None:
+    flow = MatchCreationFlow(m.chat.id, DeathMatch)
+    await flow.execute(m.bot)
+
 
 
 @r.message(Command("vd_testgame"))

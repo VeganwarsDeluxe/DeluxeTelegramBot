@@ -1,3 +1,5 @@
+from VegansDeluxe.core import EventContext, Event, At
+
 import game.content
 
 import asyncio
@@ -32,7 +34,10 @@ async def main() -> None:
                            f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
                            f"🤖Bot: `{version}`\n\n"
                            f"📄Latest changelog: ```"
-                           f"\n - hot fix"
+                           f"\n - fixed necromancer localization (but not the skill itself)"
+                           f"\n - nothing is crashing again! try out new matches!"
+                           f"/vd_bots is stable"
+                           f"initial work at deathmatch"
                            f"```",
                            parse_mode="Markdown")
     print(engine.stats())

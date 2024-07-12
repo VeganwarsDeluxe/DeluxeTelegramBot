@@ -106,7 +106,7 @@ async def h(query: CallbackQuery, callback_data: ChooseSkill) -> None:
         await match.send_skill_choice_buttons(player, callback_data.cycle + 1)
 
     await bot.edit_message_text(ls("bot.cs.skill_chosen").format(skill.name).localize(code),
-                                query.message.chat.id, query.message.message_id)
+                                chat_id=query.message.chat.id, message_id=query.message.message_id)
 
     if not match.not_chosen_skills:
         tts = ls("bot.common.game_is_starting").localize(match.locale)
