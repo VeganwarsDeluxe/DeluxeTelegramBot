@@ -56,7 +56,7 @@
   "beast.weapon.miss": "\uD83D\uDCA8|{source_name} кусает {target_name}, но не попадает.",
 
   "slime.name": "Слизень|\uD83E\uDD57",
-  "slime.name_number": "Слизень {0}|\uD83E\uDD57",
+  "slime.number": "Слизень {0}|\uD83E\uDD57",
   "slime.approach.name": "Подпрыгнуть",
   "slime.approach.text": "\uD83D\uDC63|{0} подпрыгивает ближе!",
   "slime.reload.name": "Устало похлюпать",

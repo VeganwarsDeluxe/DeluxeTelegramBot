@@ -1,3 +1,4 @@
+from VegansDeluxe.core.Translator.LocalizedList import LocalizedList
 from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
 from VegansDeluxe.core import RangedAttack
 from VegansDeluxe.core import AttachedAction, RegisterWeapon
@@ -60,7 +61,7 @@ class GrenadeAction(DecisiveItem):
             targets.append(target)
 
         self.session.say(ls("item_grenade_launcher_text")
-                         .format(source.name, damage, ", ".join([t.name for t in targets])))
+                         .format(source.name, damage, LocalizedList([t.name for t in targets])))
 
     def publish_post_damage_event(self, source, target, damage):
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)

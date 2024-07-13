@@ -34,7 +34,9 @@ async def main() -> None:
                            f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
                            f"🤖Bot: `{version}`\n\n"
                            f"📄Latest changelog: ```"
-                           f"\n - nothing worked. but now it does!"
+                           f"\n - fixed slime localization"
+                           f"\n - probably fixed grenade launcher"
+                           f"\n - fixed chain (again)"
                            f"```",
                            parse_mode="Markdown")
     print(engine.stats())
