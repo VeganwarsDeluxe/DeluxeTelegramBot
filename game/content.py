@@ -6,7 +6,6 @@ from game.States.Weakness import Weakness
 from game.Weapons.AbyssalBlade import AbyssalBlade
 from game.Weapons.CursedSword import CursedSword
 from game.Weapons.GrenadeLauncher import GrenadeLauncher
-from game.Weapons.Lance import Lance
 
 all_states = rebuild.all_states + deluxe.all_items + [Weakness, Emptiness]
 all_items = rebuild.all_items
