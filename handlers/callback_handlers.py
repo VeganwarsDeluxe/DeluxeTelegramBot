@@ -39,20 +39,20 @@ async def echo_handler(query: CallbackQuery, callback_data: ChooseWeapon) -> Non
     match = mm.get_match(callback_data.game_id)
     if not match:
         await bot.edit_message_text(ls("bot.cw.game_is_finished").localize(code),
-                                    query.message.chat.id, query.message.message_id)
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     if match.lobby:
         await bot.edit_message_text(ls("bow.cw.do_not_hurry").localize(code),
-                                    query.message.chat.id, query.message.message_id)
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     player = match.get_player(query.from_user.id)
     if not player:
         await bot.edit_message_text(ls("bot.cw.not_in_game").localize(code),
-                                    query.message.chat.id, query.message.message_id)
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     if player.chose_weapon:
         await bot.edit_message_text(ls("bot.cw.stop_doing_that").localize(code),
-                                    query.message.chat.id, query.message.message_id)
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     if callback_data.weapon_id == 'random':
         weapon = random.choice(game.content.all_weapons)(callback_data.game_id, player.id)
@@ -65,7 +65,7 @@ async def echo_handler(query: CallbackQuery, callback_data: ChooseWeapon) -> Non
         await match.choose_skills()
 
     await bot.edit_message_text(ls("bot.cw.weapon_chosen").format(weapon.name).localize(code),
-                                query.message.chat.id, query.message.message_id)
+                                chat_id=query.message.chat.id, message_id=query.message.message_id)
 
 
 @r.callback_query(ChooseSkill.filter())
@@ -76,20 +76,20 @@ async def h(query: CallbackQuery, callback_data: ChooseSkill) -> None:
     match = mm.get_match(int(callback_data.game_id))
     if not match:
         await bot.edit_message_text(ls("bot.cw.game_is_finished").localize(code),
-                                    query.message.chat.id, query.message.message_id)
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     if match.lobby:
         await bot.edit_message_text(ls("bow.cw.do_not_hurry").localize(code),
-                                    query.message.chat.id, query.message.message_id)
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     player = match.get_player(query.from_user.id)
     if not player:
         await bot.edit_message_text(ls("bot.cw.not_in_game").localize(code),
-                                    query.message.chat.id, query.message.message_id)
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     if player.chose_skills or player.skill_cycle == callback_data.cycle:
         await bot.edit_message_text(ls("bot.cw.stop_doing_that").localize(code),
-                                    query.message.chat.id, query.message.message_id)
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     skill = cm.get_state(callback_data.skill_id)
     if callback_data.skill_id == 'random':
@@ -106,7 +106,7 @@ async def h(query: CallbackQuery, callback_data: ChooseSkill) -> None:
         await match.send_skill_choice_buttons(player, callback_data.cycle + 1)
 
     await bot.edit_message_text(ls("bot.cs.skill_chosen").format(skill.name).localize(code),
-                                query.message.chat.id, query.message.message_id)
+                                chat_id=query.message.chat.id, message_id=query.message.message_id)
 
     if not match.not_chosen_skills:
         tts = ls("bot.common.game_is_starting").localize(match.locale)
@@ -124,16 +124,16 @@ async def h(query: CallbackQuery, callback_data: Additional) -> None:
     match = mm.get_match(callback_data.game_id)
     if not match:
         await bot.edit_message_text(ls("bot.error.game_not_found").localize(code),
-                                    query.message.chat.id, query.message.message_id)
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     player = match.get_player(query.from_user.id)
     if not player:
         await bot.edit_message_text(ls("bot.error.player_not_found").localize(code),
-                                    query.message.chat.id, query.message.message_id)
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     kb = match.get_additional_buttons(player)
     await bot.edit_message_text(ls("bot.common.additional").localize(code),
-                                query.message.chat.id, query.message.message_id, reply_markup=kb)
+                                chat_id=query.message.chat.id, message_id=query.message.message_id, reply_markup=kb)
 
 
 @r.callback_query(ActionChoice.filter())
@@ -144,17 +144,17 @@ async def h(query: CallbackQuery, callback_data: ActionChoice) -> None:
     match = mm.get_match(callback_data.game_id)
     if not match:
         await bot.edit_message_text(ls("bot.error.game_not_found").localize(code),
-                                    query.message.chat.id, query.message.message_id)
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     player = match.get_player(query.from_user.id)
     if not player:
         await bot.edit_message_text(ls("bot.error.player_not_found").localize(code),
-                                    query.message.chat.id, query.message.message_id)
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     action = engine.action_manager.get_action(match.session, player, callback_data.action_id)
     if not action:
         await bot.edit_message_text(ls("bot.error.invalid_button").localize(code),
-                                    query.message.chat.id, query.message.message_id)
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     if action.blocked:
         await bot.answer_callback_query(query.id, ls("bot.common.button_is_blocked").localize(code), show_alert=True)
@@ -166,11 +166,11 @@ async def h(query: CallbackQuery, callback_data: ActionChoice) -> None:
         index = len(match.action_indexes) - 1
         kb = match.get_target_choice_buttons(action.targets, index, player)
         await bot.edit_message_text(ls("bot.common.target_choice").localize(code),
-                                    query.message.chat.id, query.message.message_id, reply_markup=kb)
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id, reply_markup=kb)
         return
 
     await bot.edit_message_text(ls("bot.common.chosen_action").format(action.name, action.target.name).localize(code),
-                                query.message.chat.id, query.message.message_id)
+                                chat_id=query.message.chat.id, message_id=query.message.message_id)
     await match.choose_act(query.from_user.id, target.id, callback_data.action_id)
 
 
@@ -182,27 +182,27 @@ async def h(query: CallbackQuery, callback_data: TargetChoice) -> None:
     match = mm.get_match(callback_data.game_id)
     if not match:
         await bot.edit_message_text(ls("bot.error.game_not_found").localize(code),
-                                    query.message.chat.id, query.message.message_id)
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     player = match.get_player(query.from_user.id)
     if not player:
         await bot.edit_message_text(ls("bot.error.player_not_found").localize(code),
-                                    query.message.chat.id, query.message.message_id)
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     target = match.get_player(callback_data.target_id)
     if not target:
         await bot.edit_message_text(ls("bot.error.player_not_found").localize(code),
-                                    query.message.chat.id, query.message.message_id)
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     if len(match.action_indexes) < callback_data.index + 1:
         await bot.edit_message_text(ls("bot.error.invalid_button").localize(code),
-                                    query.message.chat.id, query.message.message_id)
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     action = match.action_indexes[callback_data.index]
     action.target = target
     await bot.edit_message_text(
         ls("bot.common.chosen_action").format(action.name, action.target.name).localize(code),
-        query.message.chat.id, query.message.message_id)
+        chat_id=query.message.chat.id, message_id=query.message.message_id)
     await match.choose_act(query.from_user.id, target.id, action.id)
 
 
@@ -213,17 +213,17 @@ async def h(query: CallbackQuery, callback_data: Back) -> None:
 
     match = mm.get_match(callback_data.game_id)
     if not match:
-        await bot.edit_message_text(ls("bot.error.game_not_found").localize(code), query.message.chat.id,
-                                    query.message.message_id)
+        await bot.edit_message_text(ls("bot.error.game_not_found").localize(code),
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     player = match.get_player(query.from_user.id)
     if not player:
         await bot.edit_message_text(ls("bot.error.player_not_found").localize(code),
-                                    query.message.chat.id, query.message.message_id)
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     kb = match.get_act_buttons(player)
     tts = match.get_act_text(player)
-    await bot.edit_message_text(tts, query.message.chat.id, query.message.message_id, reply_markup=kb)
+    await bot.edit_message_text(tts, chat_id=query.message.chat.id, message_id=query.message.message_id, reply_markup=kb)
 
 
 @r.callback_query(StartGame.filter())

@@ -168,11 +168,15 @@ class BaseMatch:
 
     async def broadcast_logs_to_players(self, logs: list[str, LocalizedString]):
         for player in self.session.entities:
+            if player.npc:
+                continue
             await self.send_logs_to_player(logs, player)
 
     async def broadcast_to_players(self, message: Union[str, LocalizedString]):
         """Notifies all players in the game."""
         for player in self.session.entities:
+            if player.npc:
+                continue
             await self.send_message_to_player(message, player)
 
     def localize_logs(self, logs: list[str, LocalizedString], code: str = '') -> str:

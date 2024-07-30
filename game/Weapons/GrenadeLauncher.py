@@ -1,3 +1,4 @@
+from VegansDeluxe.core.Translator.LocalizedList import LocalizedList
 from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
 from VegansDeluxe.core import RangedAttack, FreeWeaponAction, RegisterWeapon, Entity, Enemies, OwnOnly, AttachedAction
 from VegansDeluxe.core.Translator.LocalizedString import ls
@@ -37,11 +38,8 @@ class GrenadeLauncherAttack(RangedAttack):
             source.outbound_dmg.add(source, post_damage, self.session.turn)
             targets.append(selected_target)
 
-        source.energy = max(source.energy - self.weapon.energy_cost, 0)
-        self.session.say(
-            ls("grenade_launcher_grenade_name")
-            .format(source.name, self.damage, ", ".join([t.name for t in targets]))
-        )
+        self.session.say(ls("item_grenade_launcher_text")
+                         .format(source.name, damage, LocalizedList([t.name for t in targets])))
 
     def publish_post_damage_event(self, source, target, damage):
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
