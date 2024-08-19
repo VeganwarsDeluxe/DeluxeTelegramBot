@@ -94,12 +94,10 @@
   "elemental.reload_singularity.name": "Перезагрузить сингулярность",
   "elemental.reload_singularity.text": "⚫\uFE0F|{0} перезагружает сингулярность. Енергия восстановлена ({1})!",
 
-
   "state_emptiness_energy_loss": "\uD83C\uDF86|{0} теряет энергию от опустошенности. Осталось {1} энергии.",
   "state_emptiness_timer": "\uD83C\uDF86|{0} чуствует опустошенность. ({1})",
 
   "state_recovery_from_weakness": "\uD83E\uDEE0|{0} восстанавливается от слабости.",
-
 
   "weapon_abyssal_blade_name": "Клинок бездны",
   "weapon_abyssal_blade_description": "Ближний бой, урон 1-3, точность высокая. Имеет шанс наложить опустошенность на цель, после чего ей можно понизить максимальную энергию.",
@@ -110,15 +108,54 @@
   "weapon_cursed_sword_description": "Ближний бой, урон 1-3, точность высокая. Имеет шанс наложить на цель слабость.",
   "weapon_cursed_sword_effect": "\uD83E\uDEE0|{0} ослаблен!",
 
-  "weapon_grenade_launcher_name": "Гранатомёт",
-  "weapon_grenade_launcher_description": "Дальний бой, урон 1-4 стреляет гранатами атакуя две цели",
-  "grenade_launcher_grenade_name": "\uD83D\uDCA3|{0} стреляет из гранатомета! Нанесено {1} урона следующим целям: {2}.",
-  "grenade_launcher_molotov_name": "\uD83C\uDF78|{0} стреляет из гранатомета! {1} в огне!",
-  "grenade_launcher_grenade_text": "кабум",
-  "grenade_launcher_molotov_text": "пшшш",
-  "weapon_grenade_launcher_grenade_mode": "грены",
-  "weapon_grenade_launcher_molotov_mode": "молотов",
+  "weapon_grenade_launcher_name": "Гранатомет",
+  "weapon_grenade_launcher_description": "Дальний бой, урон 1-4, стреляет гранатами атакуя две цели",
+  "grenade_grenade_launcher_text": "\uD83D\uDCA3|{0} стреляет из гранатомета! Нанесено {1} урона следующим целям: {2}.",
+  "molotov_grenade_launcher_text": "\uD83C\uDF78|{0} стреляет из гранатомета! {1} в огне!",
+  "switch_to_molotov_launcher": "Переключить на коктейль молотова",
+  "switch_to_grenade_launcher": "Переключить на гранати",
+  "switch_to_molotov_text": "хз",
+  "switch_to_grenade_text": "хз",
 
-  "weapon_lance_name": "Пика",
-  "weapon_lance_description": "Ближний бой, урон 1-3, точность средняя. Атакуя цель, находящуюся далеко от вас, вы получаете +1 к урону."
+  "weapon_boomerang_name": "Бумеранг",
+  "weapon_boomerang_description": "Дальнобойное оружие, урон 1-4, возвращающееся через 2 хода.",
+  "boomerang_attack_text": "{0} запускает бумеранг и наносит {1} урона {2}.",
+  "boomerang_return_text": "Бумеранг возвращается к {0} и наносит {1} урона {2}.",
+
+  "weapon_javelin_name": "Scarlet devil",
+  "weapon_javelin_description": "Оружие ближнего боя, позволяет метнуть копьё во врага нанося +1 к урону. Копьё нужно поднять",
+  "weapon_javelin_throw_name": "Метнуть копьё",
+  "javelin_throw_text": "{0} метает копьё и наносит {1} урона {2}.",
+
+  "weapon_shurikens_name": "Сюрикены",
+  "weapon_shurikens_description": "Оружие дальнего боя, позволяет ментуть сразу два сюрикена. Сюрикены нужно подбирать",
+  "weapon_shuriken_throw_name": "{0} метает сюрикен и наносит {1} урона {2}.",
+  "weapon_double_shuriken_throw_name": "{0} метает сюрикен и наносит {1} урона {2}.\n{0} метает сюрикен и наносит {3} урона {4}.",
+  "shuriken_pickup_name": "Подобрать сюрикены",
+  "shuriken_no_ammo_text": "Сюрикенов нет, подбери",
+  "shuriken_pickup_text": "{0} подбирает сюрикены",
+  "switch_to_double_shuriken_text": "Выбрано два сюрикена",
+  "switch_to_single_shuriken_text": "Выбран один сюрикен",
+  "switch_shuriken_mode": "Переключить режим сюрикенов",
+
+  "weapon_needle_fan_name": "Игольчатый веер",
+  "weapon_needle_fan_description": "Оружие дальнего боя, метающее иглы. Начинает бой с 1 иглой и регенерирует иглы каждый ход.",
+  "veer_attack_text": "{0} метает иглы и наносит {1} урона {2}.",
+  "veer_no_needles_text": "{0} не имеет игл для атаки.",
+  "veer_regenerate_needles_text": "{0} восстанавливает иглы.",
+
+  "weapon_emitter_name": "Излучатель",
+  "weapon_emitter_description": "Дальний бой, урон 1-3. Имеет шанс наложить на цель голод.",
+  "weapon_emitter_effect": "\uD83D\uDE0B|{0} чуствует голод. Текущий уровень голода {1}!",
+  "state_recovery_from_hunger": "{0} восстановился от голода! Текущий уровень голода: {1}",
+  "hunger_reduced_by_item": "{0} использовал {1}. Уровень голода снижен до {2}.",
+
+  "weapon_chainsaw_name": "Бензопила",
+  "weapon_chainsaw_description": "Оружие ближнего боя, можно потратить ход чтобы завести ",
+  "weapon_chainsaw_enable_name": "Завести бензопилу",
+
+  "weapon_chainsaw_jammed": "{0} пила заклинило или цепь слетела!",
+  "weapon_chainsaw_switch_text": "{0} завел бензопилу.",
+  "weapon_chainsaw_disable_text": "{0} бензопила выключилась.",
+  "weapon_chainsaw_active": "{0} пила уже заведена и будет работать еще {1} ходов."
 }

@@ -1,0 +1,102 @@
+from VegansDeluxe.core.Translator.LocalizedList import LocalizedList
+from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
+from VegansDeluxe.core import RangedAttack, RegisterWeapon, Entity, Enemies, AttachedAction, OwnOnly, DecisiveStateAction, FreeWeaponAction
+from VegansDeluxe.core.Translator.LocalizedString import ls
+from VegansDeluxe.core.Sessions import Session
+from VegansDeluxe.core import Enemies, Distance
+import random
+
+@RegisterWeapon
+class Shurikens(RangedWeapon):
+    id = 'shurikens'
+    name = ls("weapon_shurikens_name")
+    description = ls("weapon_shurikens_description")
+
+    cubes = 2
+    accuracy_bonus = 2
+    energy_cost = 1
+    damage_bonus = 0
+
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.double_shuriken = False
+        self.ammo = 4
+
+@AttachedAction(Shurikens)
+class ShurikenThrow(RangedAttack):
+    id = 'throw'
+    target_type = Enemies(distance=Distance.ANY)
+
+    def __init__(self, session: Session, source: Entity, weapon: Shurikens):
+        super().__init__(session, source, weapon)
+        self.damage_bonus = 2
+
+    def func(self, source, target):
+        if self.weapon.ammo > 0:
+            if self.weapon.double_shuriken and self.weapon.ammo >= 2:
+                self.perform_double_shuriken_attack(source, target)
+            else:
+                self.perform_single_shuriken_attack(source, target)
+        else:
+            self.session.say(ls("shuriken_no_ammo_text").format(source.name))
+
+    def perform_single_shuriken_attack(self, source, target):
+        post_damage = self.publish_post_attack_event(source, target, self.damage_bonus)
+        target.inbound_dmg.add(source, post_damage, self.session.turn)
+        source.outbound_dmg.add(source, post_damage, self.session.turn)
+
+        self.session.say(ls("weapon_shuriken_throw_name").format(source.name, post_damage, target.name))
+        self.weapon.ammo -= 1
+
+    def perform_double_shuriken_attack(self, source, target):
+        # Первый бросок сюрикена
+        post_damage1 = self.publish_post_attack_event(source, target, self.damage_bonus)
+        target.inbound_dmg.add(source, post_damage1, self.session.turn)
+        source.outbound_dmg.add(source, post_damage1, self.session.turn)
+
+        # Второй бросок сюрикена
+        post_damage2 = self.publish_post_attack_event(source, target, self.damage_bonus)
+        target.inbound_dmg.add(source, post_damage2, self.session.turn)
+        source.outbound_dmg.add(source, post_damage2, self.session.turn)
+
+        # Сообщение о двойной атаке
+        self.session.say(ls("weapon_double_shuriken_throw_name")
+                         .format(source.name, post_damage1, target.name, post_damage2, target.name))
+        self.weapon.ammo -= 2
+
+@AttachedAction(Shurikens)
+class SwitchShurikenMode(FreeWeaponAction):
+    id = 'switch_shuriken_mode'
+    target_type = OwnOnly()
+    priority = -10
+
+    @property
+    def name(self):
+        return ls("switch_shuriken_mode") if not self.weapon.double_shuriken else ls("switch_shuriken_mode")
+
+    def func(self, source, target):
+        self.weapon.double_shuriken = not self.weapon.double_shuriken
+        if self.weapon.double_shuriken:
+            self.session.say(ls("switch_to_double_shuriken_text").format(source.name))
+        else:
+            self.session.say(ls("switch_to_single_shuriken_text").format(source.name))
+
+@AttachedAction(Shurikens)
+class PickUpShuriken(DecisiveStateAction):
+    id = 'pick_up'
+    name = "shuriken_pickup_name"
+    target_type = OwnOnly()
+
+    def __init__(self, session: Session, source: Entity, skill: Shurikens):
+        super().__init__(session, source, skill)
+        self.weapon = skill
+
+    @property
+    def hidden(self) -> bool:
+        return self.weapon.ammo == 4
+
+    def func(self, source, target):
+        self.weapon.ammo = 4
+        self.session.say(ls("shuriken_pickup_text").format(source.name))

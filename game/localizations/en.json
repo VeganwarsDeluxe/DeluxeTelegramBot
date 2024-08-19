@@ -108,11 +108,55 @@
 
   "weapon_grenade_launcher_name": "Grenade Launcher",
   "weapon_grenade_launcher_description": "Ranged, 1-4 damage, shoots grenades, damaging 2 targets",
-  "item_grenade_launcher_text": "\uD83D\uDCA3|{0} shoots with the grenade launcher! Dealt {1} damage to the following targets: {2}.",
-  "item_grenade_launcher_molotov_text": "\uD83C\uDF78|{0} shoots with the grenade launcher! {1} у вогні!",
+  "grenade_grenade_launcher_text": "\uD83D\uDCA3|{0} shoots with the grenade launcher! Dealt {1} damage to the following targets: {2}.",
+  "molotov_grenade_launcher_text": "\uD83C\uDF78|{0} shoots with the grenade launcher! {1} on fire!",
+  "switch_to_molotov_launcher": "Switch to molotov cocktail",
+  "switch_to_grenade_launcher": "Switch to grenades",
+  "switch_to_molotov_text": "хз",
+  "switch_to_grenade_text": "хз",
 
   "weapon_cursed_sword_name": "Cursed Sword",
   "weapon_cursed_sword_description": "Melee, 1-3 damage, high accuracy. Has a chance to inflict a weakness on the target.",
-  "weapon_cursed_sword_effect": "\uD83E\uDEE0|{0} weakened!"
+  "weapon_cursed_sword_effect": "\uD83E\uDEE0|{0} weakened!",
 
+  "weapon_boomerang_name": "Boomerang",
+  "weapon_boomerang_description": "Long range weapon, damage 1-4, returning in 2 turns.",
+  "boomerang_attack_text": "{0} launches a boomerang and deals {1} damage to {2}.",
+  "boomerang_return_text": "Boomerang returns to {0} and deals {1} damage to {2}.",
+
+  "weapon_javelin_name": "Scarlet devil.",
+  "weapon_javelin_description": "Melee weapon, allows you to throw a spear at an enemy dealing +1 damage. The spear must be raised.",
+  "weapon_javelin_throw_name": "Throw spear.",
+  "javelin_throw_text": "{0} throws the spear and deals {1} damage to {2}.’, “{0}”",
+
+  "weapon_shurikens_name": "Shurikens.",
+  "weapon_shurikens_description": "A ranged weapon that allows you to mint two shurikens at once. Shurikens must be picked up.",
+  "weapon_shuriken_throw_name": "{0} throws a shuriken and does {1} damage {2}.",
+  "weapon_double_shuriken_throw_name": "{0} throws a shuriken and does {1} damage {2}.",
+  "shuriken_pickup_name": "Pick up shurikens.",
+  "shuriken_no_ammo_text": "No shurikens, pick up.",
+  "shuriken_pickup_text": "{0} pick up shurikens.",
+  "switch_to_double_shuriken_text": "{0} picks up two shurikens",
+  "switch_to_single_shuriken_text": "One shuriken selected",
+  "switch_shuriken_mode": "Switch shuriken mode",
+
+  "weapon_needle_fan_name": "Needle Fan",
+  "weapon_needle_fan_description": "A ranged, needle-throwing weapon. Starts combat with 1 needle and regenerates needles every turn",
+  "veer_attack_text": "{0} throws needles and deals {1} damage to {2}.",
+  "veer_no_needles_text": "{0} has no needles to attack with.",
+  "veer_regenerate_needles_text": "{0} regenerates needles.",
+
+  "weapon_emitter_name": "Emitter.",
+  "weapon_emitter_description": "Ranged combat, damage 1-3. Has a chance to inflict starvation on the target.",
+  "weapon_emitter_effect": "{uD83D\uDE0B|{0} feels hunger. Current hunger level {1}!",
+  "state_recovery_from_hunger": "{0} has recovered from hunger! Current hunger level: {1}",
+  "hunger_reduced_by_item": "{0} has used {1}. Hunger level has been reduced to {2}.",
+
+  "weapon_chainsaw_name": "Chainsaw.",
+  "weapon_chainsaw_description": "Melee weapon, you can spend a turn to start",
+  "weapon_chainsaw_enable_name": "Start chainsaw",
+  "weapon_chainsaw_jammed": "{0} saw jammed or chain off!",
+  "weapon_chainsaw_switch_text": "{0} started the chainsaw.",
+  "weapon_chainsaw_disable_text": "{0} chainsaw switched off.",
+  "weapon_chainsaw_active": "{0} has started the chainsaw and will run for another {1} stroke."
 }
