@@ -19,25 +19,23 @@ class Chainsaw(MeleeWeapon):
     def __init__(self, session_id: str, entity_id: str):
         super().__init__(session_id, entity_id)
         self.chainsaw = False
-        self.turns_active = 0  # Количество ходов, которые пила активна
+        self.turns_active = 0
 
 @AttachedAction(Chainsaw)
 class ChainsawAttack(MeleeAttack):
     def func(self, source, target):
-        # Если пила не заведена, урон будет ниже
         if not self.weapon.chainsaw:
             self.weapon.cubes = 2
             self.weapon.damage_bonus = 0
             self.weapon.accuracy_bonus = 2
-            self.weapon.energy_cost = 1
+            self.weapon.energy_cost = 2
         else:
-            # 5% шанс, что цепь слетит или пила забьется
             if random.randint(0, 100) < 5:
                 self.weapon.chainsaw = False
                 self.weapon.turns_active = 0
                 self.weapon.cubes = 2
                 self.weapon.damage_bonus = 0
-                self.weapon.energy_cost = 1
+                self.weapon.energy_cost = 2
                 self.weapon.accuracy_bonus = 2
                 self.session.say(ls("weapon_chainsaw_jammed").format(source.name))
                 return

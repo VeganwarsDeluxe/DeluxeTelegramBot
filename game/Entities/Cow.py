@@ -15,7 +15,7 @@ class Cow(Dummy):
 
         self.weapon = CowWeapon(self.session_id, self.id)
 
-        self.hp = 3
+        self.hp = 30
         self.max_hp = 1
         self.max_energy = 5
 
