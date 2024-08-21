@@ -25,10 +25,6 @@ class Beast(Dummy):
 
         self.team = 'beast'
 
-        @RegisterEvent(self.session_id, event=VegansDeluxe.core.Events.PostActionsGameEvent)
-        def post_actions(context: EventContext[VegansDeluxe.core.Events.PostActionsGameEvent]):
-            self.get_state(Aflame.id).extinguished = True
-
     def choose_act(self, session: Session[TelegramEntity]):
         if session.turn == 1:
             self.get_state(DamageThreshold.id).threshold = 6

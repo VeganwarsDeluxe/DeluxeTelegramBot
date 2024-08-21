@@ -19,7 +19,7 @@ class AbyssalBlade(MeleeWeapon):
 @AttachedAction(AbyssalBlade)
 class AbyssalBladeAttack(MeleeAttack):
     def func(self, source, target):
-        damage = super().attack(source, target)
+        damage = super().attack(source, target).dealt
         if not damage:
             return damage
         emptiness = target.get_state('emptiness')

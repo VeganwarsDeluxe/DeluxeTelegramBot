@@ -34,9 +34,10 @@ async def main() -> None:
                            f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
                            f"🤖Bot: `{version}`\n\n"
                            f"📄Latest changelog: ```"
-                           f"\n - fixed slime localization"
-                           f"\n - probably fixed grenade launcher"
-                           f"\n - fixed chain (again)"
+                           f"\n - fire fixed"
+                           f"\n - flamethrower & armor (#3) fixed"
+                           f"\n - now WeaponAction.Attack.attack() returns data on calculated,"
+                           f" displayed and dealt damages"
                            f"```",
                            parse_mode="Markdown")
     print(engine.stats())

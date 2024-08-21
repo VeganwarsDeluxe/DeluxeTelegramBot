@@ -14,9 +14,9 @@ class GrenadeLauncher(RangedWeapon):
     name = ls("weapon_grenade_launcher_name")
     description = ls("weapon_grenade_launcher_description")
 
-    cubes = 4
-    accuracy_bonus = 2
+    cubes = 2
     energy_cost = 3
+
 
 @AttachedAction(GrenadeLauncher)
 class GrenadeLauncherAttack(RangedAttack):
@@ -27,6 +27,8 @@ class GrenadeLauncherAttack(RangedAttack):
 
     def func(self, source, target):
         targets = []
+        post_damage = 0
+
         for _ in range(self.targets_count):
             target_pool = list(filter(lambda t: t not in targets,
                                       self.get_targets(source, Enemies())))
@@ -39,7 +41,7 @@ class GrenadeLauncherAttack(RangedAttack):
             targets.append(selected_target)
 
         self.session.say(ls("item_grenade_launcher_text")
-                         .format(source.name, damage, LocalizedList([t.name for t in targets])))
+                         .format(source.name, post_damage, LocalizedList([t.name for t in targets])))
 
     def publish_post_damage_event(self, source, target, damage):
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
