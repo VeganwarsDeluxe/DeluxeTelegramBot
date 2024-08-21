@@ -114,8 +114,6 @@
   "molotov_grenade_launcher_text": "\uD83C\uDF78|{0} стреляет из гранатомета! {1} в огне!",
   "switch_to_molotov_launcher": "Переключить на коктейль молотова",
   "switch_to_grenade_launcher": "Переключить на гранати",
-  "switch_to_molotov_text": "хз",
-  "switch_to_grenade_text": "хз",
 
   "weapon_boomerang_name": "Бумеранг",
   "weapon_boomerang_description": "Дальнобойное оружие, урон 1-4, возвращающееся через 2 хода.",
@@ -157,5 +155,19 @@
   "weapon_chainsaw_jammed": "{0} пила заклинило или цепь слетела!",
   "weapon_chainsaw_switch_text": "{0} завел бензопилу.",
   "weapon_chainsaw_disable_text": "{0} бензопила выключилась.",
-  "weapon_chainsaw_active": "{0} пила уже заведена и будет работать еще {1} ходов."
+  "weapon_chainsaw_active": "{0} пила уже заведена и будет работать еще {1} ходов.",
+
+  "skill_explosion_magic_name": "Магия взрыва",
+  "skill_explosion_magic_description": "Описание в процессе",
+  "skill_explosion_action_name": "Взрыв",
+  "skill_explosion_effect_text": "\uD83D\uDCAE|Огромная волна пламени поражает {0} и наносит {1} урона поджигая цель. {2} падает на землю без сил.",
+  "skill_explosion_stun_text": "\uD83C\uDF00|{0} Оглушён!",
+  "skill_explosion_text": "\uD83D\uDCAC{0}: ВЗРЫВ!",
+
+  "skill_explosion_staff_text": "\uD83D\uDCAE|{0} достает посох и направляет на {1}",
+  "skill_explosion_delay_text_1": "\uD83D\uDCAC О тьма, куда не проникает свет, о черное пламя, что не освещает тьму, услышь мой зов. Сожги все и вся, докуда дотянется твоя карающая длань.",
+  "skill_explosion_delay_text_2": "\uD83D\uDCAC О багровая мощь, что пронизывает небо! О неизмеримая мощь, сотрясающая землю! Услышь мой зов и явись передо мной! Верни всю вселенную в первобытный хаос! Пусть мой магический поток разрушения сотрёт всё с лица земли!",
+  "skill_explosion_delay_text_3": "\uD83D\uDCAC О тьма, становящаяся мечом! Взорви моего врага в щепки и не оставь и следа!",
+  "skill_explosion_delay_text_4": "\uD83D\uDCAC О ты, кто носишь имя взрыва, покажи свою истинную силу! Пусть ничего не останется на пути твоего разрушения!"
+
 }

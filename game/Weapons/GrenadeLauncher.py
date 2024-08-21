@@ -90,7 +90,3 @@ class SwitchGrenadeLauncher(FreeWeaponAction):
 
     def func(self, source, target):
         self.weapon.is_molotov = not self.weapon.is_molotov
-        if self.weapon.is_molotov:
-            self.session.say(ls("switch_to_molotov_text").format(source.name))
-        else:
-            self.session.say(ls("switch_to_grenade_text").format(source.name))
