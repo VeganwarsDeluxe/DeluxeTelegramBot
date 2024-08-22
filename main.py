@@ -31,7 +31,7 @@ async def main() -> None:
     dp.include_router(other_router)
 
     await bot.send_message(config.boot_chat,
-                           f"♻️Core: `{VegansDeluxe.core.__version__}-modder-1.3`\n"
+                           f"♻️Core: `{VegansDeluxe.core.__version__}-modder-2.3.19`\n"
                            f"🤖Bot: `{version}`\n\n"
                            f"📄Latest changelog: `"
                            f"\n - Пу-пу-пу"

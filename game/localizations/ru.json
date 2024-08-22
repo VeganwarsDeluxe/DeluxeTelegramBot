@@ -168,6 +168,29 @@
   "skill_explosion_delay_text_1": "\uD83D\uDCAC О тьма, куда не проникает свет, о черное пламя, что не освещает тьму, услышь мой зов. Сожги все и вся, докуда дотянется твоя карающая длань.",
   "skill_explosion_delay_text_2": "\uD83D\uDCAC О багровая мощь, что пронизывает небо! О неизмеримая мощь, сотрясающая землю! Услышь мой зов и явись передо мной! Верни всю вселенную в первобытный хаос! Пусть мой магический поток разрушения сотрёт всё с лица земли!",
   "skill_explosion_delay_text_3": "\uD83D\uDCAC О тьма, становящаяся мечом! Взорви моего врага в щепки и не оставь и следа!",
-  "skill_explosion_delay_text_4": "\uD83D\uDCAC О ты, кто носишь имя взрыва, покажи свою истинную силу! Пусть ничего не останется на пути твоего разрушения!"
+  "skill_explosion_delay_text_4": "\uD83D\uDCAC О ты, кто носишь имя взрыва, покажи свою истинную силу! Пусть ничего не останется на пути твоего разрушения!",
+
+
+  "weapon_hook_name": "Крюк",
+  "weapon_hook_description": "Оружие ближнего боя, позволяет притянуть к себе цель",
+  "hook_attract_name": "Притягивание",
+  "hook_attract_text": "\uD83E\uDE9D|{0} использует крюк и притягивает {1} к себе, и наносит {2} урона!",
+  "hook_attract_text_miss":"\uD83D\uDCA8||{0} использует крюк чтобы притянуть {1}, но не попадает.",
+
+  "weapon_hell_bow_name": "Адский лук",
+  "weapon_hell_bow_description": "Оружие дальнего боя, позволяет нанести урон всем целям",
+  "weapon_hell_bow_explosion_arrow_name": "Взрывная стрела",
+  "weapon_hell_bow_explosion_arrow_single_target_text": "\uD83D\uDCA5|{0} стреляет взрывной стрелой по {1} и наносит {2} урона!",
+  "weapon_hell_bow_explosion_arrow_multiple_targets_text": "\uD83D\uDCA5|{0} стреляет взрывной стрелой по {1} и наносит {2} урона. Взрыв задевает {3} и наносит всем {4} урона!",
+  "weapon_hell_bow_explosion_arrow_text_miss": "\uD83D\uDCA8|{0} стреляет взрывной стрелой по {1}, но не попадает.",
+
+  "weapon_electric_whip_name": "Электрическая плеть",
+  "weapon_electric_whip_description": "Оружие ближнего боя, позволяет нанести урон до трёх целей",
+  "weapon_electric_whip_single_target_text": "\uD83D\uDC4A|{0} бьет {1} и наносит {2} урона.",
+  "weapon_electric_whip_multiple_targets_text": "\uD83D\uDC4A|{0} бьет {1} и наносит {2} урона. Электричество задевает {3} и наносит {4} урона!",
+  "weapon_electric_whip_tertiary_targets_text": "\uD83D\uDC4A|{0} бьет {1} и наносит {2} урона. Электричество задевает {3} и {4}, и наносит {4}, {5} урона!",
+  "weapon_electric_whip_text_miss": "\uD83D\uDCA8|{0} бьет {1} но не попадает."
+
+
 
 }

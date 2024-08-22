@@ -12,10 +12,10 @@ class Shurikens(RangedWeapon):
     name = ls("weapon_shurikens_name")
     description = ls("weapon_shurikens_description")
 
-    cubes = 2
+    cubes = 1
     accuracy_bonus = 2
-    energy_cost = 1
-    damage_bonus = 0
+    energy_cost = 2
+    damage_bonus = 1
 
 
 
@@ -25,13 +25,14 @@ class Shurikens(RangedWeapon):
         self.ammo = 4
 
 @AttachedAction(Shurikens)
-class ShurikenThrow(RangedAttack):
-    id = 'throw'
-    target_type = Enemies(distance=Distance.ANY)
+class ShurikenAttack(RangedAttack):
+    id = 'shuriken_attack'
+    target_type = Enemies()
 
     def __init__(self, session: Session, source: Entity, weapon: Shurikens):
         super().__init__(session, source, weapon)
-        self.damage_bonus = 2
+
+        source.energy = max(source.energy - self.weapon.energy_cost, 0)
 
     def func(self, source, target):
         if self.weapon.ammo > 0:
@@ -42,8 +43,10 @@ class ShurikenThrow(RangedAttack):
         else:
             self.session.say(ls("shuriken_no_ammo_text").format(source.name))
 
+
+
     def perform_single_shuriken_attack(self, source, target):
-        post_damage = self.publish_post_attack_event(source, target, self.damage_bonus)
+        post_damage = self.publish_post_attack_event(source, target)
         target.inbound_dmg.add(source, post_damage, self.session.turn)
         source.outbound_dmg.add(source, post_damage, self.session.turn)
 
@@ -52,12 +55,12 @@ class ShurikenThrow(RangedAttack):
 
     def perform_double_shuriken_attack(self, source, target):
         # Первый бросок сюрикена
-        post_damage1 = self.publish_post_attack_event(source, target, self.damage_bonus)
+        post_damage1 = self.publish_post_attack_event(source, target)
         target.inbound_dmg.add(source, post_damage1, self.session.turn)
         source.outbound_dmg.add(source, post_damage1, self.session.turn)
 
         # Второй бросок сюрикена
-        post_damage2 = self.publish_post_attack_event(source, target, self.damage_bonus)
+        post_damage2 = self.publish_post_attack_event(source, target)
         target.inbound_dmg.add(source, post_damage2, self.session.turn)
         source.outbound_dmg.add(source, post_damage2, self.session.turn)
 

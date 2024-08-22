@@ -169,9 +169,27 @@
   "skill_explosion_delay_text_1": "\uD83D\uDCAC O darkness where no light penetrates, O black flame that does not light the darkness, hear my call. Burn everything and everyone where your punishing hand reaches.",
   "skill_explosion_delay_text_2": "\uD83D\uDCAC O crimson power that pierces the sky! O immeasurable power that shakes the earth! Hear my call and appear before me! Return the entire universe to its primordial chaos! Let my magical torrent of destruction wipe everything off the face of the earth!",
   "skill_explosion_delay_text_3": "\uD83D\uDCAC O darkness that becomes a sword! Blast my enemy into splinters and leave no trace!",
-  "skill_explosion_delay_text_4": "\uD83D\uDCAC O you who bear the name of explosion, show your true power! Let nothing remain in the path of your destruction!"
+  "skill_explosion_delay_text_4": "\uD83D\uDCAC O you who bear the name of explosion, show your true power! Let nothing remain in the path of your destruction!",
 
+  "weapon_hook_name": "Hook",
+  "weapon_hook_description": "A melee weapon, allows you to draw a target towards you",
+  "hook_attract_name": "Attraction",
+  "hook_attract_text": "\uD83E\uDE9D|{0} uses a hook and pulls {1} towards you, and deals {2} damage!",
+  "hook_attract_text_miss":"\uD83D\uDCA8||{0} uses the hook to pull {1} in, but it doesn't hit.",
 
+  "weapon_hell_bow_name": "Hell's bow",
+  "weapon_hell_bow_description": "Ranged weapon, allows you to deal damage to all targets",
+  "weapon_hell_bow_explosion_arrow_name": "Exploding arrow",
+  "weapon_hell_bow_explosion_arrow_single_target_text": "\uD83D\uDCA5|{0} fires an explosive arrow at {1} and deals {2} damage!",
+  "weapon_hell_bow_explosion_arrow_multiple_targets_text": "\uD83D\uDCA5|{0} Fires an explosive arrow at {1} and does {2} damage. The explosion hits {3} and does {4} damage to all of them!",
+  "weapon_hell_bow_explosion_arrow_text_miss": "\uD83D\uDCA8|{0} fires an explosive arrow at {1}, but it doesn't hit.",
+
+  "weapon_electric_whip_name": "Electric whip",
+    "weapon_electric_whip_description": "A melee weapon that allows you to deal damage to up to three targets",
+  "weapon_electric_whip_single_target_text": "\uD83D\uDC4A|{0} hits {1} and deals {2} damage!",
+  "weapon_electric_whip_multiple_targets_text": "\uD83D\uDC4A|{0} Hits {1} and deals {2} damage. Electricity hits {3} and deals {4} damage!",
+  "weapon_electric_whip_tertiary_targets_text": "\uD83D\uDC4A|{0} Hits {1} and does {2} damage. Electricity hits {3} and {4}, and does {4}, {5} damage!",
+  "weapon_electric_whip_text_miss": "\uD83D\uDCA8|{0} shoots {1} but doesn't hit."
 
 
 }

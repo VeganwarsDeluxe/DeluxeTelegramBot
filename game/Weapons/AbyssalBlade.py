@@ -6,7 +6,7 @@ from VegansDeluxe.core.Translator.LocalizedString import ls
 
 @RegisterWeapon
 class AbyssalBlade(MeleeWeapon):
-    id = 'Abyssal_Blade'
+    id = 'abyssal_blade'
     name = ls('weapon_abyssal_blade_name')
     description = ls('weapon_abyssal_blade_description')
 

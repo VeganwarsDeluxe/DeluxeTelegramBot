@@ -157,7 +157,7 @@
   "weapon_chainsaw_disable_text": "{0} бензопила вимкнулася.",
   "weapon_chainsaw_active": "{0} пила вже заведена і буде працювати ще {1} ходів.",
 
-    "skill_explosion_magic_name": "Магія вибуху",
+  "skill_explosion_magic_name": "Магія вибуху",
   "skill_explosion_magic_description": "Опис в процесі",
   "skill_explosion_action_name": "Вибух",
   "skill_explosion_effect_text": "\uD83D\uDCAE|Величезна хвиля полум'я вражає {0} і завдає {1} шкоди, підпалюючи ціль. {2} падає на землю без сил.",
@@ -168,5 +168,26 @@
   "skill_explosion_delay_text_1": "\uD83D\uDCAC О темрява, куди не проникає світло, о чорне полум'я, що не висвітлює темряву, почуй мій поклик. Спали все і вся, докуди дотягнеться твоя караюча долоня.",
   "skill_explosion_delay_text_2": "\uD83D\uDCAC О багряна міць, що пронизує небо! О незмірна міць, що стрясає землю! Почуй мій поклик і з'явися переді мною! Поверни весь всесвіт у первісний хаос! Нехай мій магічний потік руйнування зітре все з лиця землі!",
   "skill_explosion_delay_text_3": "\uD83D\uDCAC О темрява, що стає мечем! Підірви мого ворога на друзки і не залиш і сліду!",
-  "skill_explosion_delay_text_4": "\uD83D\uDCAC О ти, хто носиш ім'я вибуху, покажи свою справжню силу! Нехай нічого не залишиться на шляху твого руйнування!"
+  "skill_explosion_delay_text_4": "\uD83D\uDCAC О ти, хто носиш ім'я вибуху, покажи свою справжню силу! Нехай нічого не залишиться на шляху твого руйнування!",
+
+
+  "weapon_hook_name": "Гак",
+  "weapon_hook_description": "Зброя ближнього бою, дає змогу притягнути до себе ціль",
+  "hook_attract_name": "Притягування",
+  "hook_attract_text": "\uD83E\uDE9D|{0} використовує гак і притягує {1} до себе, і завдає {2} шкоди!",
+  "hook_attract_text_miss":"\uD83D\uDCA8||{0} використовує гак щоб притягнути {1}, але не влучає.",
+
+  "weapon_hell_bow_name": "Пекельний лук",
+  "weapon_hell_bow_description": "Зброя дальнього бою, дає змогу завдати шкоди всім цілям",
+  "weapon_hell_bow_explosion_arrow_name": "Вибухова стріла",
+  "weapon_hell_bow_explosion_arrow_single_target_text": "\uD83D\uDCA5|{0} стріляє вибуховою стрілою по {1} і завдає {2} шкоди!",
+  "weapon_hell_bow_explosion_arrow_multiple_targets_text": "\uD83D\uDCA5|{0} стріляє вибуховою стрілою по {1} і завдає {2} шкоди. Вибух зачіпає {3} і завдає всім {4} шкоди!",
+  "weapon_hell_bow_explosion_arrow_text_miss": "\uD83D\uDCA8|{0} стріляє вибуховою стрілою по {1}, але не влучає.",
+
+  "weapon_electric_whip_name": "Електричний батіг",
+  "weapon_electric_whip_description": "Зброя ближнього бою, дозволяє завдати шкоди до трьох цілей",
+  "weapon_electric_whip_single_target_text": "\uD83D\uDC4A|{0} б'є {1} і завдає {2} шкоди!",
+  "weapon_electric_whip_multiple_targets_text": "\uD83D\uDC4A|{0} б'є {1} і завдає {2} шкоди. Електрика зачіпає {3} і завдає {4} шкоди!",
+  "weapon_electric_whip_tertiary_targets_text": "\uD83D\uDC4A|{0} б'є {1} і завдає {2} шкоди. Електрика зачіпає {3} і {4}, і завдає {4}, {5} шкоди!",
+  "weapon_electric_whip_text_miss": "\uD83D\uDCA8|{0} б'є {1} але не влучає."
 }
