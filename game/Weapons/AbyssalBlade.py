@@ -1,12 +1,12 @@
-from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
-from VegansDeluxe.core import MeleeAttack
 from VegansDeluxe.core import AttachedAction, RegisterWeapon
+from VegansDeluxe.core import MeleeAttack
 from VegansDeluxe.core.Translator.LocalizedString import ls
+from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
 
 
 @RegisterWeapon
 class AbyssalBlade(MeleeWeapon):
-    id = 'Abyssal_Blade'
+    id = 'abyssal_blade'
     name = ls('weapon_abyssal_blade_name')
     description = ls('weapon_abyssal_blade_description')
 

@@ -42,7 +42,39 @@ class Beast(Dummy):
             engine.action_manager.queue_action(session, self, BeastGrowl.id)
             return
 
-        if percentage_chance(15):
+        targets = [entity for entity in self.nearby_entities if entity != self and entity.hp > 0]
+        if targets:
+            target = random.choice(targets)
+            if target.hp == 1:
+                attack = engine.action_manager.get_action(session, self, BeastBite.id)
+                attack.target = target
+                engine.action_manager.queue_action_instance(attack)
+                return
+            else:
+                evade_action = engine.action_manager.get_action(session, self, BeastEvade.id)
+                if target.energy >= 5:
+                    # Проверь кулдаун перед добавлением в очередь
+                    if session.turn > evade_action.cooldown_turn:
+                        engine.action_manager.queue_action(session, self, BeastEvade.id)
+                        return
+
+                else:
+                    if target.energy == 0:
+                        attack = engine.action_manager.get_action(session, self, BeastAttackTwo.id)
+                        attack.target = target
+                        engine.action_manager.queue_action_instance(attack)
+                        return
+                    else:
+                        attack = engine.action_manager.get_action(session, self, BeastAttack.id)
+                        attack.target = target
+                        engine.action_manager.queue_action_instance(attack)
+                        return
+        else:
+            # If no valid targets, the beast reloads
+            engine.action_manager.queue_action(session, self, BeastReload.id)
+            return
+
+        if percentage_chance(5):
             engine.action_manager.queue_action(session, self, BeastReload.id)
             return
 
@@ -53,21 +85,6 @@ class Beast(Dummy):
         if percentage_chance(30):
             engine.action_manager.queue_action(session, self, BeastEvade.id)
             return
-
-        targets = [entity for entity in self.nearby_entities if entity != self and entity.hp > 0]
-        if targets:
-            target = random.choice(targets)
-            if target.hp == 1:
-                attack = engine.action_manager.get_action(session, self, BeastBite.id)
-                attack.target = target
-                engine.action_manager.queue_action_instance(attack)
-            else:
-                attack = engine.action_manager.get_action(session, self, BeastAttack.id)
-                attack.target = target
-                engine.action_manager.queue_action_instance(attack)
-        else:
-            # If no valid targets, the beast reloads
-            engine.action_manager.queue_action(session, self, BeastReload.id)
 
 
 @AttachedAction(Beast)
@@ -101,10 +118,24 @@ class BeastEvade(DecisiveAction):
     name = ls("beast.evade.name")
     target_type = OwnOnly()
 
+    def __init__(self, session: Session, source: Entity):
+        super().__init__(session, source)
+        self.cooldown_turn = 0  # Инициализация кулдауна
+
+    def is_on_cooldown(self) -> bool:
+        # Проверка, находится ли действие на кулдауне
+        return self.session.turn <= self.cooldown_turn
+
     def func(self, source, target):
+        # Проверка кулдауна
+        if self.is_on_cooldown():
+            return
+
         source.inbound_accuracy_bonus = -6
         self.session.say(ls("beast.evade.text").format(source.name))
 
+        # Установка кулдауна на 4 хода от текущего хода
+        self.cooldown_turn = self.session.turn + 4
 
 @AttachedAction(Beast)
 class BeastGrowl(DecisiveAction):
@@ -133,11 +164,22 @@ class BeastAttack(MeleeAttack):
     name = ls("beast.attack.name")
     target_type = Enemies()
 
-    def __init__(self, *args):
 
-        super().__init__(*args)
-        self.ATTACK_MESSAGE = ls("beast.weapon.attack")
-        self.MISS_MESSAGE = ls("beast.weapon.miss")
+@AttachedAction(BeastWeapon)
+class BeastAttackTwo(MeleeAttack):
+    id = 'Beast_attack_Two'
+    name = 'Кусать клыками'
+    target_type = Enemies()
+
+    def func(self, source, target):
+        # Вычисляем урон
+        lost_hp = target.max_hp - target.hp  # Потерянное здоровье цели
+        final_damage = 1 + (3 * lost_hp)  # 1 базовый урон + 3 урона за каждое потерянное ХП
+
+        target.hp = max(0, target.hp - final_damage)  # Применение урона
+
+        # Сообщение о нанесении урона
+        self.session.say(f"❕|{source.name} атакует когтями {target.name}. Нанесено {final_damage} урона.")
 
 
 @AttachedAction(BeastWeapon)

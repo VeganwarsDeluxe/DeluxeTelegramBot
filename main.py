@@ -34,10 +34,7 @@ async def main() -> None:
                            f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
                            f"🤖Bot: `{version}`\n\n"
                            f"📄Latest changelog: ```"
-                           f"\n - fire fixed"
-                           f"\n - flamethrower & armor (#3) fixed"
-                           f"\n - now WeaponAction.Attack.attack() returns data on calculated,"
-                           f" displayed and dealt damages"
+                           f"\n - merged modder to master (a lot of new content, enjoy)"
                            f"```",
                            parse_mode="Markdown")
     print(engine.stats())
