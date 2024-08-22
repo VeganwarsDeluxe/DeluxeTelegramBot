@@ -20,10 +20,12 @@ from game.Weapons.Hook import Hook
 from game.Weapons.HellBow import HellBow
 from game.Weapons.ElectricWhip import ElectricWhip
 
-
 all_states = rebuild.all_states + deluxe.all_items + [Weakness, Emptiness] + [Hunger]
 all_items = rebuild.all_items
-all_weapons = rebuild.all_weapons + deluxe.all_weapons + [AbyssalBlade, CursedSword, GrenadeLauncher] + [Boomerang, Javelin, Shurikens, NeedleFan, Emitter, Chainsaw] + [Hook, HellBow, ElectricWhip]
+all_weapons = (
+        rebuild.all_weapons + deluxe.all_weapons + [AbyssalBlade, CursedSword, GrenadeLauncher] +
+        [Boomerang, Javelin, Shurikens, NeedleFan, Emitter, Chainsaw] + [Hook, HellBow, ElectricWhip]
+)
 all_skills = rebuild.all_skills + deluxe.all_skills + [ExplosionMagic]
 
 game_items_pool = rebuild.game_items_pool

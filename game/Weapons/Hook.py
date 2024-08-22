@@ -1,9 +1,9 @@
-from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeAttack, RangedAttack, Enemies, Entity, Session
+from VegansDeluxe.core import Enemies
+from VegansDeluxe.core import MeleeAttack, Session
+from VegansDeluxe.core import RangedAttack, RegisterWeapon, Entity, AttachedAction, PostDamageGameEvent
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
 
-from VegansDeluxe.core import RangedAttack, RegisterWeapon, Entity, Enemies, AttachedAction, OwnOnly, DecisiveStateAction, FreeWeaponAction, PostDamageGameEvent
-from VegansDeluxe.core import Enemies, Distance
 
 @RegisterWeapon
 class Hook(MeleeWeapon):
@@ -16,12 +16,15 @@ class Hook(MeleeWeapon):
     energy_cost = 2
     damage_bonus = 0
 
-    def __init__(self, session: Session, owner_id: str):
-        super().__init__(session, owner_id)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.cooldown_turn = 0
+
+
 @AttachedAction(Hook)
 class HookAttack(MeleeAttack):
     pass
+
 
 @AttachedAction(Hook)
 class HookAttract(RangedAttack):
@@ -35,6 +38,7 @@ class HookAttract(RangedAttack):
     @property
     def hidden(self) -> bool:
         return self.session.turn < self.weapon.cooldown_turn
+
     def func(self, source: Entity, target: Entity):
         if self.hidden:
             self.session.say(ls("hook_attract_on_cooldown").format(source.name))

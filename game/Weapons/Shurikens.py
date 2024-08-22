@@ -1,10 +1,10 @@
-from VegansDeluxe.core.Translator.LocalizedList import LocalizedList
 from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
-from VegansDeluxe.core import RangedAttack, RegisterWeapon, Entity, Enemies, AttachedAction, OwnOnly, DecisiveStateAction, FreeWeaponAction
-from VegansDeluxe.core.Translator.LocalizedString import ls
+from VegansDeluxe.core import RangedAttack, RegisterWeapon, Entity, AttachedAction, OwnOnly, DecisiveStateAction, \
+    FreeWeaponAction, Enemies
 from VegansDeluxe.core.Sessions import Session
-from VegansDeluxe.core import Enemies, Distance
-import random
+from VegansDeluxe.core.Translator.LocalizedString import ls
+from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
+
 
 @RegisterWeapon
 class Shurikens(RangedWeapon):
@@ -17,12 +17,11 @@ class Shurikens(RangedWeapon):
     energy_cost = 2
     damage_bonus = 1
 
-
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.double_shuriken = False
         self.ammo = 4
+
 
 @AttachedAction(Shurikens)
 class ShurikenAttack(RangedAttack):
@@ -42,8 +41,6 @@ class ShurikenAttack(RangedAttack):
                 self.perform_single_shuriken_attack(source, target)
         else:
             self.session.say(ls("shuriken_no_ammo_text").format(source.name))
-
-
 
     def perform_single_shuriken_attack(self, source, target):
         post_damage = self.publish_post_attack_event(source, target)
@@ -69,6 +66,7 @@ class ShurikenAttack(RangedAttack):
                          .format(source.name, post_damage1, target.name, post_damage2, target.name))
         self.weapon.ammo -= 2
 
+
 @AttachedAction(Shurikens)
 class SwitchShurikenMode(FreeWeaponAction):
     id = 'switch_shuriken_mode'
@@ -86,12 +84,15 @@ class SwitchShurikenMode(FreeWeaponAction):
         else:
             self.session.say(ls("switch_to_single_shuriken_text").format(source.name))
 
+
 @AttachedAction(Shurikens)
 class PickUpShuriken(DecisiveStateAction):
     id = 'pick_up'
     name = "shuriken_pickup_name"
     target_type = OwnOnly()
 
+    # Ну шо це за жесть. Shurikens це зброя а не скілл/стейт, ну куди DecisiveStateAction.......
+    # Виправляйте....
     def __init__(self, session: Session, source: Entity, skill: Shurikens):
         super().__init__(session, source, skill)
         self.weapon = skill
