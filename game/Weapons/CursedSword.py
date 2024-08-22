@@ -21,7 +21,7 @@ class CursedSword(MeleeWeapon):
 @AttachedAction(CursedSword)
 class CursedSwordAttack(MeleeAttack):
     def func(self, source, target):
-        damage = super().attack(source, target)
+        damage = super().attack(source, target).dealt
         if not damage:
             return damage
         if random.randint(0, 100) > 99:
