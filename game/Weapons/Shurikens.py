@@ -50,7 +50,7 @@ class ShurikenAttack(RangedAttack):
         target.inbound_dmg.add(source, post_damage, self.session.turn)
         source.outbound_dmg.add(source, post_damage, self.session.turn)
 
-        self.session.say(ls("weapon_shuriken_throw_name").format(source.name, post_damage, target.name))
+        self.session.say(ls("weapon_shuriken_attack_name").format(source.name, post_damage, target.name))
         self.weapon.ammo -= 1
 
     def perform_double_shuriken_attack(self, source, target):
