@@ -1,11 +1,10 @@
-from VegansDeluxe.core.Translator.LocalizedList import LocalizedList
-from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
+import random
+
 from VegansDeluxe.core import RangedAttack, RegisterWeapon, Entity, Enemies, AttachedAction
-from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Events import PostDamageGameEvent
 from VegansDeluxe.core.Sessions import Session
-
-import random
+from VegansDeluxe.core.Translator.LocalizedString import ls
+from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
 
 
 @RegisterWeapon

@@ -1,7 +1,7 @@
-from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
-from VegansDeluxe.core import MeleeAttack
 from VegansDeluxe.core import AttachedAction, RegisterWeapon
+from VegansDeluxe.core import MeleeAttack
 from VegansDeluxe.core.Translator.LocalizedString import ls
+from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
 
 
 @RegisterWeapon
@@ -19,7 +19,7 @@ class AbyssalBlade(MeleeWeapon):
 @AttachedAction(AbyssalBlade)
 class AbyssalBladeAttack(MeleeAttack):
     def func(self, source, target):
-        damage = super().attack(source, target)
+        damage = super().attack(source, target).dealt
         if not damage:
             return damage
         emptiness = target.get_state('emptiness')

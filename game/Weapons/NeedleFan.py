@@ -7,6 +7,7 @@ from VegansDeluxe.core import RegisterState, Every, StateContext, EventContext
 from VegansDeluxe.core import PreMoveGameEvent
 import random
 
+
 @RegisterWeapon
 class NeedleFan(RangedWeapon):
     id = 'needle_fan'
@@ -22,6 +23,7 @@ class NeedleFan(RangedWeapon):
         super().__init__(*args, **kwargs)
         self.current_needles = 1  # Начальное количество игл
 
+
 @RegisterState(NeedleFan)
 def register(root_context: StateContext[NeedleFan]):
 
@@ -31,6 +33,7 @@ def register(root_context: StateContext[NeedleFan]):
         if weapon and weapon.current_needles < 1:
             weapon.current_needles = 1
             context.session.say(ls("veer_regenerate_needles_text").format(root_context.entity.name))
+
 
 @AttachedAction(NeedleFan)
 class NeedleFanAttack(RangedAttack):

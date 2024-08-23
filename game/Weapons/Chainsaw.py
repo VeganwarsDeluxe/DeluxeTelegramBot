@@ -1,9 +1,9 @@
-from VegansDeluxe.core import AttachedAction, RegisterWeapon
+from VegansDeluxe.core import AttachedAction, RegisterWeapon, At, percentage_chance
 from VegansDeluxe.core import FreeWeaponAction, MeleeAttack, RegisterEvent, PostTickGameEvent
 from VegansDeluxe.core import OwnOnly, EventContext
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
-import random
+
 
 @RegisterWeapon
 class Chainsaw(MeleeWeapon):
@@ -21,6 +21,7 @@ class Chainsaw(MeleeWeapon):
         self.chainsaw = False
         self.turns_active = 0
 
+
 @AttachedAction(Chainsaw)
 class ChainsawAttack(MeleeAttack):
     def func(self, source, target):
@@ -29,19 +30,18 @@ class ChainsawAttack(MeleeAttack):
             self.weapon.damage_bonus = 0
             self.weapon.accuracy_bonus = 2
             self.weapon.energy_cost = 2
-        else:
-            if random.randint(0, 100) < 5:
-                self.weapon.chainsaw = False
-                self.weapon.turns_active = 0
-                self.weapon.cubes = 2
-                self.weapon.damage_bonus = 0
-                self.weapon.energy_cost = 2
-                self.weapon.accuracy_bonus = 2
-                self.session.say(ls("weapon_chainsaw_jammed").format(source.name))
-                return
+        elif percentage_chance(5):
+            self.weapon.chainsaw = False
+            self.weapon.turns_active = 0
+            self.weapon.cubes = 2
+            self.weapon.damage_bonus = 0
+            self.weapon.energy_cost = 2
+            self.weapon.accuracy_bonus = 2
+            self.session.say(ls("weapon_chainsaw_jammed").format(source.name))
+            return
 
-        damage = super().func(source, target)
-        return damage
+        return super().func(source, target)
+
 
 @AttachedAction(Chainsaw)
 class SwitchChainsaw(FreeWeaponAction):
@@ -65,18 +65,14 @@ class SwitchChainsaw(FreeWeaponAction):
         self.weapon.energy_cost = 2
         self.weapon.accuracy_bonus = 2
 
-        self.session.say(ls("weapon_chainsaw_switch_text").format(source.name, ls("weapon_chainsaw_enable_text")))
+        self.session.say(ls("weapon_chainsaw_switch_text").format(source.name))
 
-@RegisterEvent(Chainsaw.id, event=PostTickGameEvent)
-def reduce_turns_active(context: EventContext[PostTickGameEvent]):
-    weapon = context.entity.get_weapon_by_id(Chainsaw.id)
-
-    if weapon.chainsaw:
-        weapon.turns_active -= 1
-        if weapon.turns_active <= 0:
-            weapon.chainsaw = False
-            weapon.cubes = 2
-            weapon.damage_bonus = 0
-            weapon.energy_cost = 1
-            weapon.accuracy_bonus = 2
-            context.session.say(ls("weapon_chainsaw_disable_text").format(context.entity.name))
+        # Цей код вимкне бензопилу через 5 ходів. Я протестував.
+        @At(self.session.id, turn=self.session.turn + 5, event=PostTickGameEvent)
+        def apply_explosion(context: EventContext[PostTickGameEvent]):
+            self.weapon.chainsaw = False
+            self.weapon.cubes = 2
+            self.weapon.damage_bonus = 0
+            self.weapon.energy_cost = 1
+            self.weapon.accuracy_bonus = 2
+            context.session.say(ls("weapon_chainsaw_disable_text").format(source.name))

@@ -6,6 +6,7 @@ import random
 from VegansDeluxe.core.Events import PostDamageGameEvent
 import math
 
+
 @RegisterWeapon
 class ElectricWhip(MeleeWeapon):
     id = 'electric_whip'
@@ -16,6 +17,7 @@ class ElectricWhip(MeleeWeapon):
     accuracy_bonus = 0
     energy_cost = 2
     damage_bonus = 0
+
 
 @AttachedAction(ElectricWhip)
 class ElectricWhipAttack(MeleeAttack):
@@ -86,6 +88,7 @@ class ElectricWhipAttack(MeleeAttack):
                         tertiary_damage
                     )
                 )
+
     def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
         self.event_manager.publish(message)

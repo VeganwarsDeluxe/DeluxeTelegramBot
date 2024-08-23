@@ -6,6 +6,7 @@ import random
 from VegansDeluxe.core.Events import PostDamageGameEvent
 import math
 
+
 @RegisterWeapon
 class HellBow(RangedWeapon):
     id = 'hell_bow'
@@ -17,13 +18,15 @@ class HellBow(RangedWeapon):
     energy_cost = 3
     damage_bonus = 0
 
-    def __init__(self, session: Session, owner_id: str):
-        super().__init__(session, owner_id)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.cooldown_turn = 0
+
 
 @AttachedAction(HellBow)
 class HellBowAttack(RangedAttack):
     pass
+
 
 @AttachedAction(HellBow)
 class ExplosionArrow(RangedAttack):

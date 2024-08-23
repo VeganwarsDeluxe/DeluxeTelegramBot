@@ -1,12 +1,12 @@
 from VegansDeluxe.core import AttachedAction, RegisterWeapon
-from VegansDeluxe.core import MeleeAttack, RangedAttack
+from VegansDeluxe.core import Enemies, Distance
 from VegansDeluxe.core import Entity
+from VegansDeluxe.core import MeleeAttack, RangedAttack
+from VegansDeluxe.core import PostDamageGameEvent
 from VegansDeluxe.core import Session
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
 
-from VegansDeluxe.core import Enemies, Distance
-from VegansDeluxe.core import State, PostDamageGameEvent, OwnOnly, DecisiveStateAction
 
 @RegisterWeapon
 class Javelin(MeleeWeapon):
@@ -18,6 +18,7 @@ class Javelin(MeleeWeapon):
     accuracy_bonus = 2
     energy_cost = 2
     damage_bonus = 0
+
 
 @AttachedAction(Javelin)
 class JavelinAttack(MeleeAttack):

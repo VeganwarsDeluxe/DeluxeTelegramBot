@@ -3,7 +3,7 @@ import random
 import VegansDeluxe.core.Events.Events
 from VegansDeluxe.core.Actions.Action import DecisiveAction
 from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeAttack, MeleeWeapon, Entity, Enemies, RegisterEvent, \
-    EventContext, Session
+    EventContext, Session, ls
 from VegansDeluxe.core import OwnOnly
 from VegansDeluxe.rebuild import DamageThreshold, Aflame
 
@@ -14,7 +14,7 @@ from VegansDeluxe.core.utils import percentage_chance
 
 
 class Beast(Dummy):
-    def __init__(self, session_id: str, name='Зверь|🐺'):
+    def __init__(self, session_id: str, name=ls("beast.name")):
         super().__init__(session_id, name)
 
         self.weapon = BeastWeapon(session_id, self.id)
@@ -23,13 +23,9 @@ class Beast(Dummy):
         self.max_hp = 4
         self.max_energy = 6
 
-        self.team = 'Beast'
+        self.team = 'beast'
 
-        @RegisterEvent(self.session_id, event=VegansDeluxe.core.Events.PostActionsGameEvent)
-        def post_actions(context: EventContext[VegansDeluxe.core.Events.PostActionsGameEvent]):
-            self.get_state(Aflame.id).extinguished = True
-
-    def choose_act(self, session: Session):
+    def choose_act(self, session: Session[TelegramEntity]):
         if session.turn == 1:
             self.get_state(DamageThreshold.id).threshold = 6
 
@@ -93,8 +89,8 @@ class Beast(Dummy):
 
 @AttachedAction(Beast)
 class BeastApproach(DecisiveAction):
-    id = 'Beast_approach'
-    name = 'Крастца'
+    id = 'beast_approach'
+    name = ls("beast.approach.name")
     target_type = OwnOnly()
 
     def func(self, source, target):
@@ -102,24 +98,24 @@ class BeastApproach(DecisiveAction):
         for entity in source.nearby_entities:
             if source not in entity.nearby_entities:
                 entity.nearby_entities.append(source)
-        self.session.say(f'🐾|{source.name} крадётся к своей жертве ближе...')
+        self.session.say(ls("beast.approach.text").format(source.name))
 
 
 @AttachedAction(Beast)
 class BeastReload(DecisiveAction):
-    id = 'Beast_reload'
-    name = 'Перевести дух'
+    id = 'beast_reload'
+    name = ls("beast.reload.name")
     target_type = OwnOnly()
 
     def func(self, source, target):
-        self.session.say(f'😤|{source.name} переводит дух. Энергия восстановлена ({source.max_energy})!')
+        self.session.say(ls('beast.reload.text').format(source.name, source.max_energy))
         source.energy = source.max_energy
 
 
 @AttachedAction(Beast)
 class BeastEvade(DecisiveAction):
-    id = 'Beast_evade'
-    name = 'Резко отпрыгнуть'
+    id = 'beast_evade'
+    name = ls("beast.evade.name")
     target_type = OwnOnly()
 
     def __init__(self, session: Session, source: Entity):
@@ -136,26 +132,25 @@ class BeastEvade(DecisiveAction):
             return
 
         source.inbound_accuracy_bonus = -6
-        self.session.say(f'💨|{source.name} резко отпрыгивает назад!')
+        self.session.say(ls("beast.evade.text").format(source.name))
 
         # Установка кулдауна на 4 хода от текущего хода
         self.cooldown_turn = self.session.turn + 4
 
 @AttachedAction(Beast)
 class BeastGrowl(DecisiveAction):
-    id = 'Beast_Growl'
-    name = 'Рычать'
+    id = 'beast_growl'
+    name = ls("beast.growl.name")
     target_type = OwnOnly()
 
     def func(self, source, target):
-        self.session.say(f"💢|{source.name} рычит.")
+        self.session.say(ls("beast.growl.text").format(source.name))
 
 
 @RegisterWeapon
 class BeastWeapon(MeleeWeapon):
-    id = 'Beast_weapon'
-    name = 'Клыки и когти'
-    description = 'Рычанье Зверя.'
+    id = 'beast_weapon'
+    name = ls("beast.weapon.name")
 
     cubes = 3
     damage_bonus = 0
@@ -165,11 +160,8 @@ class BeastWeapon(MeleeWeapon):
 
 @AttachedAction(BeastWeapon)
 class BeastAttack(MeleeAttack):
-    ATTACK_MESSAGE = "❕|{source_name} атакует когтями {target_name}! Нанесено {damage} урона."
-    MISS_MESSAGE = "💨|{source_name} атакует когтями {target_name}, но не попадает."
-
-    id = 'Beast_attack'
-    name = 'Царапать когтями'
+    id = 'beast_attack'
+    name = ls("beast.attack.name")
     target_type = Enemies()
 
 
@@ -193,8 +185,8 @@ class BeastAttackTwo(MeleeAttack):
 @AttachedAction(BeastWeapon)
 class BeastBite(MeleeAttack):
     id = 'beast_bite'
-    name = 'Cтремительный укус'
+    name = ls("beast.bite.name")
 
     def func(self, source, target):
         target.hp = max(0, target.hp - 1)
-        self.session.say(f"❕❕|{source.name} делает стремительный прыжок к {target.name} и кусает его! Цель теряет 1♥️.")
+        self.session.say(ls("beast.bite.text").format(source.name, target.name))
