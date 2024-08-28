@@ -1,7 +1,3 @@
-from VegansDeluxe.core import EventContext, Event, At
-
-import game.content
-
 import asyncio
 import logging
 import sys
@@ -12,9 +8,9 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
 import config
-
-from handlers.matches import r as match_router
+import game.content
 from handlers.callback_handlers import r as callbacks_router
+from handlers.matches import r as match_router
 from handlers.other import r as other_router
 from startup import engine, version
 
@@ -34,7 +30,7 @@ async def main() -> None:
                            f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
                            f"🤖Bot: `{version}`\n\n"
                            f"📄Latest changelog: ```"
-                           f"\n - fixed inquisitor (#7)"
+                           f"\n - merged modder to master (a lot of new content, enjoy)"
                            f"```",
                            parse_mode="Markdown")
     print(engine.stats())

@@ -1,20 +1,17 @@
 import random
 
 import VegansDeluxe.rebuild
-from VegansDeluxe.core.Actions.Action import DecisiveAction
 from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeWeapon, ls
 from VegansDeluxe.core import EventContext
-from VegansDeluxe.core import RegisterEvent
-
-from VegansDeluxe.core import PreDeathGameEvent
-
-from VegansDeluxe.core import Session
 from VegansDeluxe.core import OwnOnly
+from VegansDeluxe.core import PreDeathGameEvent
+from VegansDeluxe.core import RegisterEvent
+from VegansDeluxe.core import Session
+from VegansDeluxe.core.Actions.Action import DecisiveAction
 
 import game.content
-
-from .Dummy import Dummy
 from startup import engine
+from .Dummy import Dummy
 
 
 class Elemental(Dummy):

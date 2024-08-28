@@ -6,31 +6,30 @@ from VegansDeluxe.core import State
 from VegansDeluxe.core.Translator.LocalizedString import ls
 
 
-class Emptiness(State):
-    id = 'emptiness'
+class Mutilation(State):
+    id = 'mutilation'
 
     def __init__(self):
         super().__init__()
-        self.emptiness = 1
+        self.mutilation = 1
         self.active = False
+        self.triggered = False
 
 
-@RegisterState(Emptiness)
-def register(root_context: StateContext[Emptiness]):
+@RegisterState(Mutilation)
+def register(root_context: StateContext[Mutilation]):
     session: Session = root_context.session
     target = root_context.entity
     state = root_context.state
 
-    state.triggered = False
-
     @RegisterEvent(session.id, event=PreDamagesGameEvent, filters=[lambda e: state.active])
     def func(context: EventContext[PreDamagesGameEvent]):
-        if state.emptiness >= 3:
-            session.say(ls("state_emptiness_energy_loss").format(target.name, target.max_energy - 1))
-            target.max_energy -= 1
+        if state.mutilation >= 3:
+            session.say(ls("state_mutilation_accuracy_bonus_loss").format(target.name)) #, target.weapon.accuracy_bonus - 1
+            target.weapon.accuracy_bonus -= 1
             state.active = False
-            state.emptiness = 1
+            state.mutilation = 1
         elif state.triggered:
-            session.say(ls("state_emptiness_timer").format(target.name, max(state.emptiness, 0)))
+            session.say(ls("state_mutilation_timer").format(target.name, max(state.mutilation, 0)))
 
         state.triggered = False

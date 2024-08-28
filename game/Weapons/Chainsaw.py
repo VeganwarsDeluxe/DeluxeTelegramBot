@@ -1,8 +1,10 @@
 from VegansDeluxe.core import AttachedAction, RegisterWeapon, At, percentage_chance
-from VegansDeluxe.core import FreeWeaponAction, MeleeAttack, RegisterEvent, PostTickGameEvent
+from VegansDeluxe.core import FreeWeaponAction, MeleeAttack, PostTickGameEvent, Entity, PostDamageGameEvent
 from VegansDeluxe.core import OwnOnly, EventContext
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
+
+from VegansDeluxe.core.Session import Session
 
 
 @RegisterWeapon
@@ -11,68 +13,96 @@ class Chainsaw(MeleeWeapon):
     name = ls("weapon_chainsaw_name")
     description = ls("weapon_chainsaw_description")
 
-    cubes = 2
-    accuracy_bonus = 2
-    energy_cost = 2
-    damage_bonus = 0
-
     def __init__(self, session_id: str, entity_id: str):
         super().__init__(session_id, entity_id)
-        self.chainsaw = False
+        self.WoundUp = False
         self.turns_active = 0
+        self.cooldown_turn = 0
+
+    def reset_stats(self):
+        self.cubes = 2
+        self.energy_cost = 2
+        self.accuracy_bonus = 2
+        self.damage_bonus = 0
 
 
 @AttachedAction(Chainsaw)
 class ChainsawAttack(MeleeAttack):
-    def func(self, source, target):
-        if not self.weapon.chainsaw:
-            self.weapon.cubes = 2
-            self.weapon.damage_bonus = 0
-            self.weapon.accuracy_bonus = 2
-            self.weapon.energy_cost = 2
-        elif percentage_chance(5):
-            self.weapon.chainsaw = False
-            self.weapon.turns_active = 0
-            self.weapon.cubes = 2
-            self.weapon.damage_bonus = 0
-            self.weapon.energy_cost = 2
-            self.weapon.accuracy_bonus = 2
+
+    def __init__(self, session: Session, source: Entity, weapon: Chainsaw):
+        super().__init__(session, source, weapon)
+
+    def func(self, source: Entity, target: Entity):
+        if percentage_chance(5):
             self.session.say(ls("weapon_chainsaw_jammed").format(source.name))
+            self.weapon.WoundUp = False
+            self.weapon.turns_active = 0
+            self.weapon.reset_stats()
             return
 
-        return super().func(source, target)
+        if not self.weapon.WoundUp:
+            self.weapon.reset_stats()
+        else:
+            self.weapon.cubes = 3
+            self.weapon.damage_bonus = 1
+            self.weapon.accuracy_bonus = 2
+            self.weapon.energy_cost = 2
+
+        source.energy = max(source.energy - self.weapon.energy_cost, 0)
+
+        total_damage = self.calculate_damage(source, target)
+
+        post_damage = self.publish_post_damage_event(source, target, total_damage)
+        target.inbound_dmg.add(source, post_damage, self.session.turn)
+        source.outbound_dmg.add(target, post_damage, self.session.turn)
+
+        if not total_damage:
+            self.session.say(
+                self.MISS_MESSAGE.format(source_name=source.name, attack_text=self.ATTACK_TEXT, target_name=target.name,
+                                         weapon_name=self.weapon.name)
+            )
+        else:
+            self.session.say(
+                self.ATTACK_MESSAGE.format(attack_emoji=self.ATTACK_EMOJI, source_name=source.name,
+                                           attack_text=self.ATTACK_TEXT,
+                                           target_name=target.name, weapon_name=self.weapon.name, damage=total_damage)
+            )
+
+    def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
+        message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
+        self.event_manager.publish(message)
+        return message.damage
 
 
 @AttachedAction(Chainsaw)
-class SwitchChainsaw(FreeWeaponAction):
-    id = 'switch_chainsaw'
+class WoundUpChainsaw(FreeWeaponAction):
+    id = 'wound_up_chainsaw'
     target_type = OwnOnly()
     priority = -10
+
+    @property
+    def hidden(self) -> bool:
+        return self.session.turn < self.weapon.cooldown_turn
 
     @property
     def name(self):
         return ls("weapon_chainsaw_enable_name")
 
     def func(self, source, target):
-        if self.weapon.chainsaw:
+        if self.weapon.WoundUp:
             self.session.say(ls("weapon_chainsaw_active").format(source.name, self.weapon.turns_active))
             return
 
-        self.weapon.chainsaw = True
+        self.weapon.WoundUp = True
         self.weapon.turns_active = 5
-        self.weapon.cubes = 3
-        self.weapon.damage_bonus = 1
-        self.weapon.energy_cost = 2
-        self.weapon.accuracy_bonus = 2
+        self.weapon.cooldown_turn = self.session.turn + 5
 
         self.session.say(ls("weapon_chainsaw_switch_text").format(source.name))
 
-        # Цей код вимкне бензопилу через 5 ходів. Я протестував.
-        @At(self.session.id, turn=self.session.turn + 5, event=PostTickGameEvent)
-        def apply_explosion(context: EventContext[PostTickGameEvent]):
-            self.weapon.chainsaw = False
-            self.weapon.cubes = 2
-            self.weapon.damage_bonus = 0
-            self.weapon.energy_cost = 1
-            self.weapon.accuracy_bonus = 2
+        @At(self.session.id, turn=self.session.turn + 4, event=PostTickGameEvent)
+        def disable_chainsaw(context: EventContext[PostTickGameEvent]):
+            self.weapon.WoundUp = False
+            self.weapon.reset_stats()
             context.session.say(ls("weapon_chainsaw_disable_text").format(source.name))
+
+

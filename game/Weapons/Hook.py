@@ -40,9 +40,6 @@ class HookAttract(RangedAttack):
         return self.session.turn < self.weapon.cooldown_turn
 
     def func(self, source: Entity, target: Entity):
-        if self.hidden:
-            self.session.say(ls("hook_attract_on_cooldown").format(source.name))
-            return
 
         self.weapon.damage_bonus = 1
         total_damage = self.calculate_damage(source, target)
@@ -79,6 +76,8 @@ class HookAttract(RangedAttack):
             self.session.say(
                 ls('hook_attract_text').format(source.name, target.name, total_damage)
             )
+
+        self.weapon.damage_bonus = 0
 
     def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)

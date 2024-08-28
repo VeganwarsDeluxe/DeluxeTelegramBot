@@ -1,7 +1,10 @@
-from VegansDeluxe.core import AttachedAction, RegisterWeapon
+from VegansDeluxe.core import AttachedAction, RegisterWeapon, percentage_chance
 from VegansDeluxe.core import MeleeAttack
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
+from game.States.Emptiness import Emptiness
+
+import random
 
 
 @RegisterWeapon
@@ -22,11 +25,19 @@ class AbyssalBladeAttack(MeleeAttack):
         damage = super().attack(source, target).dealt
         if not damage:
             return damage
-        emptiness = target.get_state('emptiness')
+
+        if percentage_chance(99):
+            return damage
+
+        emptiness = target.get_state(Emptiness.id)
+
         if emptiness.active:
-            emptiness.emptiness -= 1
+            emptiness.emptiness += 1
+            emptiness.triggered = True  # Добавляем новый атрибут для отслеживания изменения
             self.session.say(ls("weapon_abyssal_blade_increase"))
         else:
+            emptiness.active = True
+            emptiness.triggered = True  # Добавляем новый атрибут для отслеживания активации
             self.session.say(ls("weapon_abyssal_blade_effect").format(target.name))
-        emptiness.active = True
+
         return damage

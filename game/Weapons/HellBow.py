@@ -1,10 +1,11 @@
+import math
+import random
+
+from VegansDeluxe.core import RangedAttack, RegisterWeapon, Entity, Enemies, AttachedAction
+from VegansDeluxe.core.Events import PostDamageGameEvent
+from VegansDeluxe.core.Session import Session
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
-from VegansDeluxe.core import RangedAttack, RegisterWeapon, Entity, Enemies, AttachedAction
-from VegansDeluxe.core.Session import Session
-import random
-from VegansDeluxe.core.Events import PostDamageGameEvent
-import math
 
 
 @RegisterWeapon
@@ -44,7 +45,6 @@ class ExplosionArrow(RangedAttack):
 
     def func(self, source: Entity, target: Entity):
         if self.hidden:
-            self.session.say(ls("weapon_hell_bow_explosion_arrow_on_cooldown").format(source.name))
             return
 
         # Уменьшение энергии
@@ -97,6 +97,8 @@ class ExplosionArrow(RangedAttack):
                         secondary_damage
                     )
                 )
+
+        self.weapon.damage_bonus = 0
 
     def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)

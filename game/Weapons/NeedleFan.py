@@ -1,11 +1,10 @@
-from VegansDeluxe.core.Translator.LocalizedString import ls
-from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
+from VegansDeluxe.core import EventContext
+from VegansDeluxe.core import PostActionsGameEvent, At
+from VegansDeluxe.core import PostDamageGameEvent
 from VegansDeluxe.core import RangedAttack, RegisterWeapon, Entity, AttachedAction
 from VegansDeluxe.core.Session import Session
-from VegansDeluxe.core import Enemies, Distance, PostDamageGameEvent
-from VegansDeluxe.core import RegisterState, Every, StateContext, EventContext
-from VegansDeluxe.core import PreMoveGameEvent
-import random
+from VegansDeluxe.core.Translator.LocalizedString import ls
+from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
 
 
 @RegisterWeapon
@@ -21,43 +20,52 @@ class NeedleFan(RangedWeapon):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.current_needles = 1  # Начальное количество игл
-
-
-@RegisterState(NeedleFan)
-def register(root_context: StateContext[NeedleFan]):
-
-    @Every(root_context.session.id, turns=1, event=PreMoveGameEvent)
-    def regenerate_needles(context: EventContext[PreMoveGameEvent]):
-        weapon = root_context.entity.get_weapon(NeedleFan)
-        if weapon and weapon.current_needles < 1:
-            weapon.current_needles = 1
-            context.session.say(ls("veer_regenerate_needles_text").format(root_context.entity.name))
+        self.current_needles = 1
+        self.max_needles = 10
 
 
 @AttachedAction(NeedleFan)
 class NeedleFanAttack(RangedAttack):
-    target_type = Enemies(distance=Distance.ANY)
 
     def __init__(self, session: Session, source: Entity, weapon: NeedleFan):
         super().__init__(session, source, weapon)
-        self.energy_cost = weapon.energy_cost
+        self.register_event_handlers()
 
-    def func(self, source, target):
+    def func(self, source: Entity, target: Entity):
         if self.weapon.current_needles > 0:
-            damage = random.randint(1, 2) * self.weapon.current_needles  # Урон зависит от количества игл
-            post_damage = self.publish_post_attack_event(source, target, damage)
+            used_needles = self.weapon.current_needles
+            total_damage = (self.calculate_damage(source, target) * used_needles)
+
+            source.energy = max(source.energy - self.weapon.energy_cost, 0)
+
+            post_damage = self.publish_post_damage_event(source, target, total_damage)
             target.inbound_dmg.add(source, post_damage, self.session.turn)
-            source.outbound_dmg.add(source, post_damage, self.session.turn)
+            source.outbound_dmg.add(target, post_damage, self.session.turn)
 
-            self.session.say(ls("veer_attack_text").format(source.name, damage, target.name))
+            if not total_damage:
+                self.session.say(
+                    self.MISS_MESSAGE.format(source_name=source.name, attack_text=self.ATTACK_TEXT, target_name=target.name,
+                                             weapon_name=self.weapon.name)
+                )
+            else:
+                self.session.say(
+                    self.ATTACK_MESSAGE.format(attack_emoji=self.ATTACK_EMOJI, source_name=source.name,
+                                               attack_text=self.ATTACK_TEXT,
+                                               target_name=target.name, weapon_name=self.weapon.name, damage=total_damage)
+                )
 
-            # Уменьшаем количество игл после атаки
-            self.weapon.current_needles = 0  # Очищаем стак игл
-        else:
-            self.session.say(ls("veer_no_needles_text").format(source.name))
+                self.weapon.current_needles = 0
 
-    def publish_post_attack_event(self, source, target, damage):
+    def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
         self.event_manager.publish(message)
         return message.damage
+
+    def register_event_handlers(self):
+        @At(self.session.id, turn=self.session.turn, event=PostActionsGameEvent)
+        def handle_needle_recovery(context: EventContext[PostActionsGameEvent]):
+            self.recovery_needles()
+
+    def recovery_needles(self):
+        if self.weapon.current_needles < self.weapon.max_needles:
+            self.weapon.current_needles += 1

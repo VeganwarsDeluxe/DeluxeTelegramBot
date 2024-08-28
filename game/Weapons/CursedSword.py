@@ -24,9 +24,19 @@ class CursedSwordAttack(MeleeAttack):
         damage = super().attack(source, target).dealt
         if not damage:
             return damage
+
         if random.randint(0, 100) > 99:
-            return
+            return damage
+
         weakness = target.get_state(Weakness.id)
-        self.session.say(ls("weapon_cursed_sword_effect").format(target.name))
-        weakness.weakness = 2
+
+        if weakness.active:
+            weakness.weakness += 2
+            weakness.triggered = True  # Set triggered to True when mutilation increases
+            self.session.say(ls("weapon_cursed_sword_increase"))
+        else:
+            weakness.active = True
+            weakness.triggered = True  # Set triggered to True when mutilation activates
+            self.session.say(ls("weapon_cursed_sword_effect").format(target.name))
+
         return damage
