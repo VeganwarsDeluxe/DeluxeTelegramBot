@@ -1,7 +1,7 @@
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
 from VegansDeluxe.core import RangedAttack, RegisterWeapon, Entity, AttachedAction
-from VegansDeluxe.core.Sessions import Session
+from VegansDeluxe.core.Session import Session
 from VegansDeluxe.core import Enemies, Distance, PostDamageGameEvent
 from VegansDeluxe.core import RegisterState, Every, StateContext, EventContext
 from VegansDeluxe.core import PreMoveGameEvent

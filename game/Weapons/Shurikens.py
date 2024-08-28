@@ -1,7 +1,7 @@
 from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
 from VegansDeluxe.core import RangedAttack, RegisterWeapon, Entity, AttachedAction, OwnOnly, DecisiveStateAction, \
     FreeWeaponAction, Enemies
-from VegansDeluxe.core.Sessions import Session
+from VegansDeluxe.core.Session import Session
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
 

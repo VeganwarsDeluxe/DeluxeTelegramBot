@@ -34,11 +34,12 @@ async def main() -> None:
                            f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
                            f"🤖Bot: `{version}`\n\n"
                            f"📄Latest changelog: ```"
-                           f"\n - merged modder to master (a lot of new content, enjoy)"
+                           f"\n - fixed inquisitor (#7)"
                            f"```",
                            parse_mode="Markdown")
     print(engine.stats())
 
+    await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
 

@@ -3,7 +3,7 @@ from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
 from VegansDeluxe.core import RangedAttack, FreeWeaponAction, RegisterWeapon, Entity, Enemies, OwnOnly, AttachedAction
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Events import PostDamageGameEvent
-from VegansDeluxe.core.Sessions import Session
+from VegansDeluxe.core.Session import Session
 
 import random
 
