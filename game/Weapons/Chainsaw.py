@@ -4,7 +4,9 @@ from VegansDeluxe.core import OwnOnly, EventContext
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
 
-from VegansDeluxe.core.Sessions import Session
+from VegansDeluxe.core.Session import Session
+
+
 @RegisterWeapon
 class Chainsaw(MeleeWeapon):
     id = 'chainsaw'
@@ -22,12 +24,13 @@ class Chainsaw(MeleeWeapon):
         self.energy_cost = 2
         self.accuracy_bonus = 2
         self.damage_bonus = 0
+
+
 @AttachedAction(Chainsaw)
 class ChainsawAttack(MeleeAttack):
 
     def __init__(self, session: Session, source: Entity, weapon: Chainsaw):
         super().__init__(session, source, weapon)
-
 
     def func(self, source: Entity, target: Entity):
         if percentage_chance(5):
@@ -46,7 +49,6 @@ class ChainsawAttack(MeleeAttack):
             self.weapon.energy_cost = 2
 
         source.energy = max(source.energy - self.weapon.energy_cost, 0)
-
 
         total_damage = self.calculate_damage(source, target)
 
@@ -70,6 +72,7 @@ class ChainsawAttack(MeleeAttack):
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
         self.event_manager.publish(message)
         return message.damage
+
 
 @AttachedAction(Chainsaw)
 class WoundUpChainsaw(FreeWeaponAction):
