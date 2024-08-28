@@ -34,7 +34,7 @@ async def main() -> None:
                            f"♻️Core: `{VegansDeluxe.core.__version__}-modder-2.9.20`\n"
                            f"🤖Bot: `{version}`\n\n"
                            f"📄Latest changelog: `"
-                           f"\n - Пу-пу-пу"
+                           f"\n - integrated. continue working"
                            f"`",
                            parse_mode="Markdown")
     print(engine.stats())
