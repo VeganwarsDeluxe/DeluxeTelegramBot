@@ -44,7 +44,6 @@ class ExplosionArrow(RangedAttack):
 
     def func(self, source: Entity, target: Entity):
         if self.hidden:
-            self.session.say(ls("weapon_hell_bow_explosion_arrow_on_cooldown").format(source.name))
             return
 
         # Уменьшение энергии
@@ -97,6 +96,8 @@ class ExplosionArrow(RangedAttack):
                         secondary_damage
                     )
                 )
+
+        self.weapon.damage_bonus = 0
 
     def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)

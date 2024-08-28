@@ -1,6 +1,6 @@
 from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
 from VegansDeluxe.core import RangedAttack, RegisterWeapon, Entity, AttachedAction, OwnOnly, DecisiveStateAction, \
-    FreeWeaponAction, Enemies
+    FreeWeaponAction, Enemies, PostDamageGameEvent
 from VegansDeluxe.core.Sessions import Session
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
@@ -25,15 +25,12 @@ class Shurikens(RangedWeapon):
 
 @AttachedAction(Shurikens)
 class ShurikenAttack(RangedAttack):
-    id = 'shuriken_attack'
-    target_type = Enemies()
-
     def __init__(self, session: Session, source: Entity, weapon: Shurikens):
         super().__init__(session, source, weapon)
 
+    def func(self, source, target):
         source.energy = max(source.energy - self.weapon.energy_cost, 0)
 
-    def func(self, source, target):
         if self.weapon.ammo > 0:
             if self.weapon.double_shuriken and self.weapon.ammo >= 2:
                 self.perform_double_shuriken_attack(source, target)
@@ -42,29 +39,39 @@ class ShurikenAttack(RangedAttack):
         else:
             self.session.say(ls("shuriken_no_ammo_text").format(source.name))
 
-    def perform_single_shuriken_attack(self, source, target):
-        post_damage = self.publish_post_attack_event(source, target)
+    def shuriken_attack(self, source, target):
+        total_damage = self.calculate_damage(source, target)
+        post_damage = self.publish_post_damage_event(source, target, total_damage)
         target.inbound_dmg.add(source, post_damage, self.session.turn)
-        source.outbound_dmg.add(source, post_damage, self.session.turn)
+        source.outbound_dmg.add(target, post_damage, self.session.turn)
 
-        self.session.say(ls("weapon_shuriken_attack_name").format(source.name, post_damage, target.name))
-        self.weapon.ammo -= 1
+        if post_damage == 0:
+            self.session.say(
+                self.MISS_MESSAGE.format(source_name=source.name, attack_text=self.ATTACK_TEXT, target_name=target.name,
+                                         weapon_name=self.weapon.name)
+            )
+        else:
+            self.session.say(
+                self.ATTACK_MESSAGE.format(attack_emoji=self.ATTACK_EMOJI, source_name=source.name,
+                                           attack_text=self.ATTACK_TEXT, target_name=target.name,
+                                           weapon_name=self.weapon.name, damage=post_damage)
+            )
+
+    def perform_single_shuriken_attack(self, source, target):
+        if self.weapon.ammo > 0:
+            self.shuriken_attack(source, target)
+            self.weapon.ammo -= 1
 
     def perform_double_shuriken_attack(self, source, target):
-        # Первый бросок сюрикена
-        post_damage1 = self.publish_post_attack_event(source, target)
-        target.inbound_dmg.add(source, post_damage1, self.session.turn)
-        source.outbound_dmg.add(source, post_damage1, self.session.turn)
+        if self.weapon.ammo >= 2:
+            self.shuriken_attack(source, target)
+            self.shuriken_attack(source, target)
+            self.weapon.ammo -= 2
 
-        # Второй бросок сюрикена
-        post_damage2 = self.publish_post_attack_event(source, target)
-        target.inbound_dmg.add(source, post_damage2, self.session.turn)
-        source.outbound_dmg.add(source, post_damage2, self.session.turn)
-
-        # Сообщение о двойной атаке
-        self.session.say(ls("weapon_double_shuriken_throw_name")
-                         .format(source.name, post_damage1, target.name, post_damage2, target.name))
-        self.weapon.ammo -= 2
+    def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
+        message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
+        self.event_manager.publish(message)
+        return message.damage
 
 
 @AttachedAction(Shurikens)
@@ -86,21 +93,19 @@ class SwitchShurikenMode(FreeWeaponAction):
 
 
 @AttachedAction(Shurikens)
-class PickUpShuriken(DecisiveStateAction):
+class PickUpShuriken(FreeWeaponAction):
     id = 'pick_up'
     name = "shuriken_pickup_name"
     target_type = OwnOnly()
 
-    # Ну шо це за жесть. Shurikens це зброя а не скілл/стейт, ну куди DecisiveStateAction.......
-    # Виправляйте....
-    def __init__(self, session: Session, source: Entity, skill: Shurikens):
-        super().__init__(session, source, skill)
-        self.weapon = skill
+    def __init__(self, session: Session, source: Entity, weapon: Shurikens):
+        super().__init__(session, source, weapon)
+        self.weapon = weapon
 
     @property
     def hidden(self) -> bool:
-        return self.weapon.ammo == 4
+        return self.weapon.ammo >= 4
 
-    def func(self, source, target):
+    def func(self, source: Entity, target: Entity):
         self.weapon.ammo = 4
         self.session.say(ls("shuriken_pickup_text").format(source.name))

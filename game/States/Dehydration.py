@@ -6,31 +6,35 @@ from VegansDeluxe.core import State
 from VegansDeluxe.core.Translator.LocalizedString import ls
 
 
-class Emptiness(State):
-    id = 'emptiness'
+class Dehydration(State):
+    id = 'dehydration'
 
     def __init__(self):
         super().__init__()
-        self.emptiness = 1
+        self.dehydration = 1
         self.active = False
+        self.triggered = False
 
-
-@RegisterState(Emptiness)
-def register(root_context: StateContext[Emptiness]):
+@RegisterState(Dehydration)
+def register(root_context: StateContext[Dehydration]):
     session: Session = root_context.session
-    target = root_context.entity
+    source = root_context.entity
     state = root_context.state
-
-    state.triggered = False
 
     @RegisterEvent(session.id, event=PreDamagesGameEvent, filters=[lambda e: state.active])
     def func(context: EventContext[PreDamagesGameEvent]):
-        if state.emptiness >= 3:
-            session.say(ls("state_emptiness_energy_loss").format(target.name, target.max_energy - 1))
-            target.max_energy -= 1
+        target = state.target
+
+        if state.dehydration >= 3:
+            health_recovered = min(1, source.max_hp - source.hp)
+            source.hp += health_recovered
+            session.say(ls("state_dehydration_hp_recovery").format(source.name, source.hp))
+
             state.active = False
-            state.emptiness = 1
+            state.dehydration = 1
         elif state.triggered:
-            session.say(ls("state_emptiness_timer").format(target.name, max(state.emptiness, 0)))
+            session.say(ls("state_dehydration_timer").format(target.name, max(state.dehydration, 0)))
 
         state.triggered = False
+
+

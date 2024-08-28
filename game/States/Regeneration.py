@@ -6,31 +6,30 @@ from VegansDeluxe.core import State
 from VegansDeluxe.core.Translator.LocalizedString import ls
 
 
-class Emptiness(State):
-    id = 'emptiness'
+class Regeneration(State):
+    id = 'regeneration'
 
     def __init__(self):
         super().__init__()
-        self.emptiness = 1
+        self.regeneration = 3
         self.active = False
 
 
-@RegisterState(Emptiness)
-def register(root_context: StateContext[Emptiness]):
+@RegisterState(Regeneration)
+def register(root_context: StateContext[Regeneration]):
     session: Session = root_context.session
-    target = root_context.entity
+    source = root_context.entity
     state = root_context.state
-
-    state.triggered = False
 
     @RegisterEvent(session.id, event=PreDamagesGameEvent, filters=[lambda e: state.active])
     def func(context: EventContext[PreDamagesGameEvent]):
-        if state.emptiness >= 3:
-            session.say(ls("state_emptiness_energy_loss").format(target.name, target.max_energy - 1))
-            target.max_energy -= 1
+        if state.regeneration <= 0:
+            health_recovered = min(1, source.max_hp - source.hp)
+            source.hp += health_recovered
+            session.say(ls("state_regeneration_hp_recovery").format(source.name, source.hp))
             state.active = False
-            state.emptiness = 1
-        elif state.triggered:
-            session.say(ls("state_emptiness_timer").format(target.name, max(state.emptiness, 0)))
+            state.regeneration = 3
+        else:
+            session.say(ls("state_regeneration_timer").format(source.name, max(state.regeneration, 0)))
+            state.regeneration -= 1
 
-        state.triggered = False

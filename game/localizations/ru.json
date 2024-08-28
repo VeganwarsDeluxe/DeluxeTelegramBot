@@ -94,36 +94,87 @@
   "elemental.reload_singularity.name": "Перезагрузить сингулярность",
   "elemental.reload_singularity.text": "⚫\uFE0F|{0} перезагружает сингулярность. Енергия восстановлена ({1})!",
 
-  "state_emptiness_energy_loss": "\uD83C\uDF86|{0} теряет энергию от опустошенности. Осталось {1} энергии.",
-  "state_emptiness_timer": "\uD83C\uDF86|{0} чуствует опустошенность. ({1})",
-
-  "state_recovery_from_weakness": "\uD83E\uDEE0|{0} восстанавливается от слабости.",
 
   "weapon_abyssal_blade_name": "Клинок бездны",
   "weapon_abyssal_blade_description": "Ближний бой, урон 1-3, точность высокая. Имеет шанс наложить опустошенность на цель, после чего ей можно понизить максимальную энергию.",
   "weapon_abyssal_blade_increase": "\uD83C\uDF86|Опустошенность усиливается!",
   "weapon_abyssal_blade_effect": "\uD83C\uDF86|{0} Опустошен!",
 
+  "state_emptiness_energy_loss": "\uD83C\uDF86|{0} теряет энергию от опустошенности. Осталось {1} энергии.",
+  "state_emptiness_timer": "\uD83C\uDF86|{0} чуствует опустошенность. ({1})",
+
+  "weapon_boomerang_name": "Бумеранг",
+  "weapon_boomerang_description": "Дальнобойное оружие, урон 1-4, возвращающееся через 2 хода.",
+  "boomerang_attack_text": "\uD83E\uDE83|{0} запускает бумеранг и наносит {1} урона {2}!",
+  "boomerang_attack_text_miss": "\uD83D\uDCA8|{0} запускает бумеранг по {1}, но не попадает.",
+  "boomerang_return_text": "\uD83E\uDE83|Бумеранг возвращается к {0} и наносит {1} урона {2}.",
+  "boomerang_return_text_miss": "\uD83D\uDCA8|Бумеранг возвращается к {0} но не попадает по {1}.",
+
+  "weapon_chainsaw_name": "Бензопила",
+  "weapon_chainsaw_description": "Оружие ближнего боя, можно потратить ход чтобы завести ",
+  "weapon_chainsaw_enable_name": "Завести бензопилу",
+  "weapon_chainsaw_jammed": "{0} пила заклинило или цепь слетела!",
+  "weapon_chainsaw_switch_text": "{0} завел бензопилу.",
+  "weapon_chainsaw_disable_text": "{0} бензопила выключилась.",
+  "weapon_chainsaw_active": "{0} пила уже заведена и будет работать еще {1} ходов.",
+
   "weapon_cursed_sword_name": "Проклятый меч",
   "weapon_cursed_sword_description": "Ближний бой, урон 1-3, точность высокая. Имеет шанс наложить на цель слабость.",
   "weapon_cursed_sword_effect": "\uD83E\uDEE0|{0} ослаблен!",
+  "weapon_cursed_sword_increase": "\uD83E\uDEE0|{0} слабость усиливается!",
+
+  "state_weakness_energy_cost_increase": "\uD83E\uDEE0|{0} потребляет на {1} энергии больше из-за слабости",
+  "state_recovery_from_weakness": "\uD83E\uDEE0|{0} восстанавливается от слабости.",
+
+  "weapon_dagger_name": "Кинжал",
+  "weapon_dagger_description": "Оружие ближнего боя. Имеет шанс наложить увечья",
+  "weapon_dagger_effect": "\uD83C\uDF86|{0} получает увечье!",
+  "weapon_dagger_increase": "\uD83C\uDF86|{0} получает ещё увечье!",
+
+  "state_mutilation_accuracy_bonus_loss": "\uD83C\uDF86|{0} теряет точность от увечий.",
+  "state_mutilation_timer": "\uD83C\uDF86|{0} чуствует боль от увечия. ({1})",
+
+  "weapon_electric_whip_name": "Электрическая плеть",
+  "weapon_electric_whip_description": "Оружие ближнего боя, позволяет нанести урон до трёх целей",
+  "weapon_electric_whip_single_target_text": "\uD83D\uDC4A|{0} бьет {1} и наносит {2} урона.",
+  "weapon_electric_whip_multiple_targets_text": "\uD83D\uDC4A|{0} бьет {1} и наносит {2} урона. Электричество задевает {3} и наносит {4} урона!",
+  "weapon_electric_whip_tertiary_targets_text": "\uD83D\uDC4A|{0} бьет {1} и наносит {2} урона. Электричество задевает {3} и {4}, и наносит {4}, {5} урона!",
+  "weapon_electric_whip_text_miss": "\uD83D\uDCA8|{0} бьет {1} но не попадает.",
+
+  "weapon_emitter_name": "Излучатель",
+  "weapon_emitter_description": "Дальний бой, урон 1-3. Имеет шанс наложить на цель голод.",
+  "weapon_emitter_effect": "\uD83D\uDE0B|{0} чуствует голод. Текущий уровень голода {1}!",
+
+  "state_recovery_from_hunger": "{0} восстановился от голода! Текущий уровень голода: {1}",
+  "hunger_reduced_by_item": "{0} использовал {1}. Уровень голода снижен до {2}.",
 
   "weapon_grenade_launcher_name": "Гранатомет",
   "weapon_grenade_launcher_description": "Дальний бой, урон 1-4, стреляет гранатами атакуя две цели",
   "grenade_grenade_launcher_text": "\uD83D\uDCA3|{0} стреляет из гранатомета! Нанесено {1} урона следующим целям: {2}.",
+  "grenade_grenade_launcher_text_miss": "\uD83D\uDCA8|{0} стреляет в {1} из гранатомета! но не попадает.",
   "molotov_grenade_launcher_text": "\uD83C\uDF78|{0} стреляет из гранатомета! {1} в огне!",
+  "molotov_grenade_launcher_text_miss": "\uD83D\uDCA8|{0} стреляет в {1} из гранатомета! но не попадает.",
   "switch_to_molotov_launcher": "Переключить на коктейль молотова",
   "switch_to_grenade_launcher": "Переключить на гранати",
 
-  "weapon_boomerang_name": "Бумеранг",
-  "weapon_boomerang_description": "Дальнобойное оружие, урон 1-4, возвращающееся через 2 хода.",
-  "boomerang_attack_text": "{0} запускает бумеранг и наносит {1} урона {2}.",
-  "boomerang_return_text": "Бумеранг возвращается к {0} и наносит {1} урона {2}.",
+  "weapon_hell_bow_name": "Адский лук",
+  "weapon_hell_bow_description": "Оружие дальнего боя, позволяет нанести урон всем целям",
+  "weapon_hell_bow_explosion_arrow_name": "Взрывная стрела",
+  "weapon_hell_bow_explosion_arrow_single_target_text": "\uD83D\uDCA5|{0} стреляет взрывной стрелой по {1} и наносит {2} урона!",
+  "weapon_hell_bow_explosion_arrow_multiple_targets_text": "\uD83D\uDCA5|{0} стреляет взрывной стрелой по {1} и наносит {2} урона. Взрыв задевает {3} и наносит всем {4} урона!",
+  "weapon_hell_bow_explosion_arrow_text_miss": "\uD83D\uDCA8|{0} стреляет взрывной стрелой по {1}, но не попадает.",
 
-  "weapon_javelin_name": "Scarlet devil",
-  "weapon_javelin_description": "Оружие ближнего боя, позволяет метнуть копьё во врага нанося +1 к урону. Копьё нужно поднять",
-  "weapon_javelin_throw_name": "Метнуть копьё",
-  "javelin_throw_text": "{0} метает копьё и наносит {1} урона {2}.",
+  "weapon_hook_name": "Крюк",
+  "weapon_hook_description": "Оружие ближнего боя, позволяет притянуть к себе цель",
+  "hook_attract_name": "Притягивание",
+  "hook_attract_text": "\uD83E\uDE9D|{0} использует крюк и притягивает {1} к себе, и наносит {2} урона!",
+  "hook_attract_text_miss":"\uD83D\uDCA8||{0} использует крюк чтобы притянуть {1}, но не попадает.",
+
+  "weapon_needle_fan_name": "Игольчатый веер",
+  "weapon_needle_fan_description": "Оружие дальнего боя, метающее иглы. Начинает бой с 1 иглой и регенерирует иглы каждый ход.",
+  "weapon_needle_fan_attack_text": "{0} метает иглы и наносит {1} урона {2}.",
+  "weapon_needle_fan_no_needles_text": "{0} не имеет игл для атаки.",
+  "weapon_needle_fan_regenerate_needles_text": "{0} восстанавливает иглы.",
 
   "weapon_shurikens_name": "Сюрикены",
   "weapon_shurikens_description": "Оружие дальнего боя, позволяет ментуть сразу два сюрикена. Сюрикены нужно подбирать",
@@ -136,26 +187,19 @@
   "switch_to_single_shuriken_text": "Выбран один сюрикен",
   "switch_shuriken_mode": "Переключить режим сюрикенов",
 
-  "weapon_needle_fan_name": "Игольчатый веер",
-  "weapon_needle_fan_description": "Оружие дальнего боя, метающее иглы. Начинает бой с 1 иглой и регенерирует иглы каждый ход.",
-  "veer_attack_text": "{0} метает иглы и наносит {1} урона {2}.",
-  "veer_no_needles_text": "{0} не имеет игл для атаки.",
-  "veer_regenerate_needles_text": "{0} восстанавливает иглы.",
+  "weapon_tomahawk_name": "Томагавк",
+  "weapon_tomahawk_description": "Оружие ближнего боя, позволяет метнуть томагавк во врага нанося +2 к урону. Томагавк нужно поднять",
+  "tomahawk_throw_name": "Метнуть томагавк",
+  "tomahawk_throw_text": "{0} метает томагавк и наносит {1} урона {2}.",
+  "tomahawk_throw_text_miss": "\uD83D\uDCA8|{0} метает томагавк в {1}, но не попадает.",
 
-  "weapon_emitter_name": "Излучатель",
-  "weapon_emitter_description": "Дальний бой, урон 1-3. Имеет шанс наложить на цель голод.",
-  "weapon_emitter_effect": "\uD83D\uDE0B|{0} чуствует голод. Текущий уровень голода {1}!",
-  "state_recovery_from_hunger": "{0} восстановился от голода! Текущий уровень голода: {1}",
-  "hunger_reduced_by_item": "{0} использовал {1}. Уровень голода снижен до {2}.",
+  "weapon_vampiric_whip_name": "Вампирический хлыст",
+  "weapon_vampiric_whip_description": "оружие ближнего боя, при атаке с шансом накладывает Иссушение. Если иссушение достигает 3 - игрок восстанавливает себе жизнь.",
+  "weapon_vampiric_whip_increase": "иссушение усиливается",
+  "weapon_vampiric_whip_effect": "иссушение начинается",
 
-  "weapon_chainsaw_name": "Бензопила",
-  "weapon_chainsaw_description": "Оружие ближнего боя, можно потратить ход чтобы завести ",
-  "weapon_chainsaw_enable_name": "Завести бензопилу",
-
-  "weapon_chainsaw_jammed": "{0} пила заклинило или цепь слетела!",
-  "weapon_chainsaw_switch_text": "{0} завел бензопилу.",
-  "weapon_chainsaw_disable_text": "{0} бензопила выключилась.",
-  "weapon_chainsaw_active": "{0} пила уже заведена и будет работать еще {1} ходов.",
+  "state_dehydration_hp_recovery": "\uD83C\uDF86|{0} восстанавливает хп благодаря иссушению. Осталось {1} хп.",
+  "state_dehydration_timer": "\uD83C\uDF86|{0} чуствует иссушение. ({1})",
 
   "skill_explosion_magic_name": "Магия взрыва",
   "skill_explosion_magic_description": "Описание в процессе",
@@ -170,27 +214,21 @@
   "skill_explosion_delay_text_3": "\uD83D\uDCAC О тьма, становящаяся мечом! Взорви моего врага в щепки и не оставь и следа!",
   "skill_explosion_delay_text_4": "\uD83D\uDCAC О ты, кто носишь имя взрыва, покажи свою истинную силу! Пусть ничего не останется на пути твоего разрушения!",
 
+  "item_cryo_grenade_name": "Крио-граната",
+  "item_cryo_grenade_text": "\n\uD83D\uDCA3\uD83E\uDDCA|{0} кидает крио-гранату! Следующие цели: {1} оглушены.",
 
-  "weapon_hook_name": "Крюк",
-  "weapon_hook_description": "Оружие ближнего боя, позволяет притянуть к себе цель",
-  "hook_attract_name": "Притягивание",
-  "hook_attract_text": "\uD83E\uDE9D|{0} использует крюк и притягивает {1} к себе, и наносит {2} урона!",
-  "hook_attract_text_miss":"\uD83D\uDCA8||{0} использует крюк чтобы притянуть {1}, но не попадает.",
+  "item_caffeine_candy_name": "Кофеиновая конфетка",
+  "item_caffeine_candy_effect": "⚡\uFE0F|Кофеиновая конфетка восстанавливает {0} 1 энергию",
+  "item_caffeine_candy_use": "\uD83C\uDF6C|{0} кушает кофеиновую конфетку",
 
-  "weapon_hell_bow_name": "Адский лук",
-  "weapon_hell_bow_description": "Оружие дальнего боя, позволяет нанести урон всем целям",
-  "weapon_hell_bow_explosion_arrow_name": "Взрывная стрела",
-  "weapon_hell_bow_explosion_arrow_single_target_text": "\uD83D\uDCA5|{0} стреляет взрывной стрелой по {1} и наносит {2} урона!",
-  "weapon_hell_bow_explosion_arrow_multiple_targets_text": "\uD83D\uDCA5|{0} стреляет взрывной стрелой по {1} и наносит {2} урона. Взрыв задевает {3} и наносит всем {4} урона!",
-  "weapon_hell_bow_explosion_arrow_text_miss": "\uD83D\uDCA8|{0} стреляет взрывной стрелой по {1}, но не попадает.",
+  "item_sour_candy_name": "Кислая конфетка",
+  "item_sour_candy_effect": "⚡\uFE0F|Кислая конфетка искажает лицо {0} таинсвенным образом увеличивая макс. энергию на 1",
+  "item_sour_candy_wear_off": "⚡\uFE0F|Лицо {0} приходит в норму, как и макс. энергия",
+  "item_sour_candy_use": "\uD83C\uDF6C|{0} кушает кислую конфетку",
 
-  "weapon_electric_whip_name": "Электрическая плеть",
-  "weapon_electric_whip_description": "Оружие ближнего боя, позволяет нанести урон до трёх целей",
-  "weapon_electric_whip_single_target_text": "\uD83D\uDC4A|{0} бьет {1} и наносит {2} урона.",
-  "weapon_electric_whip_multiple_targets_text": "\uD83D\uDC4A|{0} бьет {1} и наносит {2} урона. Электричество задевает {3} и наносит {4} урона!",
-  "weapon_electric_whip_tertiary_targets_text": "\uD83D\uDC4A|{0} бьет {1} и наносит {2} урона. Электричество задевает {3} и {4}, и наносит {4}, {5} урона!",
-  "weapon_electric_whip_text_miss": "\uD83D\uDCA8|{0} бьет {1} но не попадает."
+  "item_sweet_candy_name": "Сладкая конфетка",
+  "sweet_candy_effect": "\uD83C\uDF6C|{0} кушает сладкую конфетку",
 
-
-
+  "state_regeneration_timer": "\uD83D\uDC97|{0} Регенерирует ({1})",
+  "state_regeneration_hp_recovery": "\uD83D\uDC97|{0} Восстанавливает хп от регенерации. Осталось {1} ХП."
 }
