@@ -1,5 +1,5 @@
-from VegansDeluxe.core import RangedAttack, RegisterWeapon, Entity, AttachedAction, OwnOnly, FreeWeaponAction, \
-    PostDamageGameEvent
+from VegansDeluxe.core import PostDamageGameEvent
+from VegansDeluxe.core import RangedAttack, RegisterWeapon, Entity, AttachedAction, OwnOnly, FreeWeaponAction
 from VegansDeluxe.core.Session import Session
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Weapons.Weapon import RangedWeapon

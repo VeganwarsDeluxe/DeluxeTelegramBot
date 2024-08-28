@@ -1,19 +1,17 @@
 import random
 
-from VegansDeluxe.core.Actions.Action import DecisiveAction
+import VegansDeluxe.rebuild
 from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeWeapon, ls
 from VegansDeluxe.core import EventContext
-from VegansDeluxe.core import RegisterEvent
-
-from VegansDeluxe.core import PreDeathGameEvent
-
-from VegansDeluxe.core import Session
 from VegansDeluxe.core import OwnOnly
+from VegansDeluxe.core import PreDeathGameEvent
+from VegansDeluxe.core import RegisterEvent
+from VegansDeluxe.core import Session
+from VegansDeluxe.core.Actions.Action import DecisiveAction
 
 import game.content
-
-from .Dummy import Dummy
 from startup import engine
+from .Dummy import Dummy
 
 
 class Elemental(Dummy):
@@ -54,10 +52,12 @@ class Elemental(Dummy):
         self.weapon = random.choice(game.content.all_weapons)(session.id, self.id)
         engine.action_manager.update_entity_actions(session, self)
 
+        print(engine.action_manager.get_attached_actions(VegansDeluxe.rebuild.Adrenaline))
+
         cost = False
         while not cost:
             if self.energy <= 0:
-                action = engine.action_manager.get_action(session, self, "reload")
+                action = engine.action_manager.get_action(session, self, Singularity.id)
             else:
                 action = random.choice(engine.action_manager.get_available_actions(session, self))
             if not action:
