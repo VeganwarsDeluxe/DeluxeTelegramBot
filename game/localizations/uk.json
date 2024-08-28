@@ -113,7 +113,7 @@
   "weapon_chainsaw_name": "Бензопила",
   "weapon_chainsaw_description": "Зброя ближнього бою, можна витратити хід щоб завести",
   "weapon_chainsaw_enable_name": "Завести бензопилу",
-  "weapon_chainsaw_jammed": "{0} пила заклинило або ланцюг злетів!",
+  "weapon_chainsaw_jammed": "{0} пилу заклинило або ланцюг злетів!",
   "weapon_chainsaw_switch_text": "{0} завів бензопилу.",
   "weapon_chainsaw_disable_text": "{0} бензопила вимкнулася.",
   "weapon_chainsaw_active": "{0} пила вже заведена і буде працювати ще {1} ходів.",
@@ -123,7 +123,7 @@
   "weapon_cursed_sword_effect": "\uD83E\uDEE0|{0} ослаблений!",
   "weapon_cursed_sword_increase": "\uD83E\uDEE0|{0} слабкість посилюється!",
 
-  "state_weakness_energy_cost_increase": "\uD83E\uDEE0|{0} споживає на {1} енергії більше через слабкість",
+  "state_weakness_energy_cost_increase": "\uD83E\uDEE0|{0} споживає на {1} енергії більше через слабкість.",
   "state_recovery_from_weakness": "\uD83E\uDEE0|{0} відновлюється від слабкості.",
 
   "weapon_dagger_name": "Кинджал",
@@ -137,8 +137,8 @@
   "weapon_electric_whip_name": "Електричний батіг",
   "weapon_electric_whip_description": "Зброя ближнього бою, дозволяє завдати шкоди до трьох цілей",
   "weapon_electric_whip_single_target_text": "\uD83D\uDC4A|{0} б'є {1} і завдає {2} шкоди!",
-  "weapon_electric_whip_multiple_targets_text": "\uD83D\uDC4A|{0} б'є {1} і завдає {2} шкоди. Електрика зачіпає {3} і завдає {4} шкоди!",
-  "weapon_electric_whip_tertiary_targets_text": "\uD83D\uDC4A|{0} б'є {1} і завдає {2} шкоди. Електрика зачіпає {3} і {4}, і завдає {4}, {5} шкоди!",
+  "weapon_electric_whip_multiple_targets_text": "\uD83D\uDC4A|{0} б'є {1} і завдає {2} шкоди. Струм зачіпає {3} і завдає {4} шкоди!",
+  "weapon_electric_whip_tertiary_targets_text": "\uD83D\uDC4A|{0} б'є {1} і завдає {2} шкоди. Струм зачіпає {3} і {4}, і завдає {4}, {5} шкоди!",
   "weapon_electric_whip_text_miss": "\uD83D\uDCA8|{0} б'є {1} але не влучає.",
 
   "weapon_emitter_name": "Випромінювач",
@@ -148,16 +148,16 @@
   "hunger_reduced_by_item": "{0} використав {1}. Рівень голоду знижено до {2}.",
 
   "weapon_grenade_launcher_name": "Гранатомет",
-  "weapon_grenade_launcher_description": "Дальній бій, урон 1-4, стріляє гранатами атакуючи дві ціли",
+  "weapon_grenade_launcher_description": "Дальній бій, урон 1-4, стріляє гранатами, атакуючи до двух цілей..",
   "grenade_grenade_launcher_text": "\uD83D\uDCA3|{0} стріляє з гранатомету! Нанесено {1} урону наступним цілям: {2}.",
-  "grenade_grenade_launcher_text_miss": "\uD83D\uDCA8|{0} стріляє в {1} з гранатомета! але не влучає.",
-  "molotov_grenade_launcher_text": "\uD83C\uDF78|{0} стріляє з гранатомету! {1} у вогні!",
-  "molotov_grenade_launcher_text_miss": "\uD83D\uDCA8|{0} стріляє в {1} з гранатомета! але не влучає.",
+  "grenade_grenade_launcher_text_miss": "\uD83D\uDCA8|{0} стріляє в {1} з гранатомета, але не влучає.",
+  "molotov_grenade_launcher_text": "\uD83C\uDF78|{0} стріляє з гранатомету, {1} у вогні!",
+  "molotov_grenade_launcher_text_miss": "\uD83D\uDCA8|{0} стріляє в {1} з гранатомета, але не влучає.",
   "switch_to_molotov_launcher": "Переключити на коктейль молотова",
   "switch_to_grenade_launcher": "Переключити на гранати",
 
   "weapon_hell_bow_name": "Пекельний лук",
-  "weapon_hell_bow_description": "Зброя дальнього бою, дає змогу завдати шкоди всім цілям",
+  "weapon_hell_bow_description": "Зброя дальнього бою, дає змогу завдати шкоди всім цілям.",
   "weapon_hell_bow_explosion_arrow_name": "Вибухова стріла",
   "weapon_hell_bow_explosion_arrow_single_target_text": "\uD83D\uDCA5|{0} стріляє вибуховою стрілою по {1} і завдає {2} шкоди!",
   "weapon_hell_bow_explosion_arrow_multiple_targets_text": "\uD83D\uDCA5|{0} стріляє вибуховою стрілою по {1} і завдає {2} шкоди. Вибух зачіпає {3} і завдає всім {4} шкоди!",
@@ -187,27 +187,27 @@
   "switch_shuriken_mode": "Переключити режим сюрікенів",
 
   "weapon_tomahawk_name": "Томагавк",
-  "weapon_tomahawk_description": "Зброя ближнього бою, дає змогу метнути томагавк у ворога, завдаючи +2 до шкоди. Томагавк потрібно підняти",
+  "weapon_tomahawk_description": "Зброя ближнього бою, дає змогу метнути томагавк у ворога, завдаючи +2 до шкоди. Томагавк потрібно підняти.",
   "tomahawk_throw_name": "Метнути томагавк",
   "tomahawk_throw_text": "{0} метає томагавк і завдає {1} шкоди {2}.",
   "tomahawk_throw_text_miss": "\uD83D\uDCA8|{0} метає томагавк у {1}, але не влучає.",
 
   "weapon_vampiric_whip_name": "Вампіричний батіг",
-  "weapon_vampiric_whip_description": "зброя ближнього бою, під час атаки з шансом накладає висушування. Якщо висушування досягає 3 - гравець відновлює собі життя.",
+  "weapon_vampiric_whip_description": "Зброя ближнього бою, під час атаки з шансом накладає висушування. Якщо висушування досягає 3 - гравець відновлює собі життя.",
   "weapon_vampiric_whip_increase": "висушення посилюється",
   "weapon_vampiric_whip_effect": "висушення починається",
 
-  "state_dehydration_hp_recovery": "\uD83C\uDF86|{0} відновлює хп завдяки висушуванню. Залишилося {1} хп.",
+  "state_dehydration_hp_recovery": "\uD83C\uDF86|{0} відновлює життя завдяки висушуванню. Залишилося {1} життів.",
   "state_dehydration_timer": "\uD83C\uDF86|{0} відчуває висушення. ({1})",
 
   "skill_explosion_magic_name": "Магія вибуху",
   "skill_explosion_magic_description": "Опис в процесі",
   "skill_explosion_action_name": "Вибух",
   "skill_explosion_effect_text": "\uD83D\uDCAE|Величезна хвиля полум'я вражає {0} і завдає {1} шкоди, підпалюючи ціль. {2} падає на землю без сил.",
-  "skill_explosion_stun_text": "\uD83C\uDF00|{0} приголомшений!",
+  "skill_explosion_stun_text": "\uD83C\uDF00|{0} оглушений!",
   "skill_explosion_text": "\uD83D\uDCAC{0}: ВИБУХ!",
 
-  "skill_explosion_staff_text": "\uD83D\uDCAE|{0} дістає посох і направляє на {1}",
+  "skill_explosion_staff_text": "\uD83D\uDCAE|{0} дістає посох і направляє на {1}.",
   "skill_explosion_delay_text_1": "\uD83D\uDCAC О темрява, куди не проникає світло, о чорне полум'я, що не висвітлює темряву, почуй мій поклик. Спали все і вся, докуди дотягнеться твоя караюча долоня.",
   "skill_explosion_delay_text_2": "\uD83D\uDCAC О багряна міць, що пронизує небо! О незмірна міць, що стрясає землю! Почуй мій поклик і з'явися переді мною! Поверни весь всесвіт у первісний хаос! Нехай мій магічний потік руйнування зітре все з лиця землі!",
   "skill_explosion_delay_text_3": "\uD83D\uDCAC О темрява, що стає мечем! Підірви мого ворога на друзки і не залиш і сліду!",
@@ -217,17 +217,17 @@
   "item_cryo_grenade_text": "\n\uD83D\uDCA3\uD83E\uDDCA|{0} кидає кріо-гранату! Наступні цілі: {1} оглушені.",
 
   "item_caffeine_candy_name": "Кофеїнова цукерочка",
-  "item_caffeine_candy_effect": "⚡\uFE0F|Кофеїнова цукерочка відновлює {0} 1 енергію",
-  "item_caffeine_candy_use": "\uD83C\uDF6C|{0} їсть кофеїнову цукерочку",
+  "item_caffeine_candy_effect": "⚡\uFE0F|Кофеїнова цукерочка відновлює {0} 1 енергію.",
+  "item_caffeine_candy_use": "\uD83C\uDF6C|{0} їсть кофеїнову цукерочку.",
 
   "item_sour_candy_name": "Кисла цукерочка",
-  "item_sour_candy_effect": "⚡\uFE0F|Кисла цукерка спотворює обличчя {0} таємничим чином збільшуючи макс. енергію на 1",
-  "item_sour_candy_wear_off": "⚡\uFE0F|Обличчя {0} приходить у норму, як і макс. енергія",
-  "item_sour_candy_use": "\uD83C\uDF6C|{0} їсть кислу цукерочку",
+  "item_sour_candy_effect": "⚡\uFE0F|Кисла цукерка спотворює обличчя {0} таємничим чином збільшуючи макс. енергію на 1.",
+  "item_sour_candy_wear_off": "⚡\uFE0F|Обличчя {0} приходить у норму, як і макс. енергія.",
+  "item_sour_candy_use": "\uD83C\uDF6C|{0} їсть кислу цукерочку.",
 
   "item_sweet_candy_name": "Солодка цукерочка",
-  "sweet_candy_effect": "\uD83C\uDF6C|{0} їсть солодку цукерочку",
+  "sweet_candy_effect": "\uD83C\uDF6C|{0} їсть солодку цукерочку.",
 
-  "state_regeneration_timer": "\uD83D\uDC97|{0} Регенерує ({1})",
-  "state_regeneration_hp_recovery": "\uD83D\uDC97|{0} Відновлює хп від регенерації. Залишилося {1} ХП."
+  "state_regeneration_timer": "\uD83D\uDC97|{0} регенерує. ({1})",
+  "state_regeneration_hp_recovery": "\uD83D\uDC97|{0} Відновлює життя від регенерації. Залишилося {1} життів."
 }

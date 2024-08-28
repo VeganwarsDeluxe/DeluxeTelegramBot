@@ -141,7 +141,7 @@
   "weapon_electric_whip_tertiary_targets_text": "\uD83D\uDC4A|{0} Hits {1} and does {2} damage. Electricity hits {3} and {4}, and does {4}, {5} damage!",
   "weapon_electric_whip_text_miss": "\uD83D\uDCA8|{0} shoots {1} but doesn't hit.",
 
-  "weapon_emitter_name": "Emitter.",
+  "weapon_emitter_name": "Emitter",
   "weapon_emitter_description": "Ranged combat, damage 1-3. Has a chance to inflict starvation on the target.",
   "weapon_emitter_effect": "{uD83D\uDE0B|{0} feels hunger. Current hunger level {1}!",
   "state_recovery_from_hunger": "{0} has recovered from hunger! Current hunger level: {1}",
@@ -158,14 +158,14 @@
 
   "weapon_hell_bow_name": "Hell's bow",
   "weapon_hell_bow_description": "Ranged weapon, allows you to deal damage to all targets",
-  "weapon_hell_bow_explosion_arrow_name": "Exploding arrow",
+  "weapon_hell_bow_explosion_arrow_name": "Explosive arrow",
   "weapon_hell_bow_explosion_arrow_single_target_text": "\uD83D\uDCA5|{0} fires an explosive arrow at {1} and deals {2} damage!",
   "weapon_hell_bow_explosion_arrow_multiple_targets_text": "\uD83D\uDCA5|{0} Fires an explosive arrow at {1} and does {2} damage. The explosion hits {3} and does {4} damage to all of them!",
   "weapon_hell_bow_explosion_arrow_text_miss": "\uD83D\uDCA8|{0} fires an explosive arrow at {1}, but it doesn't hit.",
 
   "weapon_hook_name": "Hook",
   "weapon_hook_description": "A melee weapon, allows you to draw a target towards you",
-  "hook_attract_name": "Attraction",
+  "hook_attract_name": "Pull in",
   "hook_attract_text": "\uD83E\uDE9D|{0} uses a hook and pulls {1} towards you, and deals {2} damage!",
   "hook_attract_text_miss":"\uD83D\uDCA8||{0} uses the hook to pull {1} in, but it doesn't hit.",
 
@@ -187,24 +187,24 @@
   "switch_shuriken_mode": "Switch shuriken mode",
 
   "weapon_tomahawk_name": "Tomahawk",
-  "weapon_tomahawk_description": "A melee weapon that allows you to throw a tomahawk at an enemy, dealing +2 damage. The tomahawk must be raised",
+  "weapon_tomahawk_description": "A melee weapon that allows you to throw a tomahawk at an enemy, dealing +2 damage. The tomahawk must be picked up.",
   "tomahawk_throw_name": "Throw a tomahawk",
   "tomahawk_throw_text": "{0} Throws a tomahawk and deals {1} damage {2}.",
-  "tomahawk_throw_text_miss": "\uD83D\uDCA8|{0} throws a tomahawk at {1}, but it doesn't hit.",
+  "tomahawk_throw_text_miss": "\uD83D\uDCA8|{0} throws a tomahawk at {1}, but misses.",
 
   "weapon_vampiric_whip_name": "Vampiric whip",
   "weapon_vampiric_whip_description": "A melee weapon that inflicts Exhaustion when attacked with a chance. If Deterioration reaches 3, the player regains life.",
   "weapon_vampiric_whip_increase": "desiccation is increasing",
   "weapon_vampiric_whip_effect": "the desiccation begins",
 
-  "state_dehydration_hp_recovery": "\uD83C\uDF86|{0} Restores hp through desiccation. {1} hp remaining.",
+  "state_dehydration_hp_recovery": "\uD83C\uDF86|{0} Restores HP through desiccation. {1} HP remaining.",
   "state_dehydration_timer": "\uD83C\uDF86|{0} feels desiccation. ({1})",
 
-  "skill_explosion_magic_name": "The magic of explosion",
+  "skill_explosion_magic_name": "Explosion magic",
   "skill_explosion_magic_description": "Description in process",
   "skill_explosion_action_name": "Explosion",
   "skill_explosion_effect_text": "\uD83D\uDCAE|A huge wave of flame strikes {0} and deals {1} damage, setting the target on fire. {2} falls to the ground without power.",
-  "skill_explosion_stun_text": "\uD83C\uDF00|{0} Stunned!",
+  "skill_explosion_stun_text": "\uD83C\uDF00|{0} is stunned!",
   "skill_explosion_text": "\uD83D\uDCAC{0}: EXPERO-SION!",
 
   "skill_explosion_staff_text": "\uD83D\uDCAE|{0} pulls out his staff and points it at {1}",
@@ -217,17 +217,17 @@
   "item_cryo_grenade_text": "\n\uD83D\uDCA3\uD83E\uDDCA|{0} throws a cryo-grenade! The following targets: {1} stunned.",
 
   "item_caffeine_candy_name": "Caffeinated candy",
-  "item_caffeine_candy_effect": "⚡\uFE0F|Caffeine candy restores {0} 1 energy",
-  "item_caffeine_candy_use": "\uD83C\uDF6C|{0} eating caffeinated candy",
+  "item_caffeine_candy_effect": "⚡\uFE0F|Caffeine candy restores {0} 1 energy.",
+  "item_caffeine_candy_use": "\uD83C\uDF6C|{0} eating caffeinated candy.",
 
   "item_sour_candy_name": "Sour candy",
   "item_sour_candy_effect": "⚡\uFE0F|Sour Candy distorts the face {0}, thus increasing max energy by 1.",
-  "item_sour_candy_wear_off": "⚡\uFE0F|Face {0} comes to normal, as does max energy",
-  "item_sour_candy_use": "\uD83C\uDF6C|{0} is eating sour candy",
+  "item_sour_candy_wear_off": "⚡\uFE0F|Face {0} comes to normal, as does max energy.",
+  "item_sour_candy_use": "\uD83C\uDF6C|{0} is eating sour candy.",
 
   "item_sweet_candy_name": "Sweet candy",
-  "sweet_candy_effect": "\uD83C\uDF6C|{0} is eating a sweet candy",
+  "sweet_candy_effect": "\uD83C\uDF6C|{0} is eating a sweet candy.",
 
-  "state_regeneration_timer": "\uD83D\uDC97|{0} Regenerates ({1})",
-  "state_regeneration_hp_recovery": "\uD83D\uDC97|{0} Restores hp from regeneration. {1} hp remaining."
+  "state_regeneration_timer": "\uD83D\uDC97|{0} regenerates. ({1})",
+  "state_regeneration_hp_recovery": "\uD83D\uDC97|{0} Restores HP from regeneration. {1} HP remaining."
 }
