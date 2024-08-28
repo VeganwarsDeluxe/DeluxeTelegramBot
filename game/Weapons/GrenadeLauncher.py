@@ -3,7 +3,7 @@ from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
 from VegansDeluxe.core import RangedAttack, FreeWeaponAction, RegisterWeapon, Entity, Enemies, OwnOnly, AttachedAction
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Events import PostDamageGameEvent
-from VegansDeluxe.core.Sessions import Session
+from VegansDeluxe.core.Session import Session
 
 import random
 
@@ -31,11 +31,7 @@ class GrenadeLauncherAttack(RangedAttack):
         super().__init__(session, source, weapon)
         self.targets_count = 2
 
-
     def func(self, source, target):
-
-
-
         if self.weapon.is_molotov:
             self.perform_molotov_attack(source, target)
         else:
@@ -45,13 +41,7 @@ class GrenadeLauncherAttack(RangedAttack):
         base_damage = self.calculate_damage(source, target)
         source.energy = max(source.energy - self.weapon.energy_cost, 0)
 
-        targets = [target]
-        while len(targets) < self.targets_count:
-            target_pool = list(filter(lambda t: t not in targets, self.get_targets(source, Enemies())))
-            if not target_pool:
-                break
-            selected_target = random.choice(target_pool)
-            targets.append(selected_target)
+        targets = self.form_target_list(source, target)
 
         for target in targets:
             post_damage = self.publish_post_damage_event(source, target, base_damage)
@@ -65,16 +55,13 @@ class GrenadeLauncherAttack(RangedAttack):
                                                                         LocalizedList([t.name for t in targets])))
 
     def perform_molotov_attack(self, source, target):
+        # Пропоную так перевіряти попадання. calculate_damage використовує звичайні стати зброї, і поверне 0 в разі
+        # промаху.
+        base_damage = self.calculate_damage(source, target)
+
         source.energy = max(source.energy - self.weapon.energy_cost, 0)
 
-        targets = [target]
-
-        while len(targets) < self.targets_count:
-            target_pool = list(filter(lambda t: t not in targets, self.get_targets(source, Enemies())))
-            if not target_pool:
-                break
-            selected_target = random.choice(target_pool)
-            targets.append(selected_target)
+        targets = self.form_target_list(source, target)
 
         for t in targets:
             aflame = t.get_state(Aflame.id)
@@ -85,16 +72,30 @@ class GrenadeLauncherAttack(RangedAttack):
                 t.inbound_dmg.add(source, post_damage, self.session.turn)
                 source.outbound_dmg.add(source, post_damage, self.session.turn)
 
-        if targets:
+        if base_damage:
             self.session.say(ls("molotov_grenade_launcher_text")
                              .format(source.name, LocalizedList([t.name for t in targets])))
         else:
-            self.session.say(ls('molotov_grenade_launcher_text_miss'))
+            self.session.say(ls('molotov_grenade_launcher_text_miss')
+                             .format(source.name, target.name))
+
+    def form_target_list(self, source, target) -> list[Entity]:
+        targets = [target]
+
+        while len(targets) < self.targets_count:
+            target_pool = [ta for ta in self.get_targets(source, Enemies()) if ta not in targets]
+            if not target_pool:
+                break
+            selected_target = random.choice(target_pool)
+            targets.append(selected_target)
+        return targets
 
     def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
         self.event_manager.publish(message)
         return message.damage
+
+
 @AttachedAction(GrenadeLauncher)
 class SwitchGrenadeLauncher(FreeWeaponAction):
     id = 'switch_grenade_launcher'
