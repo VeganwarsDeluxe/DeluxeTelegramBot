@@ -4,7 +4,7 @@ import VegansDeluxe.core.Events.Events
 from VegansDeluxe.core.Actions.Action import DecisiveAction
 from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeAttack, MeleeWeapon, Entity, Enemies, RegisterEvent, \
     EventContext, Session, ls
-from VegansDeluxe.core import OwnOnly
+from VegansDeluxe.core import OwnOnly, PostDamageGameEvent
 from VegansDeluxe.rebuild import DamageThreshold, Aflame
 
 from startup import engine
@@ -25,7 +25,9 @@ class Beast(Dummy):
 
         self.team = 'beast'
 
-    def choose_act(self, session: Session[TelegramEntity]):
+        self.evade_cooldown_turn = 0
+
+    def choose_act(self, session: Session):
         if session.turn == 1:
             self.get_state(DamageThreshold.id).threshold = 6
 
@@ -42,6 +44,10 @@ class Beast(Dummy):
             engine.action_manager.queue_action(session, self, BeastGrowl.id)
             return
 
+        if self.energy == 0:
+            engine.action_manager.queue_action(session, self, BeastReload.id)
+            return
+
         targets = [entity for entity in self.nearby_entities if entity != self and entity.hp > 0]
         if targets:
             target = random.choice(targets)
@@ -51,13 +57,18 @@ class Beast(Dummy):
                 engine.action_manager.queue_action_instance(attack)
                 return
             else:
-                evade_action = engine.action_manager.get_action(session, self, BeastEvade.id)
+                # Если цель имеет 5 и больше энергии, проверяем кулдаун уклонения
                 if target.energy >= 5:
-                    # Проверь кулдаун перед добавлением в очередь
-                    if session.turn > evade_action.cooldown_turn:
+                    if session.turn >= self.evade_cooldown_turn:
                         engine.action_manager.queue_action(session, self, BeastEvade.id)
+                        self.evade_cooldown_turn = session.turn + 4
                         return
-
+                    else:
+                        # Кулдаун на уклонение еще активен, выбираем другое действие
+                        attack = engine.action_manager.get_action(session, self, BeastAttack.id)
+                        attack.target = target
+                        engine.action_manager.queue_action_instance(attack)
+                        return
                 else:
                     if target.energy == 0:
                         attack = engine.action_manager.get_action(session, self, BeastAttackTwo.id)
@@ -70,20 +81,8 @@ class Beast(Dummy):
                         engine.action_manager.queue_action_instance(attack)
                         return
         else:
-            # If no valid targets, the beast reloads
+            # Нет целей -- перезарядка
             engine.action_manager.queue_action(session, self, BeastReload.id)
-            return
-
-        if percentage_chance(5):
-            engine.action_manager.queue_action(session, self, BeastReload.id)
-            return
-
-        if self.energy == 0:
-            engine.action_manager.queue_action(session, self, BeastReload.id)
-            return
-
-        if percentage_chance(30):
-            engine.action_manager.queue_action(session, self, BeastEvade.id)
             return
 
 
@@ -118,24 +117,9 @@ class BeastEvade(DecisiveAction):
     name = ls("beast.evade.name")
     target_type = OwnOnly()
 
-    def __init__(self, session: Session, source: Entity):
-        super().__init__(session, source)
-        self.cooldown_turn = 0  # Инициализация кулдауна
-
-    def is_on_cooldown(self) -> bool:
-        # Проверка, находится ли действие на кулдауне
-        return self.session.turn <= self.cooldown_turn
-
     def func(self, source, target):
-        # Проверка кулдауна
-        if self.is_on_cooldown():
-            return
-
-        source.inbound_accuracy_bonus = -6
+        self.source.inbound_accuracy_bonus = -6
         self.session.say(ls("beast.evade.text").format(source.name))
-
-        # Установка кулдауна на 4 хода от текущего хода
-        self.cooldown_turn = self.session.turn + 4
 
 @AttachedAction(Beast)
 class BeastGrowl(DecisiveAction):
@@ -168,19 +152,30 @@ class BeastAttack(MeleeAttack):
 @AttachedAction(BeastWeapon)
 class BeastAttackTwo(MeleeAttack):
     id = 'Beast_attack_Two'
-    name = 'Кусать клыками'
+    name = ls("beast.AttackTwo.name")
     target_type = Enemies()
 
+
+
     def func(self, source, target):
-        # Вычисляем урон
-        lost_hp = target.max_hp - target.hp  # Потерянное здоровье цели
-        final_damage = 1 + (3 * lost_hp)  # 1 базовый урон + 3 урона за каждое потерянное ХП
 
-        target.hp = max(0, target.hp - final_damage)  # Применение урона
+        self.weapon.damage_bonus = 1
+        final_damage = self.calculate_damage(source, target)
 
-        # Сообщение о нанесении урона
-        self.session.say(f"❕|{source.name} атакует когтями {target.name}. Нанесено {final_damage} урона.")
+        post_damage = self.publish_post_damage_event(source, target, final_damage)
+        target.inbound_dmg.add(source, post_damage, self.session.turn)
+        source.outbound_dmg.add(target, post_damage, self.session.turn)
 
+
+        self.session.say(ls('beast.AttackTwo.text').format(source.name, target.name, final_damage))
+
+
+        self.weapon.damage_bonus = 0
+
+    def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
+        message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
+        self.event_manager.publish(message)
+        return message.damage
 
 @AttachedAction(BeastWeapon)
 class BeastBite(MeleeAttack):

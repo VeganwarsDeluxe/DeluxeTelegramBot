@@ -54,6 +54,38 @@
   "beast.weapon.name": "Ікла та кігті",
   "beast.weapon.attack": "❕|{source_name} кусає {target_name}! Завдано {damage} шкоди.",
   "beast.weapon.miss": "\uD83D\uDCA8|{source_name} кусає {target_name}, але не влучає.",
+  "beast.AttackTwo.name": "Атака кігтями",
+  "beast.AttackTwo.text": "❕|{source.name} атакує кігтями {target.name}. Нанесено {final_damage} шкоди",
+
+"guardian.name": "Стародавній страж|u83DuDC7E",
+ "guardian.weapon.name": "Мірний-Стук-Серця-Часів-Судного-Дня",
+ "guardian.red_heart.name": "Червоне серце",
+ "Guardian.red_heart.text": "♥️ Червоне серце активоване",
+ "Guardian.red_heart.attack.text": "♥️|{0} атакує {1}. Завдано {2} шкоди",
+ "guardian.cyan_heart.name": "Блакитне серце",
+ "guardian.cyan_heart.text": "Будь-яке серце активоване",
+ "guardian.cyan_heart.attack.text": "\uD83E\uDE75|{0} атакує {1}. Завдано {2} шкоди",
+ "guardian.orange_heart.name": "Помаранчеве серце",
+ "guardian.orange_heart.text": "\uD83E\uDDE1 Помаранчеве серце активоване",
+ "guardian.orange_heart.attack.text": "\uD83E\uDDE1|{0} атакує {1}. Завдано {2} шкоди",
+ "guardian.orange_heart.text.miss": "\uD83E\uDDE1|{0} атакує {1}, але не влучає",
+
+ "guardian.Green.Сhitin.name": "Зелене серце, такт перший",
+ "guardian.Green.Сhitin.text": "\uD83D\uDC9A|{0} закутується в щити, такт перший",
+ "guardian.Green.Heart.Growl.name": "Зелене серце, такт другий",
+ "guardian.Green.Heart.Growl.text": "\uD83D\uDC9A|{0} закутується в щити, такт другий",
+ "guardian_Green_Heart_text": "\uD83DuDC9A|{0} закутується в щити, такт третій",
+ "guardian_Green_Heart_effect": "\uD83D\uDC9A|{0} лікує {1}, {2} залишилося",
+
+ "guardian.black_heart.name": "Чорне серце",
+ "guardian.black_heart.text": "Чорне серце активоване",
+ "guardian.black_heart.attack.text": "{0} закликає чорний промінь з неба, і він б'є в {1}!",
+ "guardian.yellow_heart.name": "Жовте серце",
+ "guardian.yellow_heart.text": "жовте серце активоване",
+ "guardian.yellow_heart.attack.text": "\uD83D\uDC9B|{0} атакує {1}, вивільняючи жовте сяйво з Меча! Завдано {2} шкоди",
+ "guardian.yellow_heart.text.miss": "\uD83D\uDC9B|{0} атакує {1}, але не влучає",
+ "guardian.yellow_heart": "...жовте сяйво зникає, забираючи енергію {0}!",
+ "guardian.reload.text": "{0} перезаряджається",
 
   "slime.name": "Слизень|\uD83E\uDD57",
   "slime.number": "Слизень {0}|\uD83E\uDD57",
@@ -216,6 +248,9 @@
   "item_cryo_grenade_name": "Кріо-граната",
   "item_cryo_grenade_text": "\n\uD83D\uDCA3\uD83E\uDDCA|{0} кидає кріо-гранату! Наступні цілі: {1} оглушені.",
 
+  "skill_sweet_tooth_name": "Ласун",
+  "skill_sweet_tooth_description": "Дає три цукерки! Пам'ятай що багато солодкого шкідливо і будуть боліти зубки",
+
   "item_caffeine_candy_name": "Кофеїнова цукерочка",
   "item_caffeine_candy_effect": "⚡\uFE0F|Кофеїнова цукерочка відновлює {0} 1 енергію.",
   "item_caffeine_candy_use": "\uD83C\uDF6C|{0} їсть кофеїнову цукерочку.",
@@ -229,5 +264,51 @@
   "sweet_candy_effect": "\uD83C\uDF6C|{0} їсть солодку цукерочку.",
 
   "state_regeneration_timer": "\uD83D\uDC97|{0} регенерує. ({1})",
-  "state_regeneration_hp_recovery": "\uD83D\uDC97|{0} Відновлює життя від регенерації. Залишилося {1} життів."
+  "state_regeneration_hp_recovery": "\uD83D\uDC97|{0} Відновлює життя від регенерації. Залишилося {1} життів.",
+
+  "skill_echo_name": "Ехо",
+  "skill_echo_description": "Наступна атака має бонус 50% від завданої шкоди в попередній хід",
+
+  "item_energy_grenade_name": "Енергетична граната",
+  "item_energy_grenade_text": "\uD83D\uDCA3|{0} кидає енергетичну гранату, яка завдає {1} по {2}",
+
+  "skill_tactician_name": "Тактик",
+  "skill_tactician_description": "Дає (25%) шанс не витратити енергію на атаку.",
+  "skill_tactician_effect_text": "Тактика спрацювала",
+
+  "item_death_grenade_name": "Граната смерті",
+  "item_death_grenade_text": "\uD83D\uDCA3|{0} кидає гранату смерті в {1}, залишилося {2} хп",
+
+"skill_dash_name": "Ривок",
+ "skill_dash_description": "В процесі",
+ "skill_dash_action_name": "Ривок",
+ "dash_text": "{0} робить ривок в {1}, завдано {2} шкоди",
+ "dash_text_miss": "{0} Робить ривок в {1},але не влучає",
+
+ "skill.heroism.name": "Героїзм",
+ "skill.heroism.description": "Жертвуючи своїм життям, ви зцілюєте товаришів",
+ "skill.heroism_action.name": "Героїзм",
+ "state.heroism.hp.lost": "{0} пожертвував хп, залишилося {1} життів.",
+ "state.heroism.hp.recovery": "{0} відновив хп, залишилося {1} життів.",
+
+ "skill.final_blow.name": "Останній удар",
+ "skill.final_blow.description": "Жертвуя своїм життям, ви зносите 1 хп двом цілям",
+ "skill.final_blow_action.name": "Останній удар",
+ "state.final_blow.hp.decrease": "{0} дістає меч, збирає останні сили і робить неймовірно потужну серію ударів по {1}. Цілі втрачають 1♥\uFE0F, а {0} помре в наступному ході.",
+ "state.final_blow.death": "❤\uFE0F\u200D\uD83D\uDD25|{0} вмирає.",
+
+ "skill.toad.name": "Жаба",
+ "skill.toad.description": "Під час перекату, дозволяє віддалитися",
+
+ "state.corrosive_mucus.item.loss": "\uD83E\uDE72|{0} втратив {1}.",
+ "state.corrosive_mucus.no_item": "\uD83E\uDE72|{0} не має предметів для втрати.",
+ "state.corrosive_mucus.timer": "{0} роз'їдає слиз {1}.",
+
+ "item.mucus_in_the_bottle.name": "Слиз у пляшці",
+ "item.mucus_in_the_bottle.energy_insufficient": "\uD83E\uDE72|{0} не має достатньо енергії для використання цього предмета.",
+ "item.mucus_in_the_bottle.text": "\uD83C\uDF7E|{0} кидає слиз у пляшці, в {1}.",
+
+ "weapon.halberd.name": "Алебарда",
+ "weapon.halberd.description": "Кожна третя атака може стати критичною.",
+ "weapon.halberd.attack.critical": "{0} атакує критичною атакою по {1}, завдано {2} шкоди!"
 }

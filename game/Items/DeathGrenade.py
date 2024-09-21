@@ -28,10 +28,9 @@ class DeathGrenadeAction(DecisiveItem):
         self.tags += [ActionTag.HARMFUL]
 
     def func(self, source, target):
-        if target.energy == 0:
-            # Reduce target's HP by 1 if their energy is 0
-            target.hp = max(target.hp - 1, 0)  # Ensure HP doesn't go below 0
-            self.session.say(ls("item_death_grenade_text").format(source.name, target.name))
+        source.energy = max(source.energy - 2, 0)
+        target.hp = max(target.hp - 1, 0)
+        self.session.say(ls("item_death_grenade_text").format(source.name, target.name, target.hp))
 
     @property
     def blocked(self):

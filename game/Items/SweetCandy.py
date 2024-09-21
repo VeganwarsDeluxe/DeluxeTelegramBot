@@ -3,7 +3,7 @@ from VegansDeluxe.core import RegisterItem, At
 from VegansDeluxe.core import OwnOnly, EventContext, PostDamagesGameEvent
 from VegansDeluxe.core.Translator.LocalizedString import ls
 
-from game.States.Regeneration import Regeneration  # Исправление на правильное имя состояния
+from game.States.Regeneration import Regeneration
 
 @RegisterItem
 class SweetCandy(Item):
