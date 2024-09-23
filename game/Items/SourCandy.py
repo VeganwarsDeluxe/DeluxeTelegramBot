@@ -1,6 +1,6 @@
 from VegansDeluxe.core import Item, FreeItem, AttachedAction, ActionTag
-from VegansDeluxe.core import RegisterItem, At
 from VegansDeluxe.core import OwnOnly, EventContext, PostDamagesGameEvent
+from VegansDeluxe.core import RegisterItem, At
 from VegansDeluxe.core.Translator.LocalizedString import ls
 
 
@@ -21,7 +21,7 @@ class SourCandyAction(FreeItem):
         super().__init__(*args)
         self.tags += [ActionTag.MEDICINE]
 
-    def func(self, source, target):
+    async def func(self, source, target):
         # Увеличиваем максимальную энергию на 1
         target.max_energy += 1
         self.session.say(ls("item_sour_candy_effect").format(target.name, target.max_energy))

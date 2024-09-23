@@ -1,19 +1,19 @@
 import random
 
 import VegansDeluxe.core.Events.Events
-from VegansDeluxe.core.Actions.Action import DecisiveAction
 from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeAttack, MeleeWeapon, Entity, Enemies, RegisterEvent, \
     EventContext, Session, ls
 from VegansDeluxe.core import OwnOnly
+from VegansDeluxe.core.Actions.Action import DecisiveAction
+from VegansDeluxe.core.utils import percentage_chance
 from VegansDeluxe.rebuild import DamageThreshold, Aflame
 
 from startup import engine
-from .Dummy import Dummy
+from .NPC import NPC
 from .TelegramEntity import TelegramEntity
-from VegansDeluxe.core.utils import percentage_chance
 
 
-class Slime(Dummy):
+class Slime(NPC):
     def __init__(self, session_id: str, name=ls("slime.name")):
         super().__init__(session_id, name)
 
@@ -26,7 +26,7 @@ class Slime(Dummy):
         self.team = 'slimes'
 
         @RegisterEvent(self.session_id, event=VegansDeluxe.core.Events.PostActionsGameEvent)
-        def post_actions(context: EventContext[VegansDeluxe.core.Events.PostActionsGameEvent]):
+        async def post_actions(context: EventContext[VegansDeluxe.core.Events.PostActionsGameEvent]):
             self.get_state(Aflame.id).extinguished = True
 
     def choose_act(self, session: Session[TelegramEntity]):

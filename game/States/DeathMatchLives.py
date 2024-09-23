@@ -1,9 +1,7 @@
 from VegansDeluxe.core import RegisterState, RegisterEvent, HPLossGameEvent
-from VegansDeluxe.core import StateContext, EventContext
-from VegansDeluxe.core import PreDamagesGameEvent
 from VegansDeluxe.core import Session
 from VegansDeluxe.core import State
-from VegansDeluxe.core.Translator.LocalizedString import ls
+from VegansDeluxe.core import StateContext, EventContext
 
 
 class DeathMatchLives(State):
@@ -15,11 +13,11 @@ class DeathMatchLives(State):
 
 
 @RegisterState(DeathMatchLives)
-def register(root_context: StateContext[DeathMatchLives]):
+async def register(root_context: StateContext[DeathMatchLives]):
     session: Session = root_context.session
     source = root_context.entity
     state = root_context.state
 
     @RegisterEvent(session.id, event=HPLossGameEvent)
-    def func(context: EventContext[HPLossGameEvent]):
+    async def func(context: EventContext[HPLossGameEvent]):
         session.say("буль")

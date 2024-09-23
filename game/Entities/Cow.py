@@ -1,15 +1,17 @@
 import random
 
-from VegansDeluxe.core.Actions.Action import DecisiveAction
 from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeWeapon, ls
 from VegansDeluxe.core import FreeItem
 from VegansDeluxe.core import Item
 from VegansDeluxe.core import OwnOnly
+from VegansDeluxe.core.Actions.Action import DecisiveAction
+from VegansDeluxe.core.Actions.EntityActions import ApproachAction
+
 from startup import engine
-from .Dummy import Dummy
+from .NPC import NPC
 
 
-class Cow(Dummy):
+class Cow(NPC):
     def __init__(self, session_id: str):
         super().__init__(session_id, name=ls('cow.name'))
 
@@ -21,8 +23,8 @@ class Cow(Dummy):
 
         self.team = 'cows'
 
-    def choose_act(self, session):
-        super().choose_act(session)
+    async def choose_act(self, session):
+        await super().choose_act(session)
 
         while True:
             action = engine.action_manager.get_action(session, self, "cow_silence")
@@ -36,12 +38,11 @@ class Cow(Dummy):
 
 
 @AttachedAction(Cow)
-class CowApproach(DecisiveAction):
+class CowApproach(ApproachAction):
     id = 'cow_approach'
-    name = ls("entity.approach.name")
     target_type = OwnOnly()
 
-    def func(self, source, target):
+    async def func(self, source, target):
         source.nearby_entities = list(filter(lambda t: t != source, self.session.entities))
         for entity in source.nearby_entities:
             entity.nearby_entities.append(source) if source not in entity.nearby_entities else None
@@ -54,7 +55,7 @@ class Silence(DecisiveAction):
     name = ls("cow.silence.name")
     target_type = OwnOnly()
 
-    def func(self, source, target):
+    async def func(self, source, target):
         source.items.append(MilkItem())
 
 
@@ -64,7 +65,7 @@ class Run(DecisiveAction):
     name = ls("cow.dodge.name")
     target_type = OwnOnly()
 
-    def func(self, source, target):
+    async def func(self, source, target):
         self.source.inbound_accuracy_bonus = -5
         self.session.say(ls('cow.dodge.text').format(source.name))
 
@@ -75,7 +76,7 @@ class WalkAway(DecisiveAction):
     name = ls("cow.walk_away.name")
     target_type = OwnOnly()
 
-    def func(self, source, target):
+    async def func(self, source, target):
         for entity in source.nearby_entities:
             entity.nearby_entities.remove(source) if source in entity.nearby_entities else None
         source.nearby_entities = []
@@ -88,7 +89,7 @@ class EatGrassReload(DecisiveAction):
     name = ls("cow.eat_grass.name")
     target_type = OwnOnly()
 
-    def func(self, source, target):
+    async def func(self, source, target):
         source.energy = source.max_energy
         self.session.say(ls("cow.eat_grass.text").format(source.name, source.max_energy))
 

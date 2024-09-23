@@ -1,12 +1,9 @@
 from VegansDeluxe.core import AttachedAction, RegisterWeapon, percentage_chance
 from VegansDeluxe.core import RangedAttack
-from VegansDeluxe.core import EventContext
-from VegansDeluxe.core import PostTickGameEvent
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
-from game.States.Hunger import Hunger
 
-import random
+from game.States.Hunger import Hunger
 
 
 @RegisterWeapon
@@ -23,8 +20,8 @@ class Emitter(RangedWeapon):
 
 @AttachedAction(Emitter)
 class EmitterAttack(RangedAttack):
-    def func(self, source, target):
-        damage = super().attack(source, target)
+    async def func(self, source, target):
+        damage = await super().attack(source, target)
         if not damage.dealt:
             return damage.dealt
 

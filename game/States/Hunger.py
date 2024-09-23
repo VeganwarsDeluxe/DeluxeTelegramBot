@@ -1,11 +1,11 @@
-from VegansDeluxe.core.Actions.StateAction import DecisiveStateAction
-from VegansDeluxe.core import AttachedAction
 from VegansDeluxe.core import RegisterState, RegisterEvent
-from VegansDeluxe.core import StateContext, EventContext
-from VegansDeluxe.core import PostUpdatesGameEvent, PostDamagesGameEvent, PostTickGameEvent
+from VegansDeluxe.core import PostUpdatesGameEvent, PostTickGameEvent
+from VegansDeluxe.core import RegisterState, RegisterEvent
 from VegansDeluxe.core import Session
 from VegansDeluxe.core import State
+from VegansDeluxe.core import StateContext, EventContext
 from VegansDeluxe.core.Translator.LocalizedString import ls
+
 
 class Hunger(State):
     id = 'hunger'
@@ -14,14 +14,15 @@ class Hunger(State):
         super().__init__()
         self.hunger = 0
 
+
 @RegisterState(Hunger)
-def register(root_context: StateContext[Hunger]):
+async def register(root_context: StateContext[Hunger]):
     session: Session = root_context.session
     source = root_context.entity
     state = root_context.state
 
     @RegisterEvent(session.id, event=PostUpdatesGameEvent)
-    def apply_hunger_effects(context: EventContext[PostUpdatesGameEvent]):
+    async def apply_hunger_effects(context: EventContext[PostUpdatesGameEvent]):
         if state.hunger >= 1:
             accuracy_penalty = 1
 
@@ -46,20 +47,20 @@ def register(root_context: StateContext[Hunger]):
                     action.max_energy -= max_energy_penalty
 
     @RegisterState(Hunger)
-    def register(root_context: StateContext[Hunger]):
+    async def register(root_context: StateContext[Hunger]):
         session: Session = root_context.session
         source = root_context.entity
         state = root_context.state
 
         @RegisterEvent(session.id, event=PostTickGameEvent)
-        def skip_turn(context: EventContext[PostTickGameEvent]):
+        async def skip_turn(context: EventContext[PostTickGameEvent]):
             if state.hunger > 0:
                 state.hunger -= 5
                 if state.hunger < 0:
                     state.hunger = 0
 
         @RegisterEvent(session.id, event=PostUpdatesGameEvent)
-        def use_items(context: EventContext[PostUpdatesGameEvent]):
+        async def use_items(context: EventContext[PostUpdatesGameEvent]):
             hunger_reducing_items = {'adrenaline', 'jet', 'chitin', 'rage-serum', 'stimulator'}
 
             for item in list(source.inventory):

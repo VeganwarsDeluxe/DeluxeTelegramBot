@@ -31,14 +31,14 @@ class NeedleFanAttack(RangedAttack):
         super().__init__(session, source, weapon)
         self.register_event_handlers()
 
-    def func(self, source: Entity, target: Entity):
+    async def func(self, source: Entity, target: Entity):
         if self.weapon.current_needles > 0:
             used_needles = self.weapon.current_needles
             total_damage = (self.calculate_damage(source, target) * used_needles)
 
             source.energy = max(source.energy - self.weapon.energy_cost, 0)
 
-            post_damage = self.publish_post_damage_event(source, target, total_damage)
+            post_damage = await self.publish_post_damage_event(source, target, total_damage)
             target.inbound_dmg.add(source, post_damage, self.session.turn)
             source.outbound_dmg.add(target, post_damage, self.session.turn)
 
@@ -56,14 +56,14 @@ class NeedleFanAttack(RangedAttack):
 
                 self.weapon.current_needles = 0
 
-    def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
+    async def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
-        self.event_manager.publish(message)
+        await self.event_manager.publish(message)
         return message.damage
 
     def register_event_handlers(self):
         @At(self.session.id, turn=self.session.turn, event=PostActionsGameEvent)
-        def handle_needle_recovery(context: EventContext[PostActionsGameEvent]):
+        async def handle_needle_recovery(context: EventContext[PostActionsGameEvent]):
             self.recovery_needles()
 
     def recovery_needles(self):

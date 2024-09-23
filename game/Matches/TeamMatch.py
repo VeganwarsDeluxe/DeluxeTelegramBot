@@ -5,6 +5,7 @@ from game.Matches.BaseMatch import BaseMatch
 
 
 class TeamMatch(BaseMatch):
+    # TODO: Finish team matches.
     name = ls("matches.teams")
 
     def __init__(self, chat_id, bot):

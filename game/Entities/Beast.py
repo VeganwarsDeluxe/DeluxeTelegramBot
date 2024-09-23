@@ -1,19 +1,18 @@
 import random
 
-import VegansDeluxe.core.Events.Events
+from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeAttack, MeleeWeapon, Entity, Enemies, Session, ls
+from VegansDeluxe.core import OwnOnly
+from VegansDeluxe.core import PostDamageGameEvent
 from VegansDeluxe.core.Actions.Action import DecisiveAction
-from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeAttack, MeleeWeapon, Entity, Enemies, RegisterEvent, \
-    EventContext, Session, ls
-from VegansDeluxe.core import OwnOnly, PostDamageGameEvent
-from VegansDeluxe.rebuild import DamageThreshold, Aflame
+from VegansDeluxe.core.utils import percentage_chance
+from VegansDeluxe.rebuild import DamageThreshold
 
 from startup import engine
-from .Dummy import Dummy
+from .NPC import NPC
 from .TelegramEntity import TelegramEntity
-from VegansDeluxe.core.utils import percentage_chance
 
 
-class Beast(Dummy):
+class Beast(NPC):
     def __init__(self, session_id: str, name=ls("beast.name")):
         super().__init__(session_id, name)
 
@@ -27,14 +26,14 @@ class Beast(Dummy):
 
         self.evade_cooldown_turn = 0
 
-    def choose_act(self, session: Session):
+    async def choose_act(self, session: Session[TelegramEntity]):
         if session.turn == 1:
             self.get_state(DamageThreshold.id).threshold = 6
 
         if not self.weapon:
             self.weapon = BeastWeapon(self.session_id, self.id)
 
-        super().choose_act(session)
+        await super().choose_act(session)
 
         if self.nearby_entities != list(filter(lambda t: t != self, session.entities)) and percentage_chance(75):
             engine.action_manager.queue_action(session, self, BeastApproach.id)
@@ -92,7 +91,7 @@ class BeastApproach(DecisiveAction):
     name = ls("beast.approach.name")
     target_type = OwnOnly()
 
-    def func(self, source, target):
+    async def func(self, source, target):
         source.nearby_entities = list(filter(lambda t: t != source, self.session.entities))
         for entity in source.nearby_entities:
             if source not in entity.nearby_entities:
@@ -106,7 +105,7 @@ class BeastReload(DecisiveAction):
     name = ls("beast.reload.name")
     target_type = OwnOnly()
 
-    def func(self, source, target):
+    async def func(self, source, target):
         self.session.say(ls('beast.reload.text').format(source.name, source.max_energy))
         source.energy = source.max_energy
 
@@ -120,6 +119,7 @@ class BeastEvade(DecisiveAction):
     def func(self, source, target):
         self.source.inbound_accuracy_bonus = -6
         self.session.say(ls("beast.evade.text").format(source.name))
+
 
 @AttachedAction(Beast)
 class BeastGrowl(DecisiveAction):
@@ -155,27 +155,23 @@ class BeastAttackTwo(MeleeAttack):
     name = ls("beast.AttackTwo.name")
     target_type = Enemies()
 
-
-
-    def func(self, source, target):
+    async def func(self, source, target):
 
         self.weapon.damage_bonus = 1
         final_damage = self.calculate_damage(source, target)
 
-        post_damage = self.publish_post_damage_event(source, target, final_damage)
+        post_damage = await self.publish_post_damage_event(source, target, final_damage)
         target.inbound_dmg.add(source, post_damage, self.session.turn)
         source.outbound_dmg.add(target, post_damage, self.session.turn)
 
-
         self.session.say(ls('beast.AttackTwo.text').format(source.name, target.name, final_damage))
-
-
         self.weapon.damage_bonus = 0
 
-    def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
+    async def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
-        self.event_manager.publish(message)
+        await self.event_manager.publish(message)
         return message.damage
+
 
 @AttachedAction(BeastWeapon)
 class BeastBite(MeleeAttack):

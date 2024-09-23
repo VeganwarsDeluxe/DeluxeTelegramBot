@@ -1,8 +1,8 @@
 from VegansDeluxe.core import ls
 
+import game.content
 from game.Entities.Cow import Cow
 from game.Matches.BaseMatch import BaseMatch
-import game.content
 from startup import engine
 
 
@@ -15,9 +15,11 @@ class TestGameMatch(BaseMatch):
         self.skill_number = len(game.content.all_skills)
         self.weapon_number = len(game.content.all_weapons)
 
+    async def init_async(self):
+        await super().init_async()
         cow = Cow(self.id)
         self.session.attach_entity(cow)
-        engine.attach_states(cow, game.content.all_states)
+        await engine.attach_states(cow, game.content.all_states)
 
     async def choose_items(self):
         for player in self.not_chosen_items:

@@ -11,10 +11,10 @@ from VegansDeluxe.core.Actions.Action import DecisiveAction
 
 import game.content
 from startup import engine
-from .Dummy import Dummy
+from .NPC import NPC
 
 
-class Elemental(Dummy):
+class Elemental(NPC):
     def __init__(self, session_id: str, name=ls("elemental.name")):
         super().__init__(session_id, name=name)
 
@@ -33,7 +33,7 @@ class Elemental(Dummy):
         self.anger = False
 
         @RegisterEvent(self.session_id, event=PreDeathGameEvent, priority=5)
-        def hp_loss(context: EventContext[PreDeathGameEvent]):
+        async def hp_loss(context: EventContext[PreDeathGameEvent]):
             if context.event.canceled:
                 return
             session: Session = context.session
@@ -89,7 +89,7 @@ class WarpReality(DecisiveAction):
     name = ls("elemental.warp_reality.name")
     target_type = OwnOnly()
 
-    def func(self, source, target):
+    async def func(self, source, target):
         self.source.inbound_accuracy_bonus = -5
         self.session.say(ls("elemental.warp_reality.text").format(source.name))
 
@@ -100,6 +100,6 @@ class Singularity(DecisiveAction):
     name = ls("elemental.reload_singularity.name")
     target_type = OwnOnly()
 
-    def func(self, source, target):
+    async def func(self, source, target):
         self.session.say(ls("elemental.reload_singularity.text").format(source.name, source.max_energy))
         source.energy = source.max_energy

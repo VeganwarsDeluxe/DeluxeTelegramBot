@@ -1,7 +1,5 @@
-from VegansDeluxe.core import MeleeAttack
-import random
-
 from VegansDeluxe.core import AttachedAction, RegisterWeapon, percentage_chance
+from VegansDeluxe.core import MeleeAttack
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
 
@@ -20,17 +18,15 @@ class CursedSword(MeleeWeapon):
 
 @AttachedAction(CursedSword)
 class CursedSwordAttack(MeleeAttack):
-    def func(self, source, target):
-        damage = super().attack(source, target).dealt
+    async def func(self, source, target):
+        attack = await super().attack(source, target)
+        damage = attack.dealt
         if not damage:
             return damage
 
         # 99% chance to apply the weakness effect
         if percentage_chance(99):
-            weakness = target.get_state('weakness')
-            if not weakness:
-                weakness = Weakness()
-                target.get_state(weakness)
+            weakness = target.get_state(Weakness.id)
 
             self.session.say(ls("weapon_cursed_sword_effect").format(target.name))
             weakness.weakness += 2  # Increase the weakness stack

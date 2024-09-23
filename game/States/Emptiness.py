@@ -1,8 +1,8 @@
-from VegansDeluxe.core import RegisterState, RegisterEvent
-from VegansDeluxe.core import StateContext, EventContext
 from VegansDeluxe.core import PreDamagesGameEvent
+from VegansDeluxe.core import RegisterState, RegisterEvent
 from VegansDeluxe.core import Session
 from VegansDeluxe.core import State
+from VegansDeluxe.core import StateContext, EventContext
 from VegansDeluxe.core.Translator.LocalizedString import ls
 
 
@@ -16,7 +16,7 @@ class Emptiness(State):
 
 
 @RegisterState(Emptiness)
-def register(root_context: StateContext[Emptiness]):
+async def register(root_context: StateContext[Emptiness]):
     session: Session = root_context.session
     target = root_context.entity
     state = root_context.state
@@ -24,7 +24,7 @@ def register(root_context: StateContext[Emptiness]):
     state.triggered = False
 
     @RegisterEvent(session.id, event=PreDamagesGameEvent, filters=[lambda e: state.active])
-    def func(context: EventContext[PreDamagesGameEvent]):
+    async def func(context: EventContext[PreDamagesGameEvent]):
         if state.emptiness >= 3:
             session.say(ls("state_emptiness_energy_loss").format(target.name, target.max_energy - 1))
             target.max_energy -= 1

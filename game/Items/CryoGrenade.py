@@ -1,11 +1,11 @@
-from VegansDeluxe.core import AttachedAction, RegisterItem, ActionTag
-from VegansDeluxe.core import Entity
-from VegansDeluxe.core import Item
-from VegansDeluxe.core import DecisiveItem
 import random
 
-from VegansDeluxe.core import Session
+from VegansDeluxe.core import AttachedAction, RegisterItem, ActionTag
+from VegansDeluxe.core import DecisiveItem
 from VegansDeluxe.core import Enemies
+from VegansDeluxe.core import Entity
+from VegansDeluxe.core import Item
+from VegansDeluxe.core import Session
 from VegansDeluxe.core.Translator.LocalizedList import LocalizedList
 from VegansDeluxe.core.Translator.LocalizedString import ls
 
@@ -27,7 +27,7 @@ class CryoGrenadeAction(DecisiveItem):
         self.tags += [ActionTag.HARMFUL]
         self.range = 2
 
-    def func(self, source, target):
+    async def func(self, source, target):
         targets = []
         for _ in range(self.range):
             target_pool = list(filter(lambda t: t not in targets,

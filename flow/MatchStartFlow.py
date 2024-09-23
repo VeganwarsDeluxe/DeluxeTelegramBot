@@ -1,5 +1,4 @@
 from VegansDeluxe.core.Translator.LocalizedString import LocalizedString, ls
-from aiogram import Bot
 
 import config
 from game.Matches.BaseMatch import BaseMatch
@@ -27,7 +26,7 @@ class MatchStartFlow:
             return ls("bot.join.game_already_started")
 
         match.lobby = False
-        print(match.id)
+
         await match.choose_items()
         await match.choose_weapons()
 

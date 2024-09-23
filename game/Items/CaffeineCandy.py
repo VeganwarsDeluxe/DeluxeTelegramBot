@@ -1,6 +1,6 @@
 from VegansDeluxe.core import Item, FreeItem, AttachedAction, ActionTag
-from VegansDeluxe.core import RegisterItem, At
 from VegansDeluxe.core import OwnOnly, EventContext, PostDamagesGameEvent
+from VegansDeluxe.core import RegisterItem, At
 from VegansDeluxe.core.Translator.LocalizedString import ls
 
 
@@ -21,7 +21,7 @@ class CaffeineCandyAction(FreeItem):
         super().__init__(*args)
         self.tags += [ActionTag.MEDICINE]
 
-    def func(self, source, target):
+    async def func(self, source, target):
         def apply_energy_boost(context: EventContext[PostDamagesGameEvent]):
             energy_recovered = min(1, source.max_energy - source.energy)
             source.energy += energy_recovered

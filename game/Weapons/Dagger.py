@@ -1,10 +1,13 @@
+import random
+
 from VegansDeluxe.core import AttachedAction, RegisterWeapon
 from VegansDeluxe.core import MeleeAttack
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
+
 from game.States.Mutilation import Mutilation
 
-import random
+
 @RegisterWeapon
 class Dagger(MeleeWeapon):
     id = 'dagger'
@@ -19,7 +22,7 @@ class Dagger(MeleeWeapon):
 
 @AttachedAction(Dagger)
 class DaggerAttack(MeleeAttack):
-    def func(self, source, target):
+    async def func(self, source, target):
         damage = super().attack(source, target).dealt
         if not damage:
             return damage

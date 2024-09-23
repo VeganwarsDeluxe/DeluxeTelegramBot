@@ -14,11 +14,11 @@ class BeastDungeon(BaseMatch):
 
         self.beast_created = False
 
-    def join_session(self, user_id, user_name):
-        player = super().join_session(user_id, user_name)
+    async def join_session(self, user_id, user_name):
+        player = await super().join_session(user_id, user_name)
         player.team = 'players'
         if not self.beast_created:
             self.beast_created = True
             beast = Beast(self.id)
             self.session.attach_entity(beast)
-            engine.attach_states(beast, game.content.all_states)
+            await engine.attach_states(beast, game.content.all_states)

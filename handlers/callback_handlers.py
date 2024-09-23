@@ -6,11 +6,11 @@ from aiogram import Router
 from aiogram.types import CallbackQuery
 from aiogram.utils.formatting import Text
 
+import game.content
+from flow.MatchStartFlow import MatchStartFlow
 from handlers.callbacks.other import (WeaponInfo, StateInfo, ChooseWeapon, ChooseSkill, StartGame,
                                       Additional, ActionChoice, TargetChoice, Back)
-from flow.MatchStartFlow import MatchStartFlow
 from startup import mm, engine
-import game.content
 
 r = Router()
 
@@ -97,7 +97,7 @@ async def h(query: CallbackQuery, callback_data: ChooseSkill) -> None:
         if not variants:
             variants = game.content.all_skills
         skill = random.choice(variants)
-    engine.attach_states(player, [skill])
+    await engine.attach_states(player, [skill])
     player.skill_cycle = callback_data.cycle
 
     if callback_data.cycle >= match.skill_cycles:
@@ -131,7 +131,7 @@ async def h(query: CallbackQuery, callback_data: Additional) -> None:
         await bot.edit_message_text(ls("bot.error.player_not_found").localize(code),
                                     chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
-    kb = match.get_additional_buttons(player)
+    kb = await match.get_additional_buttons(player)
     await bot.edit_message_text(ls("bot.common.additional").localize(code),
                                 chat_id=query.message.chat.id, message_id=query.message.message_id, reply_markup=kb)
 
@@ -221,7 +221,7 @@ async def h(query: CallbackQuery, callback_data: Back) -> None:
         await bot.edit_message_text(ls("bot.error.player_not_found").localize(code),
                                     chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
-    kb = match.get_act_buttons(player)
+    kb = await match.get_act_buttons(player)
     tts = match.get_act_text(player)
     await bot.edit_message_text(tts, chat_id=query.message.chat.id, message_id=query.message.message_id, reply_markup=kb)
 
