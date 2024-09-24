@@ -1,6 +1,3 @@
-# TODO: Refactor
-
-
 class Matchmaker:
     """Matchmaker Class: Handles matches.."""
 
@@ -25,7 +22,3 @@ class Matchmaker:
             del self.matches[match.id]
             return
         return match
-
-    def join_game(self, chat_id, user_id, user_name):
-        match = self.get_match(chat_id)
-        match.join_session(user_id, user_name)

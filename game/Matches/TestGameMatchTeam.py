@@ -6,8 +6,8 @@ from game.Matches.BaseMatch import BaseMatch
 from startup import engine
 
 
-class TestGameMatch(BaseMatch):
-    name = ls("matches.test_game")
+class TestGameMatchTeam(BaseMatch):
+    name = ls("matches.test_game_team")
 
     def __init__(self, chat_id, bot):
         super().__init__(chat_id, bot)
@@ -32,3 +32,7 @@ class TestGameMatch(BaseMatch):
             if player.npc:
                 continue
             await self.bot.send_message(player.user_id, ls("test_game.items").localize(player.locale))
+
+    async def join_session(self, user_id, user_name):
+        player = super().join_session(user_id, user_name)
+        player.team = 'players'

@@ -2,16 +2,15 @@ from VegansDeluxe.core import AttachedAction, RegisterWeapon, percentage_chance
 from VegansDeluxe.core import MeleeAttack
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
-from game.States.Emptiness import Emptiness
 
-import random
+from game.States.Emptiness import Emptiness
 
 
 @RegisterWeapon
 class AbyssalBlade(MeleeWeapon):
     id = 'abyssal_blade'
-    name = ls('weapon_abyssal_blade_name')
-    description = ls('weapon_abyssal_blade_description')
+    name = ls("weapon_abyssal_blade_name")
+    description = ls("weapon_abyssal_blade_description")
 
     cubes = 3
     accuracy_bonus = 2
@@ -21,15 +20,15 @@ class AbyssalBlade(MeleeWeapon):
 
 @AttachedAction(AbyssalBlade)
 class AbyssalBladeAttack(MeleeAttack):
-    def func(self, source, target):
-        damage = super().attack(source, target).dealt
-        if not damage:
+    async def func(self, source, target):
+        damage = await super().attack(source, target)
+        if not damage.dealt:
             return damage
 
         if percentage_chance(99):
             return damage
 
-        emptiness = target.get_state(Emptiness.id)
+        emptiness = target.get_state(Emptiness)
 
         if emptiness.active:
             emptiness.emptiness += 1

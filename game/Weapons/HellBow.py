@@ -43,7 +43,7 @@ class ExplosionArrow(RangedAttack):
     def hidden(self) -> bool:
         return self.session.turn < self.weapon.cooldown_turn
 
-    def func(self, source: Entity, target: Entity):
+    async def func(self, source: Entity, target: Entity):
         if self.hidden:
             return
 
@@ -68,7 +68,7 @@ class ExplosionArrow(RangedAttack):
             if not target_pool:
                 break
             selected_target = random.choice(target_pool)
-            post_damage = self.publish_post_damage_event(source, selected_target, secondary_damage)
+            post_damage = await self.publish_post_damage_event(source, selected_target, secondary_damage)
             selected_target.inbound_dmg.add(source, post_damage, self.session.turn)
             source.outbound_dmg.add(selected_target, post_damage, self.session.turn)
             secondary_targets.append(selected_target)
@@ -100,7 +100,7 @@ class ExplosionArrow(RangedAttack):
 
         self.weapon.damage_bonus = 0
 
-    def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
+    async def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
-        self.event_manager.publish(message)
+        await self.event_manager.publish(message)
         return message.damage

@@ -1,9 +1,6 @@
-from VegansDeluxe.core.Actions.Action import DecisiveAction
-from VegansDeluxe.core import AttachedAction, ls
-from VegansDeluxe.core.Actions.EntityActions import SkipActionGameEvent, ReloadAction, SkipTurnAction, ApproachAction
+from VegansDeluxe.core import AttachedAction
+from VegansDeluxe.core.Actions.EntityActions import ReloadAction, SkipTurnAction, ApproachAction
 from VegansDeluxe.core.Entities.Entity import Entity
-
-from VegansDeluxe.core import OwnOnly
 
 
 class TelegramEntity(Entity):
@@ -25,7 +22,7 @@ class TelegramEntity(Entity):
     def user_id(self):
         return int(self.id)
 
-    def choose_act(self, session):  # method for AI
+    async def choose_act(self, session):  # method for NPCs
         pass
 
     def pre_move(self):
@@ -41,7 +38,7 @@ class ApproachAction(ApproachAction):
 
 @AttachedAction(TelegramEntity)
 class ReloadAction(ReloadAction):
-    name = ls("entity.reload.name")
+    pass
 
 
 @AttachedAction(TelegramEntity)

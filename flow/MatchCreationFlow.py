@@ -1,5 +1,4 @@
 from aiogram import Bot
-from aiogram.types import Message
 
 from game.Matches.BaseMatch import BaseMatch
 from startup import mm
@@ -22,6 +21,8 @@ class MatchCreationFlow:
             return
 
         match = self.match(self.chat_id, bot)
+        await match.init_async()
+
         match.locale = locale
         self.mm.attach_match(match)
 

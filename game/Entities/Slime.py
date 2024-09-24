@@ -1,19 +1,19 @@
 import random
 
 import VegansDeluxe.core.Events.Events
-from VegansDeluxe.core.Actions.Action import DecisiveAction
 from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeAttack, MeleeWeapon, Entity, Enemies, RegisterEvent, \
     EventContext, Session, ls
 from VegansDeluxe.core import OwnOnly
+from VegansDeluxe.core.Actions.Action import DecisiveAction
+from VegansDeluxe.core.utils import percentage_chance
 from VegansDeluxe.rebuild import DamageThreshold, Aflame
 
 from startup import engine
-from .Dummy import Dummy
+from .NPC import NPC
 from .TelegramEntity import TelegramEntity
-from VegansDeluxe.core.utils import percentage_chance
 
 
-class Slime(Dummy):
+class Slime(NPC):
     def __init__(self, session_id: str, name=ls("slime.name")):
         super().__init__(session_id, name)
 
@@ -26,17 +26,17 @@ class Slime(Dummy):
         self.team = 'slimes'
 
         @RegisterEvent(self.session_id, event=VegansDeluxe.core.Events.PostActionsGameEvent)
-        def post_actions(context: EventContext[VegansDeluxe.core.Events.PostActionsGameEvent]):
-            self.get_state(Aflame.id).extinguished = True
+        async def post_actions(context: EventContext[VegansDeluxe.core.Events.PostActionsGameEvent]):
+            self.get_state(Aflame).extinguished = True
 
-    def choose_act(self, session: Session[TelegramEntity]):
+    async def choose_act(self, session: Session[TelegramEntity]):
         if session.turn == 1:
-            self.get_state(DamageThreshold.id).threshold = 5
+            self.get_state(DamageThreshold).threshold = 5
 
         if not self.weapon:
             self.weapon = SlimeWeapon(self.session_id, self.id)
 
-        super().choose_act(session)
+        await super().choose_act(session)
 
         if self.nearby_entities != list(filter(lambda t: t != self, session.entities)) and percentage_chance(75):
             engine.action_manager.queue_action(session, self, SlimeApproach.id)
@@ -64,7 +64,7 @@ class SlimeApproach(DecisiveAction):
     name = ls("slime.approach.name")
     target_type = OwnOnly()
 
-    def func(self, source, target):
+    async def func(self, source, target):
         source.nearby_entities = list(filter(lambda t: t != source, self.session.entities))
         for entity in source.nearby_entities:
             entity.nearby_entities.append(source) if source not in entity.nearby_entities else None
@@ -74,10 +74,10 @@ class SlimeApproach(DecisiveAction):
 @AttachedAction(Slime)
 class SlimeReload(DecisiveAction):
     id = 'slime_reload'
-    name = ls('slime.reload.name')
+    name = ls("slime.reload.name")
     target_type = OwnOnly()
 
-    def func(self, source, target):
+    async def func(self, source, target):
         self.session.say(ls("slime.reload.text").format(source.name, source.max_energy))
         source.energy = source.max_energy
 
@@ -88,7 +88,7 @@ class SlimeEvade(DecisiveAction):
     name = ls("slime.evade.name")
     target_type = OwnOnly()
 
-    def func(self, source, target):
+    async def func(self, source, target):
         self.source.inbound_accuracy_bonus = -5
         self.session.say(ls("slime.evade.text").format(source.name))
 
@@ -99,14 +99,14 @@ class SlimeSlop(DecisiveAction):
     name = ls("slime.slop.name")
     target_type = OwnOnly()
 
-    def func(self, source, target):
+    async def func(self, source, target):
         self.session.say(ls("slime.slop.text").format(source.name))
 
 
 @RegisterWeapon
 class SlimeWeapon(MeleeWeapon):
     id = 'slime_weapon'
-    name = ls('slime.weapon.name')
+    name = ls("slime.weapon.name")
 
     cubes = 3
     damage_bonus = 0
@@ -126,9 +126,9 @@ class SlimeAttack(MeleeAttack):
         self.ATTACK_MESSAGE = ls("slime.weapon.attack")
         self.MISS_MESSAGE = ls("slime.weapon.miss")
 
-    def func(self, source: Slime, target: Entity):
-        damage = super().func(source, target)
-        if not damage:
+    async def func(self, source: Slime, target: Entity):
+        damage = await super().func(source, target)
+        if not damage.dealt:
             return
 
         target.energy = max(0, target.energy - 1)

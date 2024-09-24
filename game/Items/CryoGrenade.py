@@ -1,13 +1,14 @@
-from VegansDeluxe.core import AttachedAction, RegisterItem, ActionTag
-from VegansDeluxe.core import Entity
-from VegansDeluxe.core import Item
-from VegansDeluxe.core import DecisiveItem
 import random
 
-from VegansDeluxe.core import Session
+from VegansDeluxe.core import AttachedAction, RegisterItem, ActionTag
+from VegansDeluxe.core import DecisiveItem
 from VegansDeluxe.core import Enemies
+from VegansDeluxe.core import Entity
+from VegansDeluxe.core import Item
+from VegansDeluxe.core import Session
 from VegansDeluxe.core.Translator.LocalizedList import LocalizedList
 from VegansDeluxe.core.Translator.LocalizedString import ls
+from VegansDeluxe.rebuild import Stun
 
 
 @RegisterItem
@@ -27,7 +28,7 @@ class CryoGrenadeAction(DecisiveItem):
         self.tags += [ActionTag.HARMFUL]
         self.range = 2
 
-    def func(self, source, target):
+    async def func(self, source, target):
         targets = []
         for _ in range(self.range):
             target_pool = list(filter(lambda t: t not in targets,
@@ -36,7 +37,7 @@ class CryoGrenadeAction(DecisiveItem):
             if not target_pool:
                 continue
             target = random.choice(target_pool)
-            stun_state = target.get_state('stun')
+            stun_state = target.get_state(Stun)
             stun_state.stun += 2
             targets.append(target)
 

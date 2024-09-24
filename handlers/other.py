@@ -59,7 +59,7 @@ async def echo_handler(m: Message) -> None:
     except:
         await m.reply(**Text(ls("bot.join.open_pm").localize(code)).as_kwargs())
         return
-    match.join_session(m.from_user.id, m.from_user.full_name)
+    await match.join_session(m.from_user.id, m.from_user.full_name)
 
     await m.bot.send_message(m.chat.id, ls("bot.join.text").localize(match.locale).format(m.from_user.full_name))
 
@@ -82,7 +82,7 @@ async def handler(m: Message, command: CommandObject):
     if not match.lobby:
         await m.reply(ls("bot.join.game_already_started").localize(code))
         return
-    match.join_session(m.from_user.id, m.from_user.full_name)
+    await match.join_session(m.from_user.id, m.from_user.full_name)
 
     await bot.send_message(m.from_user.id, ls("bot.join.success").localize(code))
     await bot.send_message(match.chat_id, ls("bot.join.text").localize(match.locale).format(m.from_user.full_name))

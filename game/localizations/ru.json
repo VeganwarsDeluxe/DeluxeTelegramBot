@@ -1,20 +1,18 @@
 {
-  "match_end_winner_team": "Игра окончена! Победила команда {0}",
-  "match_end_no_winner": "Игра окончена! Все погибли!",
-  "match_turn_number": "Ход {0}:",
-  "match_your_items": "Ваши предметы: {0}",
-  "match_weapons_chosen": "Оружие выбрано.",
-  "match_start": "Способности выбраны, игра начинается! Выбор оружия:{0}",
-  "match_choose_weapon": "Выберите оружие:",
-  "match_choose_skill": "Выберите скилл ({0} из {1}):",
-
-
-  "buttons_back": "Назад",
-  "buttons_info": "Инфо",
-  "buttons_information": "Информация",
-  "buttons_additional": "Дополнительно",
-  "buttons_random_weapon": "Случайное оружие",
-  "buttons_random_skill": "Случайный скилл",
+  "deluxe.matches.messages.end_winner_team": "Игра окончена! Победила команда {0}",
+  "deluxe.matches.messages.end_no_winner": "Игра окончена! Все погибли!",
+  "deluxe.matches.messages.turn_number": "Ход {0}:",
+  "deluxe.matches.messages.your_items": "Ваши предметы: {0}",
+  "deluxe.matches.messages.weapons_chosen": "Оружие выбрано.",
+  "deluxe.matches.messages.start": "Способности выбраны, игра начинается! Выбор оружия:{0}",
+  "deluxe.matches.messages.choose_weapon": "Выберите оружие:",
+  "deluxe.matches.messages.choose_skill": "Выберите скилл ({0} из {1}):",
+  "deluxe.buttons.back": "Назад",
+  "deluxe.buttons.info": "Инфо",
+  "deluxe.buttons.information": "Информация",
+  "deluxe.buttons.additional": "Дополнительно",
+  "deluxe.buttons.random_weapon": "Случайное оружие",
+  "deluxe.buttons.random_skill": "Случайный скилл",
 
 
   "action_info_turn": "Ход {0}",
@@ -54,6 +52,38 @@
   "beast.weapon.name": "Клыки и когти",
   "beast.weapon.attack": "❕|{source_name} кусает {target_name}! Нанесено {damage} урона.",
   "beast.weapon.miss": "\uD83D\uDCA8|{source_name} кусает {target_name}, но не попадает.",
+  "beast.AttackTwo.name": "Атака когтями",
+  "beast.AttackTwo.text": "❕|{0} атакует когтями {1}. Нанесено {2} урона",
+
+  "guardian.name": "Древний страж|\uD83D\uDC7E",
+  "guardian.weapon.name": "Мерный-Стук-Сердца-Цасов-Судного-Дня",
+  "guardian.red_heart.name": "Красное сердце",
+  "Guardian.red_heart.text": "♥️ Красное сердце активировано",
+  "Guardian.red_heart.attack.text": "♥️|{0} атакует {1}. Нанесено {2} урона",
+  "guardian.cyan_heart.name": "Голубое сердце",
+  "guardian.cyan_heart.text": "\uD83E\uDE75 Голубое сердце активировано",
+  "guardian.cyan_heart.attack.text": "\uD83E\uDE75|{0} атакует {1}. Нанесено {2} урона",
+  "guardian.orange_heart.name": "Оранжевое сердце",
+  "guardian.orange_heart.text": "\uD83E\uDDE1 Оранжевое сердце активировано",
+  "guardian.orange_heart.attack.text": "\uD83E\uDDE1|{0} атакует {1}. Нанесено {2} урона",
+  "guardian.orange_heart.text.miss": "\uD83E\uDDE1|{0} атакует {1}, но не попадет",
+
+  "guardian.Green.Сhitin.name": "Зелёное сердце, такт первый",
+  "guardian.Green.Сhitin.text": "\uD83D\uDC9A|{0} закутывается в щиты, такт первый",
+  "guardian.Green.Heart.Growl.name": "Зелёное сердце, такт второй",
+  "guardian.Green.Heart.Growl.text": "\uD83D\uDC9A|{0} закутывается в щиты, такт второй",
+  "guardian_Green_Heart_text": "\uD83D\uDC9A|{0} закутывается в щиты, такт третий",
+  "guardian_Green_Heart_effect": "\uD83D\uDC9A|{0} лечит {1}, {2} осталось",
+
+  "guardian.black_heart.name": "Чёрное сердце",
+  "guardian.black_heart.text": "\uD83D\uDDA4 Чёрное сердце активировано",
+  "guardian.black_heart.attack.text": "{0} призывает чёрный луч с неба, и он бьёт в {1}!",
+  "guardian.yellow_heart.name": "Жёлтое сердце",
+  "guardian.yellow_heart.text": "\uD83D\uDC9B жёлтое сердце активировано",
+  "guardian.yellow_heart.attack.text": "\uD83D\uDC9B|{0} атакует {1}, высвобождая жёлтое сияние из Меча! Нанесено {2} урона",
+  "guardian.yellow_heart.text.miss": "\uD83D\uDC9B|{0} атакует {1}, но не попадет",
+  "guardian.yellow_heart": "...желтоё сияние исчезает, забирая энергию {0}!",
+  "guardian.reload.text": "{0} перезаряжается",
 
   "slime.name": "Слизень|\uD83E\uDD57",
   "slime.number": "Слизень {0}|\uD83E\uDD57",
@@ -217,6 +247,9 @@
   "item_cryo_grenade_name": "Крио-граната",
   "item_cryo_grenade_text": "\n\uD83D\uDCA3\uD83E\uDDCA|{0} кидает крио-гранату! Следующие цели: {1} оглушены.",
 
+  "skill_sweet_tooth_name": "Сладкоежка",
+  "skill_sweet_tooth_description": "Даёт три конфетки! Помни что много сладкого вредно и будут болеть зубки",
+
   "item_caffeine_candy_name": "Кофеиновая конфетка",
   "item_caffeine_candy_effect": "⚡\uFE0F|Кофеиновая конфетка восстанавливает {0} 1 энергию!",
   "item_caffeine_candy_use": "\uD83C\uDF6C|{0} кушает кофеиновую конфетку.",
@@ -230,5 +263,51 @@
   "sweet_candy_effect": "\uD83C\uDF6C|{0} кушает сладкую конфетку.",
 
   "state_regeneration_timer": "\uD83D\uDC97|{0} регенерирует. ({1})",
-  "state_regeneration_hp_recovery": "\uD83D\uDC97|{0} восстанавливает жизнь от регенерации. Осталось {1} жизней."
+  "state_regeneration_hp_recovery": "\uD83D\uDC97|{0} восстанавливает жизнь от регенерации. Осталось {1} жизней.",
+
+  "skill_echo_name": "Эхо",
+  "skill_echo_description": "Следующая атака имеет бонус 50% от нанесеного урона в предудыщий ход",
+
+  "item_energy_grenade_name": "Энергетическая граната",
+  "item_energy_grenade_text": "\uD83D\uDCA3|{0} кидает энергетическую гранату, которая наносит {1} по {2}",
+
+  "skill_tactician_name": "Тактик",
+  "skill_tactician_description": "Даёт (25%) шанс не потратить энергию на атаку.",
+  "skill_tactician_effect_text": "Тактика сработала",
+
+  "item_death_grenade_name": "Граната смерти",
+  "item_death_grenade_text": "\uD83D\uDCA3|{0} кидает гранату смерти в {1}, осталось {2} хп",
+
+  "skill_dash_name": "Рывок",
+  "skill_dash_description": "В процессе",
+  "skill_dash_action_name": "Рывок",
+  "dash_text": "{0} Делает рывок в {1}, нанесено {2} урона",
+  "dash_text_miss": "{0} Делает рывок в {1},но не попадает",
+
+  "skill.heroism.name": "Героизм",
+  "skill.heroism.description": "Жертвуя своей жизнью, вы исцеляете товарищей",
+  "skill.heroism_action.name": "Героизм",
+  "state.heroism.hp.lost": "{0} пожертвовал хп, осталось {1} жизней.",
+  "state.heroism.hp.recovery": "{0} восстановил хп, осталось {1} жизней.",
+
+  "skill.final_blow.name": "Последний удар",
+  "skill.final_blow.description": "Жертвуя своей жизнью, вы сносите 1 хп двум целям",
+  "skill.final_blow_action.name": "Последний удар",
+  "state.final_blow.hp.decrease": "{0} достаёт клинок, собирает последние силы и делает невероятно мощную серию ударов по {1}. Цели теряют 1♥\uFE0F, а {0} умрёт в следующем ходу.",
+  "state.final_blow.death": "❤\uFE0F\u200D\uD83D\uDD25|{0} умирает.",
+
+  "skill.toad.name": "Жаба",
+  "skill.toad.description": "Во время переката, позволяет отдалиться",
+
+  "state.corrosive_mucus.item.loss": "\uD83E\uDE72|{0} потерял {1}.",
+  "state.corrosive_mucus.no_item": "\uD83E\uDE72|{0} не имеет предметов для потери.",
+  "state.corrosive_mucus.timer": "\uD83E\uDE72|{0} разъедает слизь {1}.",
+
+  "item.mucus_in_the_bottle.name": "Слизь в бутылке",
+  "item.mucus_in_the_bottle.energy_insufficient": "\uD83E\uDE72|{0} не имеет достаточно энергии для использования этого предмета.",
+  "item.mucus_in_the_bottle.text": "\uD83C\uDF7E|{0} кидает слизь в бутылке, в {1}.",
+
+  "weapon.halberd.name": "Алебарда",
+  "weapon.halberd.description": "Каждая третья атака может стать критической.",
+  "weapon.halberd.attack.critical": "{0} атакует критической атакой по {1}, нанесено {2} урона!"
 }

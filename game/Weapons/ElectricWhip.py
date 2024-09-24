@@ -26,7 +26,7 @@ class ElectricWhipAttack(MeleeAttack):
         super().__init__(session, source, weapon)
         self.targets_count = 3
 
-    def func(self, source, target):
+    async def func(self, source, target):
         base_damage = self.calculate_damage(source, target)
         primary_damage = math.ceil(base_damage)
         secondary_damage = math.ceil(base_damage * 0.5)
@@ -34,7 +34,7 @@ class ElectricWhipAttack(MeleeAttack):
 
         source.energy = max(source.energy - self.weapon.energy_cost, 0)
 
-        post_damage = self.publish_post_damage_event(source, target, primary_damage)
+        post_damage = await self.publish_post_damage_event(source, target, primary_damage)
         target.inbound_dmg.add(source, post_damage, self.session.turn)
         source.outbound_dmg.add(target, post_damage, self.session.turn)
 
@@ -90,7 +90,7 @@ class ElectricWhipAttack(MeleeAttack):
                     )
                 )
 
-    def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
+    async def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
-        self.event_manager.publish(message)
+        await self.event_manager.publish(message)
         return message.damage

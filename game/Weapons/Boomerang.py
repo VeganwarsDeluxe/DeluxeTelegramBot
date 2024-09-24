@@ -41,15 +41,15 @@ class BoomerangAttack(RangedAttack):
             self.source.current_weapon = self.weapon
         return is_hidden
 
-    def func(self, source: Entity, target: Entity):
+    async def func(self, source: Entity, target: Entity):
         if self.hidden or self.weapon.is_thrown:
             return
 
-        self.attack_boomerang(source, target)
+        await self.attack_boomerang(source, target)
 
-    def attack_boomerang(self, source: Entity, target: Entity):
+    async def attack_boomerang(self, source: Entity, target: Entity):
         if source.energy < self.weapon.energy_cost:
-            self.session.say(ls('boomerang_attack_text_miss').format(source.name, target.name))
+            self.session.say(ls("boomerang_attack_text_miss").format(source.name, target.name))
             return
 
         self.weapon.throw_energy = source.energy
@@ -57,25 +57,25 @@ class BoomerangAttack(RangedAttack):
         total_damage = self.calculate_damage(source, target)
         source.energy = max(source.energy - self.weapon.energy_cost, 0)
 
-        post_damage = self.publish_post_damage_event(source, target, total_damage)
+        post_damage = await self.publish_post_damage_event(source, target, total_damage)
         target.inbound_dmg.add(source, post_damage, self.session.turn)
         source.outbound_dmg.add(target, post_damage, self.session.turn)
 
         if not total_damage:
-            self.session.say(ls('boomerang_attack_text_miss').format(source.name, target.name))
+            self.session.say(ls("boomerang_attack_text_miss").format(source.name, target.name))
         else:
             self.session.say(ls("boomerang_attack_text").format(source.name, target.name, total_damage))
 
         self.weapon.is_thrown = True
         self.weapon.return_turn = self.session.turn + self.weapon.turns_until_return
-        state = source.get_state(KnockedWeapon.id)
+        state = source.get_state(KnockedWeapon)
         state.drop_weapon(source)
 
         @At(self.session.id, turn=self.weapon.return_turn, event=PreActionsGameEvent)
-        def handle_boomerang_return(context: EventContext[PreActionsGameEvent]):
-            self.return_boomerang(source)
+        async def handle_boomerang_return(context: EventContext[PreActionsGameEvent]):
+            await self.return_boomerang(source)
 
-    def return_boomerang(self, source: Entity):
+    async def return_boomerang(self, source: Entity):
         if self.weapon.throw_energy == 0:
             self.session.say(ls("boomerang_return_text_miss").format(source.name, "the wind"))
             self.weapon.is_thrown = False
@@ -94,7 +94,7 @@ class BoomerangAttack(RangedAttack):
 
         total_damage = self.calculate_damage(source, target)
 
-        post_damage = self.publish_post_damage_event(source, target, total_damage)
+        post_damage = await self.publish_post_damage_event(source, target, total_damage)
         target.inbound_dmg.add(source, post_damage, self.session.turn)
         source.outbound_dmg.add(target, post_damage, self.session.turn)
 
@@ -110,7 +110,7 @@ class BoomerangAttack(RangedAttack):
 
         self.weapon.throw_energy = 0
 
-    def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
+    async def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
-        self.event_manager.publish(message)
+        await self.event_manager.publish(message)
         return message.damage

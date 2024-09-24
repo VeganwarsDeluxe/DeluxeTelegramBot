@@ -1,8 +1,8 @@
-from VegansDeluxe.core import RegisterState, RegisterEvent
-from VegansDeluxe.core import StateContext, EventContext
 from VegansDeluxe.core import PreDamagesGameEvent
+from VegansDeluxe.core import RegisterState, RegisterEvent
 from VegansDeluxe.core import Session
 from VegansDeluxe.core import State
+from VegansDeluxe.core import StateContext, EventContext
 from VegansDeluxe.core.Translator.LocalizedString import ls
 
 
@@ -16,13 +16,13 @@ class Regeneration(State):
 
 
 @RegisterState(Regeneration)
-def register(root_context: StateContext[Regeneration]):
+async def register(root_context: StateContext[Regeneration]):
     session: Session = root_context.session
     source = root_context.entity
     state = root_context.state
 
     @RegisterEvent(session.id, event=PreDamagesGameEvent, filters=[lambda e: state.active])
-    def func(context: EventContext[PreDamagesGameEvent]):
+    async def func(context: EventContext[PreDamagesGameEvent]):
         if state.regeneration <= 0:
             health_recovered = min(1, source.max_hp - source.hp)
             source.hp += health_recovered

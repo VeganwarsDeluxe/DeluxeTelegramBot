@@ -33,7 +33,7 @@ class ExplosionMagic(Skill):
 
 
 @RegisterState(ExplosionMagic)
-def register(root_context: StateContext[ExplosionMagic]):
+async def register(root_context: StateContext[ExplosionMagic]):
     session: Session = root_context.session
     source = root_context.entity
 
@@ -53,39 +53,39 @@ class Explosion(DecisiveStateAction):
     def hidden(self) -> bool:
         return self.session.turn < self.state.cooldown_turn
 
-    def func(self, source: Entity, target: Entity):
+    async def func(self, source: Entity, target: Entity):
         self.session.say(ls("skill_explosion_staff_text").format(source.name, target.name))
         random_text = random.choice(self.state.preparation_texts)
         self.session.say(random_text.format(source.name))
 
-        stun_state = source.get_state(Stun.id)
+        stun_state = source.get_state(Stun)
         stun_state.stun += 3
 
         self.state.cooldown_turn = self.session.turn + 12
 
         @At(self.session.id, turn=self.session.turn + 1, event=PreActionsGameEvent)
-        def apply_explosion(context: EventContext[PreActionsGameEvent]):
+        async def apply_explosion(context: EventContext[PreActionsGameEvent]):
             calculated_damage = self.state.damage
-            displayed_damage = self.publish_pre_damage_event(source, target, calculated_damage)
+            displayed_damage = await self.publish_pre_damage_event(source, target, calculated_damage)
 
             source.energy = max(0, source.energy - 10)
             self.session.say(ls("skill_explosion_stun_text").format(source.name))
 
-            aflame = target.get_state(Aflame.id)
+            aflame = target.get_state(Aflame)
             aflame.add_flame(self.session, target, source, 6)
             self.session.say(ls("skill_explosion_text").format(source.name))
             self.session.say(ls("skill_explosion_effect_text").format(target.name, displayed_damage, source.name))
 
-            dealt_damage = self.publish_post_damage_event(source, target, displayed_damage)
+            dealt_damage = await self.publish_post_damage_event(source, target, displayed_damage)
             target.inbound_dmg.add(source, dealt_damage, self.session.turn)
             source.outbound_dmg.add(target, dealt_damage, self.session.turn)
 
-    def publish_post_damage_event(self, source, target, displayed_damage):
+    async def publish_post_damage_event(self, source, target, displayed_damage):
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, displayed_damage)
-        self.event_manager.publish(message)
+        await self.event_manager.publish(message)
         return message.damage
 
-    def publish_pre_damage_event(self, source, target, calculated_damage):
+    async def publish_pre_damage_event(self, source, target, calculated_damage):
         message = PreDamageGameEvent(self.session.id, self.session.turn, source, target, calculated_damage)
-        self.event_manager.publish(message)
+        await self.event_manager.publish(message)
         return message.damage

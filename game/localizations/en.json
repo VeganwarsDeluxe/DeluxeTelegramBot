@@ -1,32 +1,24 @@
 {
-  "match_end_winner_team": "Game over! Team {0} is the winner.",
-  "match_end_no_winner": "Game over! Everyone is dead!",
-  "match_turn_number": "Turn {0}:",
-  "match_your_items": "Your items: {0}",
-  "match_weapons_chosen": "Weapons selected.",
-  "match_start": "Abilities selected, game starts! Weapon selection:{0}",
-  "match_choose_weapon": "Choose a weapon;",
-  "match_choose_skill": "Choose an ability ({0} of {1}):",
-
-
-  "buttons_back": "Back",
-  "buttons_info": "Info",
-  "buttons_information": "Information",
-  "buttons_additional": "Additional",
-  "buttons_random_weapon": "Random weapon",
-  "buttons_random_skill": "Random skill",
+  "deluxe.matches.messages.end_winner_team": "Game over! Team {0} is the winner.",
+  "deluxe.matches.messages.end_no_winner": "Game over! Everyone is dead!",
+  "deluxe.matches.messages.turn_number": "Turn {0}:",
+  "deluxe.matches.messages.your_items": "Your items: {0}",
+  "deluxe.matches.messages.weapons_chosen": "Weapons selected.",
+  "deluxe.matches.messages.start": "Abilities selected, game starts! Weapon selection:{0}",
+  "deluxe.matches.messages.choose_weapon": "Choose a weapon;",
+  "deluxe.matches.messages.choose_skill": "Choose an ability ({0} of {1}):",
+  "deluxe.buttons.back": "Back",
+  "deluxe.buttons.info": "Info",
+  "deluxe.buttons.information": "Information",
+  "deluxe.buttons.additional": "Additional",
+  "deluxe.buttons.random_weapon": "Random weapon",
+  "deluxe.buttons.random_skill": "Random skill",
 
 
   "action_info_turn": "Turn {0}",
   "action_info_hp": "{0}|{1} HP. Max: {2}",
   "action_info_energy": "{0}|{1} energy. Max: {2}",
   "action_info_hit_chance": "\uD83C\uDFAF|Hit probability is {0}%",
-
-  "entity.approach.name": "Approach",
-  "entity.approach.text": "\uD83D\uDC63|{0} approaches the enemy closely.",
-  "entity.reload.name": "Reload",
-  "entity.skip.name": "Skip",
-  "entity.skip.text": "⬇||{0} skips the turn.",
 
   "matches.basic": "Normal battle",
   "matches.elemental": "Elemental dungeon",
@@ -54,6 +46,38 @@
   "beast.weapon.name": "Fangs and Claws",
   "beast.weapon.attack": "❕||{source_name} bites {target_name}! {damage} damage has been done.",
   "beast.weapon.miss": "\uD83D\uDCA8|{source_name} bites {target_name} but fails to hit.",
+  "beast.AttackTwo.name": "Claw Attack",
+  "beast.AttackTwo.text": "❕|{source_name} attacks with claws {target_name}. {final_damage} damage done",
+
+"guardian.name": "Ancient Guardian|\uD83D\uDC7E",
+"guardian.weapon.name": "Measured-Beating-of-the-Heart-of-Tsasov-Doomsday",
+"guardian.red_heart.name": "Red Heart",
+"Guardian.red_heart.text": "♥️ Red Heart activated",
+"Guardian.red_heart.attack.text": "♥️|{0} attacks {1}. Deals {2} damage",
+"guardian.cyan_heart.name": "Blue Heart",
+"guardian.cyan_heart.text": "\uD83E\uDE75 Blue Heart activated",
+"guardian.cyan_heart.attack.text": "\uD83E\uDE75|{0} attacks {1}. Deals {2} damage",
+"guardian.orange_heart.name": "Orange Heart",
+"guardian.orange_heart.text": "\uD83E\uDDE1 Orange Heart activated",
+"guardian.orange_heart.attack.text": "\uD83E\uDDE1|{0} attacks {1}. Deals {2} damage",
+"guardian.orange_heart.text.miss": "\uD83E\uDDE1|{0} attacks {1}, but misses",
+
+"guardian.Green.Сhitin.name": "Green Heart, beat one",
+"guardian.Green.Сhitin.text": "\uD83D\uDC9A|{0} wraps itself in shields, beat one",
+"guardian.Green.Heart.Growl.name": "Green Heart, beat two",
+"guardian.Green.Heart.Growl.text": "\uD83D\uDC9A|{0} wraps himself in shields, beat two",
+"guardian_Green_Heart_text": "\uD83D\uDC9A|{0} wraps himself in shields, beat three",
+"guardian_Green_Heart_effect": "\uD83D\uDC9A|{0} heals {1}, {2} remaining",
+
+"guardian.black_heart.name": "Black Heart",
+"guardian.black_heart.text": "\uD83D\uDDA4 Black Heart activated",
+"guardian.black_heart.attack.text": "{0} summons a black beam from the sky, and it hits {1}!",
+"guardian.yellow_heart.name": "Yellow Heart",
+"guardian.yellow_heart.text": "\uD83D\uDC9B Yellow Heart activated",
+"guardian.yellow_heart.attack.text": "\uD83D\uDC9B|{0} attacks {1}, releasing yellow light from the Sword! Deals {2} damage",
+"guardian.yellow_heart.text.miss": "\uD83D\uDC9B|{0} attacks {1}, but misses",
+"guardian.yellow_heart": "...the yellow light disappears, taking {0}'s energy!",
+"guardian.reload.text": "{0} is recharging",
 
   "slime.name": "Slime|\uD83E\uDD57",
   "slime.number": "Slime {0}|\uD83E\uDD57",
@@ -216,6 +240,9 @@
   "item_cryo_grenade_name": "Cryo-grenade",
   "item_cryo_grenade_text": "\n\uD83D\uDCA3\uD83E\uDDCA|{0} throws a cryo-grenade! The following targets: {1} stunned.",
 
+  "skill_sweet_tooth_name": "Sweet tooth",
+  "skill_sweet_tooth_description": "Gives you three candy bars! Remember that too much sweets are bad for you and your teeth will hurt",
+
   "item_caffeine_candy_name": "Caffeinated candy",
   "item_caffeine_candy_effect": "⚡\uFE0F|Caffeine candy restores {0} 1 energy.",
   "item_caffeine_candy_use": "\uD83C\uDF6C|{0} eating caffeinated candy.",
@@ -229,5 +256,50 @@
   "sweet_candy_effect": "\uD83C\uDF6C|{0} is eating a sweet candy.",
 
   "state_regeneration_timer": "\uD83D\uDC97|{0} regenerates. ({1})",
-  "state_regeneration_hp_recovery": "\uD83D\uDC97|{0} Restores HP from regeneration. {1} HP remaining."
+  "state_regeneration_hp_recovery": "\uD83D\uDC97|{0} Restores HP from regeneration. {1} HP remaining.",
+
+  "skill_echo_name": "Echo",
+  "skill_echo_description": "The next attack has a 50% bonus to the damage dealt in the previous turn.",
+
+  "item_energy_grenade_name": "Energy grenade",
+  "item_energy_grenade_text": "\uD83D\uDCA3|{0} throws an energy grenade, which deals {1} to {2}",
+
+  "skill_tactician_name": "Tactician",
+  "skill_tactician_description": "Gives (25%) chance not to spend energy on an attack.",
+  "skill_tactician_effect_text": "Tactic worked",
+
+  "item_death_grenade_name": "Grenade of death",
+  "item_death_grenade_text": "\uD83D\uDCA3|{0} throws a grenade of death at {1}, {2} hp remaining",
+
+  "skill_dash_name": "Dash",
+  "skill_dash_description": "description",
+  "skill_dash_action_name": "Dash",
+  "dash_text": "{0} Makes a dash to {1}, dealing {2} damage",
+  "dash_text_miss": "{0} He makes a dash for the {1} but doesn't hit it.",
+
+  "skill.heroism.name": "Heroism",
+  "skill.heroism.description": "By sacrificing your life, you heal your comrades",
+  "skill.heroism_action.name": "Heroism",
+  "state.heroism.hp.lost": "{0} sacrificed hp, {1} lives left..",
+  "state.heroism.hp.recovery": "{0} regained hp, {1} life left..",
+
+  "skill.final_blow.name": "Final blow",
+  "skill.final_blow.description": "By sacrificing your life, you take 1 xp to two targets",
+  "skill.final_blow_action.name": "Final blow",
+  "state.final_blow.hp.decrease": "{0} pulls out his blade, gathers his last strength and makes an incredibly powerful series of blows on {1}. The targets lose 1♥\uFE0F, and {0} will die next turn.",
+  "state.final_blow.death": "❤\uFE0F\u200D\uD83D\uDD25|{0} dies.",
+
+  "skill.toad.name": "Toad",
+  "skill.toad.description": "During a roll, allows you to distance yourself",
+
+  "state.corrosive_mucus.item.loss": "\uD83E\uDE72|{0} lost {1}.",
+  "state.corrosive_mucus.no_item": "\uD83E\uDE72|{0} has no items to lose.",
+  "state.corrosive_mucus.timer": "\uD83E\uDE72|{0} corrodes mucus {1}.",
+
+  "item.mucus_in_the_bottle.name": "Slime in the bottle",
+  "item.mucus_in_the_bottle.text": "\uD83C\uDF7E|{0} throws slime in the bottle, in the {1}.",
+
+  "weapon.halberd.name": "Halberd",
+  "weapon.halberd.description": "One in three attacks can be critical.",
+  "weapon.halberd.attack.critical": "{0} attacks with a critical attack on {1}, dealing {2} damage!"
 }

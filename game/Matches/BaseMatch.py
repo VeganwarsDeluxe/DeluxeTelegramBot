@@ -1,20 +1,20 @@
 import random
 from typing import Union
 
+from VegansDeluxe.core import PreMoveGameEvent, Weapon, Session, ActionTag, EventContext
+from VegansDeluxe.core.Question.QuestionEvents import QuestionGameEvent
 from VegansDeluxe.core.States import State
 from VegansDeluxe.core.Translator.LocalizedString import LocalizedString, ls
-
-from VegansDeluxe.core import PreMoveGameEvent, Weapon, Session, ActionTag
+from VegansDeluxe.rebuild import Stun
 from aiogram import Bot
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 
+import game.content
+from game.Entities.TelegramEntity import TelegramEntity
 from handlers.callbacks.other import (WeaponInfo, StateInfo, ChooseWeapon, ChooseSkill,
                                       Additional, ActionChoice, TargetChoice, Back)
-from game.Entities.TelegramEntity import TelegramEntity
 from startup import engine
 from utils import KLineMerger, smartsplit
-
-import game.content
 
 
 class BaseMatch:
@@ -24,8 +24,8 @@ class BaseMatch:
         self.bot: Bot = bot
 
         self.id: str = str(chat_id)
+        self.session: Session = Session(engine.event_manager)
         self.chat_id = chat_id
-        self.session: Session[TelegramEntity] = self.create_session(self.id)
         self.locale = ""
 
         self.lobby_message: Message | None = None
@@ -41,6 +41,22 @@ class BaseMatch:
         self.cowed = False
 
         self.action_indexes = []
+
+        self.detached = False  # TODO: Temporary fix. Figure out why are we detaching session for every entity.
+
+    async def init_async(self):
+        self.session: Session[TelegramEntity] = await self.create_session(self.id)
+        engine.event_manager.at_event(event=QuestionGameEvent, session_id=self.session.id,
+                                      unique_type=QuestionGameEvent,
+                                      callback_wrapper=self.handling_question)
+
+    async def handling_question(self, context: EventContext[QuestionGameEvent]):
+        print("Question handled!")
+        player = self.get_player(context.event.entity_id)
+        if player.npc:
+            return
+
+        await self.bot.send_message(player.user_id, context.event.question.text)
 
     @property
     def unready_players(self) -> list[TelegramEntity]:
@@ -68,25 +84,25 @@ class BaseMatch:
         if result:
             return result[0]
 
-    def join_session(self, user_id, user_name) -> TelegramEntity:
+    async def join_session(self, user_id, user_name) -> TelegramEntity:
         player = TelegramEntity(self.session.id, user_name, user_id)
         player.energy, player.max_energy, player.hp, player.max_hp = 5, 5, 4, 4
         self.session.attach_entity(player)
-        engine.attach_states(player, game.content.all_states)
+        await engine.attach_states(player, game.content.all_states)
         return player
 
-    def create_session(self, chat_id: str) -> Session[TelegramEntity]:
+    async def create_session(self, chat_id: str) -> Session[TelegramEntity]:
         session = Session(engine.event_manager)
         session.id = chat_id
-        engine.attach_session(session)
+        await engine.attach_session(session)
         return session
 
     async def send_end_game_messages(self):
         """Sends messages when the game ends."""
         if list(self.session.alive_entities):
-            tts = ls("match_end_winner_team").format(list(self.session.alive_entities)[0].name)
+            tts = ls("deluxe.matches.messages.end_winner_team").format(list(self.session.alive_entities)[0].name)
         else:
-            tts = ls("match_end_no_winner")
+            tts = ls("deluxe.matches.messages.end_no_winner")
         await self.broadcast_to_players(tts)
         await self.send_message_to_chat(tts)
 
@@ -102,7 +118,7 @@ class BaseMatch:
                     callback_data=TargetChoice(game_id=self.id, target_id=target.id, index=index).pack(),
                 )])
         kb.append([InlineKeyboardButton(
-            text=ls('buttons_back').localize(code), callback_data=Back(game_id=self.id).pack()
+            text=ls("deluxe.buttons.back").localize(code), callback_data=Back(game_id=self.id).pack()
         )])
 
         kb = InlineKeyboardMarkup(inline_keyboard=kb)
@@ -191,7 +207,7 @@ class BaseMatch:
         return KLineMerger.merge_lines(text.split("\n"))
 
     async def send_act_buttons(self, player):
-        kb = self.get_act_buttons(player)
+        kb = await self.get_act_buttons(player)
         tts = self.get_act_text(player)
 
         await self.bot.send_message(player.user_id, tts, reply_markup=kb)
@@ -215,41 +231,45 @@ class BaseMatch:
 
     async def start_game(self):
         """Starts a game."""
-        self.session.start()
+        await self.session.start()
         await self.pre_move()
 
-    def update_game_actions(self):
+    async def update_game_actions(self):
         """Updates actions for a game."""
-        engine.action_manager.update_actions(self.session)
+        await engine.action_manager.update_actions(self.session)
         self.action_indexes = []
 
-    def handle_pre_move_events(self):
+    async def handle_pre_move_events(self):
         """Handles events before a move."""
-        self.session.pre_move(), engine.event_manager.publish(PreMoveGameEvent(self.session.id, self.session.turn))
+        self.session.pre_move()
+        await engine.event_manager.publish(PreMoveGameEvent(self.session.id, self.session.turn))
 
     async def execute_actions(self):
         """Executes actions for all alive entities."""
-        for player in self.session.alive_entities:
-            if player.get_state('stun').stun:  # TODO: Hardcoded. It can be done better
-                engine.action_manager.queue_action(self.session, player, 'lay_stun')
-                player.ready = True
+        for entity in self.session.alive_entities:
+            entity: TelegramEntity
+            if entity.get_state(Stun).stun:  # TODO: Hardcoded. It can be done better
+                engine.action_manager.queue_action(self.session, entity, 'lay_stun')
+                entity.ready = True
                 if not self.unready_players:
                     await self.cycle()
-            elif player.npc:
-                player.choose_act(self.session)
+            elif entity.npc:
+                await entity.choose_act(self.session)
             else:
-                await self.send_act_buttons(player)
+                await self.send_act_buttons(entity)
 
     def get_info_for_player(self, player: TelegramEntity):
+        # TODO: Incomplete.
         code = player.locale
 
         text = f"{self.localize_text(player.name)}\n"
         text += f""
 
-    def map_buttons(self, player: TelegramEntity):  # TODO: Rethink this function. Maybe we can use action tags here?
+    async def map_buttons(self,
+                          player: TelegramEntity):  # TODO: Rethink this function. Maybe we can use action tags here?
         code = player.locale
 
-        engine.action_manager.update_entity_actions(self.session, player)
+        await engine.action_manager.update_entity_actions(self.session, player)
 
         buttons = {
             'first_row': [],
@@ -276,22 +296,23 @@ class BaseMatch:
                 buttons['additional'].append(button)
         return buttons
 
-    def get_act_buttons(self, player):
+    async def get_act_buttons(self, player):
         code = player.locale
 
-        buttons = self.map_buttons(player)
+        buttons = await self.map_buttons(player)
 
         kb = []
         buttons['first_row'].reverse()
         buttons['second_row'].append(
-            InlineKeyboardButton(text=ls('buttons_info').localize(code), callback_data=StateInfo(state_id='777').pack())
+            InlineKeyboardButton(text=ls("deluxe.buttons.info").localize(code),
+                                 callback_data=StateInfo(state_id='777').pack())
             # TODO: Huh?? 777? Pasyuk much?
         )
 
         kb.append(buttons['first_row'])
         kb.append(buttons['second_row'])
         kb.append([InlineKeyboardButton(
-            text=ls('buttons_additional').localize(code), callback_data=Additional(game_id=self.id).pack())
+            text=ls("deluxe.buttons.additional").localize(code), callback_data=Additional(game_id=self.id).pack())
         ])
         kb.append(buttons['approach_row'])
         kb.append(buttons['skip_row'])
@@ -299,10 +320,10 @@ class BaseMatch:
         kb = InlineKeyboardMarkup(inline_keyboard=kb)
         return kb
 
-    def get_additional_buttons(self, player: TelegramEntity):
+    async def get_additional_buttons(self, player: TelegramEntity):
         code = player.locale
 
-        engine.action_manager.update_entity_actions(self.session, player)
+        await engine.action_manager.update_entity_actions(self.session, player)
 
         all_buttons = []
         items = []
@@ -341,7 +362,7 @@ class BaseMatch:
         for button in item_buttons:
             kb.append([button])
         kb.append([InlineKeyboardButton(
-            text=ls('buttons_back').localize(code), callback_data=Back(game_id=self.id).pack()
+            text=ls("deluxe.buttons.back").localize(code), callback_data=Back(game_id=self.id).pack()
         )])
 
         kb = InlineKeyboardMarkup(inline_keyboard=kb)
@@ -350,6 +371,10 @@ class BaseMatch:
     async def check_game_status(self):
         """Checks the status of the game and sends end game messages if needed."""
         if not self.session.active:
+            if self.detached:
+                return
+            self.detached = True
+
             await self.send_end_game_messages()
             engine.detach_session(self.session)
             return False
@@ -357,8 +382,8 @@ class BaseMatch:
 
     async def pre_move(self):
         """Handles pre-move procedures."""
-        self.update_game_actions()
-        self.handle_pre_move_events()
+        await self.update_game_actions()
+        await self.handle_pre_move_events()
         if not await self.check_game_status():
             return
         await self.execute_actions()
@@ -368,8 +393,8 @@ class BaseMatch:
     async def cycle(self):
         if not await self.check_game_status():
             return
-        self.session.say(ls('match_turn_number').format(self.session.turn))
-        self.session.move()
+        self.session.say(ls("deluxe.matches.messages.turn_number").format(self.session.turn))
+        await self.session.move()
         await self.broadcast_logs()
         await self.pre_move()
 
@@ -389,7 +414,7 @@ class BaseMatch:
             if player.npc:
                 continue
             items = ", ".join([self.localize_text(item.name, code) for item in player.items])
-            await self.send_message_to_player(ls("match_your_items").format(items), player)
+            await self.send_message_to_player(ls("deluxe.matches.messages.your_items").format(items), player)
 
     async def choose_weapons(self):
         for player in self.not_chosen_weapon:
@@ -397,7 +422,7 @@ class BaseMatch:
                 continue
             await self.send_weapon_choice_buttons(player)
         if not self.not_chosen_weapon:
-            await self.send_message_to_chat(ls("match_weapons_chosen"))
+            await self.send_message_to_chat(ls("deluxe.matches.messages.weapons_chosen"))
             await self.choose_skills()
 
     async def choose_skills(self):
@@ -408,7 +433,7 @@ class BaseMatch:
         if not self.not_chosen_skills:
             weapons_text = '\n' + '\n'.join([f'{player.name}: {self.localize_text(player.weapon.name, self.locale)}'
                                              for player in self.session.alive_entities])
-            text = ls('match_start').format(weapons_text)
+            text = ls("deluxe.matches.messages.start").format(weapons_text)
             await self.send_message_to_chat(text)
             await self.pre_move()
 
@@ -430,17 +455,18 @@ class BaseMatch:
             kb.append(
                 [InlineKeyboardButton(text=self.localize_text(weapon.name, code),
                                       callback_data=ChooseWeapon(game_id=self.id, weapon_id=weapon.id).pack()),
-                 InlineKeyboardButton(text=ls('buttons_information').localize(code),
+                 InlineKeyboardButton(text=ls("deluxe.buttons.information").localize(code),
                                       callback_data=WeaponInfo(weapon_id=weapon.id).pack()
                                       )]
             )
-        kb.append([InlineKeyboardButton(text=ls("buttons_random_weapon").localize(code),
+        kb.append([InlineKeyboardButton(text=ls("deluxe.buttons.random_weapon").localize(code),
                                         callback_data=ChooseWeapon(game_id=self.id,
                                                                    weapon_id="random").pack())])
 
         kb = InlineKeyboardMarkup(inline_keyboard=kb)
 
-        await self.bot.send_message(player.user_id, ls("match_choose_weapon").localize(code), reply_markup=kb)
+        await self.bot.send_message(player.user_id, ls("deluxe.matches.messages.choose_weapon").localize(code),
+                                    reply_markup=kb)
 
     async def send_skill_choice_buttons(self, player, cycle=1):
         code = player.locale
@@ -462,14 +488,15 @@ class BaseMatch:
                 InlineKeyboardButton(text=skill.name.localize(),
                                      callback_data=ChooseSkill(cycle=cycle, game_id=self.id, skill_id=skill.id)
                                      .pack()),
-                InlineKeyboardButton(text=ls("buttons_information").localize(code),
+                InlineKeyboardButton(text=ls("deluxe.buttons.information").localize(code),
                                      callback_data=StateInfo(state_id=skill.id).pack())])
-        kb.append([InlineKeyboardButton(text=ls("buttons_random_skill").localize(code),
+        kb.append([InlineKeyboardButton(text=ls("deluxe.buttons.random_skill").localize(code),
                                         callback_data=ChooseSkill(cycle=cycle, game_id=self.id, skill_id="random")
                                         .pack())])
 
         kb = InlineKeyboardMarkup(inline_keyboard=kb)
 
         await self.bot.send_message(player.user_id,
-                              ls("match_choose_skill").format(cycle, self.skill_cycles).localize(code),
-                              reply_markup=kb)
+                                    ls("deluxe.matches.messages.choose_skill").format(cycle,
+                                                                                      self.skill_cycles).localize(code),
+                                    reply_markup=kb)

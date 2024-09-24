@@ -1,10 +1,9 @@
 from VegansDeluxe.core import AttachedAction, RegisterWeapon, At, percentage_chance
 from VegansDeluxe.core import FreeWeaponAction, MeleeAttack, PostTickGameEvent, Entity, PostDamageGameEvent
 from VegansDeluxe.core import OwnOnly, EventContext
+from VegansDeluxe.core.Session import Session
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
-
-from VegansDeluxe.core.Session import Session
 
 
 @RegisterWeapon
@@ -32,7 +31,7 @@ class ChainsawAttack(MeleeAttack):
     def __init__(self, session: Session, source: Entity, weapon: Chainsaw):
         super().__init__(session, source, weapon)
 
-    def func(self, source: Entity, target: Entity):
+    async def func(self, source: Entity, target: Entity):
         if percentage_chance(5):
             self.session.say(ls("weapon_chainsaw_jammed").format(source.name))
             self.weapon.WoundUp = False
@@ -52,7 +51,7 @@ class ChainsawAttack(MeleeAttack):
 
         total_damage = self.calculate_damage(source, target)
 
-        post_damage = self.publish_post_damage_event(source, target, total_damage)
+        post_damage = await self.publish_post_damage_event(source, target, total_damage)
         target.inbound_dmg.add(source, post_damage, self.session.turn)
         source.outbound_dmg.add(target, post_damage, self.session.turn)
 
@@ -68,9 +67,9 @@ class ChainsawAttack(MeleeAttack):
                                            target_name=target.name, weapon_name=self.weapon.name, damage=total_damage)
             )
 
-    def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
+    async def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
-        self.event_manager.publish(message)
+        await self.event_manager.publish(message)
         return message.damage
 
 
@@ -88,7 +87,7 @@ class WoundUpChainsaw(FreeWeaponAction):
     def name(self):
         return ls("weapon_chainsaw_enable_name")
 
-    def func(self, source, target):
+    async def func(self, source, target):
         if self.weapon.WoundUp:
             self.session.say(ls("weapon_chainsaw_active").format(source.name, self.weapon.turns_active))
             return
@@ -100,7 +99,7 @@ class WoundUpChainsaw(FreeWeaponAction):
         self.session.say(ls("weapon_chainsaw_switch_text").format(source.name))
 
         @At(self.session.id, turn=self.session.turn + 4, event=PostTickGameEvent)
-        def disable_chainsaw(context: EventContext[PostTickGameEvent]):
+        async def disable_chainsaw(context: EventContext[PostTickGameEvent]):
             self.weapon.WoundUp = False
             self.weapon.reset_stats()
             context.session.say(ls("weapon_chainsaw_disable_text").format(source.name))

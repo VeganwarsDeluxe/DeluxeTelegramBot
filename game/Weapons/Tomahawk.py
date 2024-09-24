@@ -9,6 +9,7 @@ from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
 
 from VegansDeluxe.rebuild import KnockedWeapon
 
+
 @RegisterWeapon
 class Tomahawk(MeleeWeapon):
     id = 'tomahawk'
@@ -24,6 +25,7 @@ class Tomahawk(MeleeWeapon):
         super().__init__(*args, **kwargs)
         self.cooldown_turn = 0
 
+
 @AttachedAction(Tomahawk)
 class TomahawkAttack(MeleeAttack):
     pass
@@ -38,20 +40,18 @@ class TomahawkThrow(RangedAttack):
     @property
     def hidden(self) -> bool:
         return self.session.turn < self.weapon.cooldown_turn
+
     def __init__(self, session: Session, source: Entity, weapon: Tomahawk):
         super().__init__(session, source, weapon)
 
-    def func(self, source: Entity, target: Entity):
-
+    async def func(self, source: Entity, target: Entity):
         self.weapon.damage_bonus = 2
-
         total_damage = self.calculate_damage(source, target)
-
         self.weapon.cooldown_turn = self.session.turn + 5
 
         source.energy = max(source.energy - self.weapon.energy_cost, 0)
 
-        post_damage = self.publish_post_damage_event(source, target, total_damage)
+        post_damage = await self.publish_post_damage_event(source, target, total_damage)
         target.inbound_dmg.add(source, post_damage, self.session.turn)
         source.outbound_dmg.add(target, post_damage, self.session.turn)
 
@@ -62,16 +62,15 @@ class TomahawkThrow(RangedAttack):
             )
         else:
             self.session.say(
-                ls('tomahawk_throw_text').format(source.name, target.name, total_damage)
+                ls("tomahawk_throw_text").format(source.name, target.name, total_damage)
             )
 
-        state = source.get_state(KnockedWeapon.id)
+        state = source.get_state(KnockedWeapon)
         state.drop_weapon(source)
-
 
         self.weapon.damage_bonus = 0
 
-    def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
+    async def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
-        self.event_manager.publish(message)
+        await self.event_manager.publish(message)
         return message.damage

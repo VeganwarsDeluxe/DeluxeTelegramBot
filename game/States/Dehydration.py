@@ -1,8 +1,8 @@
-from VegansDeluxe.core import RegisterState, RegisterEvent
-from VegansDeluxe.core import StateContext, EventContext
 from VegansDeluxe.core import PreDamagesGameEvent
+from VegansDeluxe.core import RegisterState, RegisterEvent
 from VegansDeluxe.core import Session
 from VegansDeluxe.core import State
+from VegansDeluxe.core import StateContext, EventContext
 from VegansDeluxe.core.Translator.LocalizedString import ls
 
 
@@ -15,14 +15,15 @@ class Dehydration(State):
         self.active = False
         self.triggered = False
 
+
 @RegisterState(Dehydration)
-def register(root_context: StateContext[Dehydration]):
+async def register(root_context: StateContext[Dehydration]):
     session: Session = root_context.session
     source = root_context.entity
     state = root_context.state
 
     @RegisterEvent(session.id, event=PreDamagesGameEvent, filters=[lambda e: state.active])
-    def func(context: EventContext[PreDamagesGameEvent]):
+    async def func(context: EventContext[PreDamagesGameEvent]):
         target = state.target
 
         if state.dehydration >= 3:

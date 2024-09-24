@@ -1,9 +1,12 @@
 import random
-from VegansDeluxe.core import MeleeAttack
+
 from VegansDeluxe.core import AttachedAction, RegisterWeapon
+from VegansDeluxe.core import MeleeAttack
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
+
 from game.States.Dehydration import Dehydration
+
 
 @RegisterWeapon
 class VampiricWhip(MeleeWeapon):
@@ -14,18 +17,20 @@ class VampiricWhip(MeleeWeapon):
     accuracy_bonus = 2
     cubes = 3
 
+
 @AttachedAction(VampiricWhip)
-class VampiricWhippAttack(MeleeAttack):
-    def func(self, source, target):
-        damage = super().attack(source, target).dealt
-        if not damage:
+class VampiricWhipAttack(MeleeAttack):
+
+    async def func(self, source, target):
+        damage = await super().attack(source, target)
+        if not damage.dealt:
             return damage
 
         # Определяем шанс наложения состояния
         if random.randint(0, 100) > 99:
             return damage
 
-        dehydration = source.get_state(Dehydration.id)
+        dehydration = source.get_state(Dehydration)
 
         if dehydration.active:
             dehydration.dehydration += 1

@@ -8,8 +8,8 @@ from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
 @RegisterWeapon
 class Hook(MeleeWeapon):
     id = 'hook'
-    name = ls('weapon_hook_name')
-    description = ls('weapon_hook_description')
+    name = ls("weapon_hook_name")
+    description = ls("weapon_hook_description")
 
     cubes = 3
     accuracy_bonus = 2
@@ -39,7 +39,7 @@ class HookAttract(RangedAttack):
     def hidden(self) -> bool:
         return self.session.turn < self.weapon.cooldown_turn
 
-    def func(self, source: Entity, target: Entity):
+    async def func(self, source: Entity, target: Entity):
 
         self.weapon.damage_bonus = 1
         total_damage = self.calculate_damage(source, target)
@@ -63,7 +63,7 @@ class HookAttract(RangedAttack):
             if entity != target and entity not in target.nearby_entities:
                 target.nearby_entities.append(entity)
 
-        post_damage = self.publish_post_damage_event(source, target, total_damage)
+        post_damage = await self.publish_post_damage_event(source, target, total_damage)
         target.inbound_dmg.add(source, post_damage, self.session.turn)
         source.outbound_dmg.add(target, post_damage, self.session.turn)
 
@@ -74,12 +74,12 @@ class HookAttract(RangedAttack):
             )
         else:
             self.session.say(
-                ls('hook_attract_text').format(source.name, target.name, total_damage)
+                ls("hook_attract_text").format(source.name, target.name, total_damage)
             )
 
         self.weapon.damage_bonus = 0
 
-    def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
+    async def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
-        self.event_manager.publish(message)
+        await self.event_manager.publish(message)
         return message.damage

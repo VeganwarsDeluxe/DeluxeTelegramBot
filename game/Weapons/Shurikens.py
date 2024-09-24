@@ -27,20 +27,20 @@ class ShurikenAttack(RangedAttack):
     def __init__(self, session: Session, source: Entity, weapon: Shurikens):
         super().__init__(session, source, weapon)
 
-    def func(self, source, target):
+    async def func(self, source, target):
         source.energy = max(source.energy - self.weapon.energy_cost, 0)
 
         if self.weapon.ammo > 0:
             if self.weapon.double_shuriken and self.weapon.ammo >= 2:
-                self.perform_double_shuriken_attack(source, target)
+                await self.perform_double_shuriken_attack(source, target)
             else:
-                self.perform_single_shuriken_attack(source, target)
+                await self.perform_single_shuriken_attack(source, target)
         else:
             self.session.say(ls("shuriken_no_ammo_text").format(source.name))
 
-    def shuriken_attack(self, source, target):
+    async def shuriken_attack(self, source, target):
         total_damage = self.calculate_damage(source, target)
-        post_damage = self.publish_post_damage_event(source, target, total_damage)
+        post_damage = await self.publish_post_damage_event(source, target, total_damage)
         target.inbound_dmg.add(source, post_damage, self.session.turn)
         source.outbound_dmg.add(target, post_damage, self.session.turn)
 
@@ -56,20 +56,20 @@ class ShurikenAttack(RangedAttack):
                                            weapon_name=self.weapon.name, damage=post_damage)
             )
 
-    def perform_single_shuriken_attack(self, source, target):
+    async def perform_single_shuriken_attack(self, source, target):
         if self.weapon.ammo > 0:
-            self.shuriken_attack(source, target)
+            await self.shuriken_attack(source, target)
             self.weapon.ammo -= 1
 
-    def perform_double_shuriken_attack(self, source, target):
+    async def perform_double_shuriken_attack(self, source, target):
         if self.weapon.ammo >= 2:
-            self.shuriken_attack(source, target)
-            self.shuriken_attack(source, target)
+            await self.shuriken_attack(source, target)
+            await self.shuriken_attack(source, target)
             self.weapon.ammo -= 2
 
-    def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
+    async def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
-        self.event_manager.publish(message)
+        await self.event_manager.publish(message)
         return message.damage
 
 
@@ -83,7 +83,7 @@ class SwitchShurikenMode(FreeWeaponAction):
     def name(self):
         return ls("switch_shuriken_mode") if not self.weapon.double_shuriken else ls("switch_shuriken_mode")
 
-    def func(self, source, target):
+    async def func(self, source, target):
         self.weapon.double_shuriken = not self.weapon.double_shuriken
         if self.weapon.double_shuriken:
             self.session.say(ls("switch_to_double_shuriken_text").format(source.name))
@@ -105,6 +105,6 @@ class PickUpShuriken(FreeWeaponAction):
     def hidden(self) -> bool:
         return self.weapon.ammo >= 4
 
-    def func(self, source: Entity, target: Entity):
+    async def func(self, source: Entity, target: Entity):
         self.weapon.ammo = 4
         self.session.say(ls("shuriken_pickup_text").format(source.name))
