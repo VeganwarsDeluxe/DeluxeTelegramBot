@@ -1,10 +1,12 @@
-from VegansDeluxe.core import RegisterState, RegisterEvent
-from VegansDeluxe.core import StateContext, EventContext
+import random
+
 from VegansDeluxe.core import PreDamagesGameEvent
+from VegansDeluxe.core import RegisterState, RegisterEvent
 from VegansDeluxe.core import Session
 from VegansDeluxe.core import State
+from VegansDeluxe.core import StateContext, EventContext
 from VegansDeluxe.core.Translator.LocalizedString import ls
-import random
+
 
 class CorrosiveMucus(State):
     id = 'corrosive_mucus'
@@ -14,14 +16,15 @@ class CorrosiveMucus(State):
         self.corrosive_mucus = 3
         self.active = False
 
+
 @RegisterState(CorrosiveMucus)
-def register(root_context: StateContext[CorrosiveMucus]):
+async def register(root_context: StateContext[CorrosiveMucus]):
     session: Session = root_context.session
     source = root_context.entity
     state = root_context.state
 
     @RegisterEvent(session.id, event=PreDamagesGameEvent, filters=[lambda e: state.active])
-    def func(context: EventContext[PreDamagesGameEvent]):
+    async def func(context: EventContext[PreDamagesGameEvent]):
         if state.corrosive_mucus <= 0:
             if source.items:
                 # Randomly select an item from the items list

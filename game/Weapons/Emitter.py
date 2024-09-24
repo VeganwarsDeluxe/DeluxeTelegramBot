@@ -26,7 +26,7 @@ class EmitterAttack(RangedAttack):
             return damage.dealt
 
         if percentage_chance(99):  # 20% шанс, 99 для тестов
-            hunger = target.get_state(Hunger.id)
+            hunger = target.get_state(Hunger)
             hunger.hunger += 1
             self.session.say(ls("weapon_emitter_effect").format(target.name, hunger.hunger))
 

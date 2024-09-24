@@ -1,9 +1,6 @@
 import VegansDeluxe.deluxe as deluxe
 import VegansDeluxe.rebuild as rebuild
 
-# Testing!
-from VegansDeluxe.rebuild.Skills.Weaponsmith import Weaponsmith
-
 from game.Items.CaffeineCandy import CaffeineCandy
 from game.Items.CryoGrenade import CryoGrenade
 from game.Items.DeathGrenade import DeathGrenade
@@ -41,8 +38,10 @@ from game.Weapons.Shurikens import Shurikens
 from game.Weapons.Tomahawk import Tomahawk
 from game.Weapons.VampiricWhip import VampiricWhip
 
+# Testing!
+
 all_states = (rebuild.all_states + deluxe.all_states + [Emptiness] + [Weakness, Hunger, Dehydration, Mutilation] +
-              [CorrosiveMucus, Weaponsmith])
+              [CorrosiveMucus])
 all_items = (rebuild.all_items + [CryoGrenade, CaffeineCandy, SourCandy, SweetCandy, DeathGrenade, EnergyGrenade] +
              [MucusInTheBottle]
              )

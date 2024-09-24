@@ -53,9 +53,8 @@
   "beast.weapon.attack": "❕|{source_name} кусає {target_name}! Завдано {damage} шкоди.",
   "beast.weapon.miss": "\uD83D\uDCA8|{source_name} кусає {target_name}, але не влучає.",
   "beast.AttackTwo.name": "Атака кігтями",
-  "beast.AttackTwo.text": "❕|{source.name} атакує кігтями {target.name}. Нанесено {final_damage} шкоди",
-
-"guardian.name": "Стародавній страж|u83DuDC7E",
+  "beast.AttackTwo.text": "❕|{0} атакує кігтями {1}. Нанесено {2} шкоди",
+  "guardian.name": "Стародавній страж|\uD83D\uDC7E",
  "guardian.weapon.name": "Мірний-Стук-Серця-Часів-Судного-Дня",
  "guardian.red_heart.name": "Червоне серце",
  "Guardian.red_heart.text": "♥️ Червоне серце активоване",

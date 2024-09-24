@@ -20,16 +20,17 @@ class VampiricWhip(MeleeWeapon):
 
 @AttachedAction(VampiricWhip)
 class VampiricWhipAttack(MeleeAttack):
+
     async def func(self, source, target):
-        damage = super().attack(source, target).dealt
-        if not damage:
+        damage = await super().attack(source, target)
+        if not damage.dealt:
             return damage
 
         # Определяем шанс наложения состояния
         if random.randint(0, 100) > 99:
             return damage
 
-        dehydration = source.get_state(Dehydration.id)
+        dehydration = source.get_state(Dehydration)
 
         if dehydration.active:
             dehydration.dehydration += 1

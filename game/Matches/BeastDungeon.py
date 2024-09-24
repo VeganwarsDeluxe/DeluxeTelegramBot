@@ -7,7 +7,7 @@ from startup import engine
 
 
 class BeastDungeon(BaseMatch):
-    name = ls('matches.beast')
+    name = ls("matches.beast")
 
     def __init__(self, chat_id, bot):
         super().__init__(chat_id, bot)

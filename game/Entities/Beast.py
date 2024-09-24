@@ -28,7 +28,7 @@ class Beast(NPC):
 
     async def choose_act(self, session: Session[TelegramEntity]):
         if session.turn == 1:
-            self.get_state(DamageThreshold.id).threshold = 6
+            self.get_state(DamageThreshold).threshold = 6
 
         if not self.weapon:
             self.weapon = BeastWeapon(self.session_id, self.id)
@@ -106,7 +106,7 @@ class BeastReload(DecisiveAction):
     target_type = OwnOnly()
 
     async def func(self, source, target):
-        self.session.say(ls('beast.reload.text').format(source.name, source.max_energy))
+        self.session.say(ls("beast.reload.text").format(source.name, source.max_energy))
         source.energy = source.max_energy
 
 
@@ -116,7 +116,7 @@ class BeastEvade(DecisiveAction):
     name = ls("beast.evade.name")
     target_type = OwnOnly()
 
-    def func(self, source, target):
+    async def func(self, source, target):
         self.source.inbound_accuracy_bonus = -6
         self.session.say(ls("beast.evade.text").format(source.name))
 
@@ -127,7 +127,7 @@ class BeastGrowl(DecisiveAction):
     name = ls("beast.growl.name")
     target_type = OwnOnly()
 
-    def func(self, source, target):
+    async def func(self, source, target):
         self.session.say(ls("beast.growl.text").format(source.name))
 
 
@@ -164,7 +164,7 @@ class BeastAttackTwo(MeleeAttack):
         target.inbound_dmg.add(source, post_damage, self.session.turn)
         source.outbound_dmg.add(target, post_damage, self.session.turn)
 
-        self.session.say(ls('beast.AttackTwo.text').format(source.name, target.name, final_damage))
+        self.session.say(ls("beast.AttackTwo.text").format(source.name, target.name, final_damage))
         self.weapon.damage_bonus = 0
 
     async def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
@@ -178,6 +178,6 @@ class BeastBite(MeleeAttack):
     id = 'beast_bite'
     name = ls("beast.bite.name")
 
-    def func(self, source, target):
+    async def func(self, source, target):
         target.hp = max(0, target.hp - 1)
         self.session.say(ls("beast.bite.text").format(source.name, target.name))

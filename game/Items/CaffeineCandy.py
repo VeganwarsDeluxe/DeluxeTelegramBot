@@ -1,6 +1,6 @@
-from VegansDeluxe.core import Item, FreeItem, AttachedAction, ActionTag
+from VegansDeluxe.core import Item, FreeItem, AttachedAction, ActionTag, After
 from VegansDeluxe.core import OwnOnly, EventContext, PostDamagesGameEvent
-from VegansDeluxe.core import RegisterItem, At
+from VegansDeluxe.core import RegisterItem
 from VegansDeluxe.core.Translator.LocalizedString import ls
 
 
@@ -22,13 +22,10 @@ class CaffeineCandyAction(FreeItem):
         self.tags += [ActionTag.MEDICINE]
 
     async def func(self, source, target):
-        def apply_energy_boost(context: EventContext[PostDamagesGameEvent]):
+        @After(self.session.id, 0, event=PostDamagesGameEvent, repeats=3)
+        async def handle_at(context: EventContext[PostDamagesGameEvent]):
             energy_recovered = min(1, source.max_energy - source.energy)
             source.energy += energy_recovered
             self.session.say(ls("item_caffeine_candy_effect").format(target.name, target.energy))
-
-        # Запланировать увеличение энергии на 3 следующих хода
-        for turn_offset in range(0, 3):
-            At(self.session.id, turn=self.session.turn + turn_offset, event=PostDamagesGameEvent)(apply_energy_boost)
 
         self.session.say(ls("item_caffeine_candy_use").format(source.name, target.name))

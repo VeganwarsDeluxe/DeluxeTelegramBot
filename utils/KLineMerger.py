@@ -20,7 +20,7 @@ def represent(data: list):
     for lines, repetitions in data:
         line = "\n".join(lines)
         if repetitions > 1:
-            result += f"[{line}]x{repetitions}\n"
+            result += f"\n[{line}]x{repetitions}\n"
         else:
             result += line
     return result

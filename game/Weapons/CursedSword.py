@@ -26,7 +26,7 @@ class CursedSwordAttack(MeleeAttack):
 
         # 99% chance to apply the weakness effect
         if percentage_chance(99):
-            weakness = target.get_state(Weakness.id)
+            weakness = target.get_state(Weakness)
 
             self.session.say(ls("weapon_cursed_sword_effect").format(target.name))
             weakness.weakness += 2  # Increase the weakness stack

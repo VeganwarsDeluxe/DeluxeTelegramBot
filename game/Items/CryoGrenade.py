@@ -8,6 +8,7 @@ from VegansDeluxe.core import Item
 from VegansDeluxe.core import Session
 from VegansDeluxe.core.Translator.LocalizedList import LocalizedList
 from VegansDeluxe.core.Translator.LocalizedString import ls
+from VegansDeluxe.rebuild import Stun
 
 
 @RegisterItem
@@ -36,7 +37,7 @@ class CryoGrenadeAction(DecisiveItem):
             if not target_pool:
                 continue
             target = random.choice(target_pool)
-            stun_state = target.get_state('stun')
+            stun_state = target.get_state(Stun)
             stun_state.stun += 2
             targets.append(target)
 

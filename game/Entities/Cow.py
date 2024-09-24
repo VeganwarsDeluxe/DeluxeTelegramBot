@@ -13,7 +13,7 @@ from .NPC import NPC
 
 class Cow(NPC):
     def __init__(self, session_id: str):
-        super().__init__(session_id, name=ls('cow.name'))
+        super().__init__(session_id, name=ls("cow.name"))
 
         self.weapon = CowWeapon(self.session_id, self.id)
 
@@ -67,7 +67,7 @@ class Run(DecisiveAction):
 
     async def func(self, source, target):
         self.source.inbound_accuracy_bonus = -5
-        self.session.say(ls('cow.dodge.text').format(source.name))
+        self.session.say(ls("cow.dodge.text").format(source.name))
 
 
 @AttachedAction(Cow)
@@ -80,7 +80,7 @@ class WalkAway(DecisiveAction):
         for entity in source.nearby_entities:
             entity.nearby_entities.remove(source) if source in entity.nearby_entities else None
         source.nearby_entities = []
-        self.session.say(ls('cow.walk_away.text').format(source.name))
+        self.session.say(ls("cow.walk_away.text").format(source.name))
 
 
 @AttachedAction(Cow)
@@ -116,6 +116,6 @@ class Milk(FreeItem):
     name = ls("cow.item.milk")
     target_type = OwnOnly()
 
-    def use(self):
+    async def use(self):
         self.target.energy = self.target.max_energy
         self.session.say(ls("cow.item.milk.text").format(self.source.name))

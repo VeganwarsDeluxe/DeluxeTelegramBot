@@ -1,13 +1,13 @@
+from VegansDeluxe.core import AttachedAction
+from VegansDeluxe.core import OwnOnly
 from VegansDeluxe.core import RegisterState
-from VegansDeluxe.core import StateContext
 from VegansDeluxe.core import Session
+from VegansDeluxe.core import StateContext
+from VegansDeluxe.core.Actions.StateAction import DecisiveStateAction
+from VegansDeluxe.core.Entities.Entity import Entity
 from VegansDeluxe.core.Skills.Skill import Skill
 from VegansDeluxe.core.Translator.LocalizedString import ls
 
-from VegansDeluxe.core import AttachedAction
-from VegansDeluxe.core.Actions.StateAction import DecisiveStateAction
-from VegansDeluxe.core.Entities.Entity import Entity
-from VegansDeluxe.core import OwnOnly
 
 class Heroism(Skill):
     id = 'heroism'
@@ -20,7 +20,7 @@ class Heroism(Skill):
 
 
 @RegisterState(Heroism)
-def register(root_context: StateContext[Heroism]):
+async def register(root_context: StateContext[Heroism]):
     session: Session = root_context.session
     source = root_context.entity
 
@@ -44,7 +44,7 @@ class HeroismAction(DecisiveStateAction):
         # Retrieve all allies except the source
         return [entity for entity in self.session.entities if entity.team == source.team and entity != source and not entity.dead]
 
-    def func(self, source: Entity, target: Entity):
+    async def func(self, source: Entity, target: Entity):
         # Set long cooldown
         self.state.cooldown_turn = self.session.turn + 999
 

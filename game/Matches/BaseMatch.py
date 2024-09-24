@@ -5,6 +5,7 @@ from VegansDeluxe.core import PreMoveGameEvent, Weapon, Session, ActionTag, Even
 from VegansDeluxe.core.Question.QuestionEvents import QuestionGameEvent
 from VegansDeluxe.core.States import State
 from VegansDeluxe.core.Translator.LocalizedString import LocalizedString, ls
+from VegansDeluxe.rebuild import Stun
 from aiogram import Bot
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 
@@ -41,15 +42,13 @@ class BaseMatch:
 
         self.action_indexes = []
 
+        self.detached = False  # TODO: Temporary fix. Figure out why are we detaching session for every entity.
+
     async def init_async(self):
         self.session: Session[TelegramEntity] = await self.create_session(self.id)
-
-        print(f"Question handling created: {engine.event_manager.id}! S: {self.session.id}")
-
-        h = engine.event_manager.at_event(event=QuestionGameEvent, session_id=self.session.id,
-                                          unique_type=QuestionGameEvent,
-                                          callback_wrapper=self.handling_question)
-        print(h.session_id)
+        engine.event_manager.at_event(event=QuestionGameEvent, session_id=self.session.id,
+                                      unique_type=QuestionGameEvent,
+                                      callback_wrapper=self.handling_question)
 
     async def handling_question(self, context: EventContext[QuestionGameEvent]):
         print("Question handled!")
@@ -119,7 +118,7 @@ class BaseMatch:
                     callback_data=TargetChoice(game_id=self.id, target_id=target.id, index=index).pack(),
                 )])
         kb.append([InlineKeyboardButton(
-            text=ls('deluxe.buttons.back').localize(code), callback_data=Back(game_id=self.id).pack()
+            text=ls("deluxe.buttons.back").localize(code), callback_data=Back(game_id=self.id).pack()
         )])
 
         kb = InlineKeyboardMarkup(inline_keyboard=kb)
@@ -249,7 +248,7 @@ class BaseMatch:
         """Executes actions for all alive entities."""
         for entity in self.session.alive_entities:
             entity: TelegramEntity
-            if entity.get_state('stun').stun:  # TODO: Hardcoded. It can be done better
+            if entity.get_state(Stun).stun:  # TODO: Hardcoded. It can be done better
                 engine.action_manager.queue_action(self.session, entity, 'lay_stun')
                 entity.ready = True
                 if not self.unready_players:
@@ -305,7 +304,7 @@ class BaseMatch:
         kb = []
         buttons['first_row'].reverse()
         buttons['second_row'].append(
-            InlineKeyboardButton(text=ls('deluxe.buttons.info').localize(code),
+            InlineKeyboardButton(text=ls("deluxe.buttons.info").localize(code),
                                  callback_data=StateInfo(state_id='777').pack())
             # TODO: Huh?? 777? Pasyuk much?
         )
@@ -313,7 +312,7 @@ class BaseMatch:
         kb.append(buttons['first_row'])
         kb.append(buttons['second_row'])
         kb.append([InlineKeyboardButton(
-            text=ls('deluxe.buttons.additional').localize(code), callback_data=Additional(game_id=self.id).pack())
+            text=ls("deluxe.buttons.additional").localize(code), callback_data=Additional(game_id=self.id).pack())
         ])
         kb.append(buttons['approach_row'])
         kb.append(buttons['skip_row'])
@@ -363,7 +362,7 @@ class BaseMatch:
         for button in item_buttons:
             kb.append([button])
         kb.append([InlineKeyboardButton(
-            text=ls('deluxe.buttons.back').localize(code), callback_data=Back(game_id=self.id).pack()
+            text=ls("deluxe.buttons.back").localize(code), callback_data=Back(game_id=self.id).pack()
         )])
 
         kb = InlineKeyboardMarkup(inline_keyboard=kb)
@@ -372,6 +371,10 @@ class BaseMatch:
     async def check_game_status(self):
         """Checks the status of the game and sends end game messages if needed."""
         if not self.session.active:
+            if self.detached:
+                return
+            self.detached = True
+
             await self.send_end_game_messages()
             engine.detach_session(self.session)
             return False
@@ -452,7 +455,7 @@ class BaseMatch:
             kb.append(
                 [InlineKeyboardButton(text=self.localize_text(weapon.name, code),
                                       callback_data=ChooseWeapon(game_id=self.id, weapon_id=weapon.id).pack()),
-                 InlineKeyboardButton(text=ls('deluxe.buttons.information').localize(code),
+                 InlineKeyboardButton(text=ls("deluxe.buttons.information").localize(code),
                                       callback_data=WeaponInfo(weapon_id=weapon.id).pack()
                                       )]
             )

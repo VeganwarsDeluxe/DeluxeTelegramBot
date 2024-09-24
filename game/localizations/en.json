@@ -47,7 +47,7 @@
   "beast.weapon.attack": "❕||{source_name} bites {target_name}! {damage} damage has been done.",
   "beast.weapon.miss": "\uD83D\uDCA8|{source_name} bites {target_name} but fails to hit.",
   "beast.AttackTwo.name": "Claw Attack",
-  "beast.AttackTwo.text": "❕|{source.name } attacks with claws {target.name }. {final_damage} damage done",
+  "beast.AttackTwo.text": "❕|{source_name} attacks with claws {target_name}. {final_damage} damage done",
 
 "guardian.name": "Ancient Guardian|\uD83D\uDC7E",
 "guardian.weapon.name": "Measured-Beating-of-the-Heart-of-Tsasov-Doomsday",

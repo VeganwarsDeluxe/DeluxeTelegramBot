@@ -26,13 +26,13 @@ async def main() -> None:
     dp.include_router(callbacks_router)
     dp.include_router(other_router)
 
-    await bot.send_message(config.boot_chat,
-                           f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
-                           f"🤖Bot: `{version}`\n\n"
-                           f"📄Latest changelog: ```"
-                           f"\n - giant async update"
-                           f"```",
-                           parse_mode="Markdown")
+    await bot.send_message(
+        config.boot_chat,
+        f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
+        f"🤖Bot: `{version}`\n\n"
+        f"📄Changelog: [here](https://github.com/VeganwarsDeluxe/VeganwarsDeluxe/blob/master/CHANGELOG.md)",
+        parse_mode="Markdown"
+    )
     print(engine.stats())
 
     await bot.delete_webhook(drop_pending_updates=True)
@@ -40,5 +40,5 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, stream=sys.stdout, force=True)
+    logging.basicConfig(level=logging.WARNING, stream=sys.stdout, force=True)
     asyncio.run(main())

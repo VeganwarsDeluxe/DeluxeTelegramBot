@@ -1,6 +1,3 @@
-# TODO: Refactor
-
-
 class Matchmaker:
     """Matchmaker Class: Handles matches.."""
 

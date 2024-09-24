@@ -1,18 +1,19 @@
 import random
-import VegansDeluxe.core.Events.Events
-from VegansDeluxe.core.Actions.Action import DecisiveAction
+
 from VegansDeluxe.core import (
     AttachedAction, RegisterWeapon, RangedAttack, RangedWeapon,
-    Entity, Enemies, RegisterEvent, EventContext, Session,
-    ls, PostDamageGameEvent, OwnOnly, StateContext, At,
-    Item, FreeItem, ActionTag, PostDamagesGameEvent
+    Entity, Enemies, Session,
+    ls, PostDamageGameEvent, OwnOnly, ActionTag
 )
-from startup import engine
-from .Dummy import Dummy
-from .TelegramEntity import TelegramEntity
+from VegansDeluxe.core.Actions.Action import DecisiveAction
 from VegansDeluxe.core.utils import percentage_chance
-from VegansDeluxe.rebuild import DamageThreshold
-class Guardian(Dummy):
+from VegansDeluxe.rebuild import DamageThreshold, Armor, Stun
+
+from game.Entities.NPC import NPC
+from startup import engine
+
+
+class Guardian(NPC):
     def __init__(self, session_id: str, name=ls("guardian.name")):
         super().__init__(session_id, name)
 
@@ -23,14 +24,14 @@ class Guardian(Dummy):
         self.team = 'guardian'
         self.evade_cooldown_turn = 0
 
-    def choose_act(self, session: Session):
+    async def choose_act(self, session: Session):
         if session.turn == 1:
-            self.get_state(DamageThreshold.id).threshold = 424242
+            self.get_state(DamageThreshold).threshold = 424242
 
         if not self.weapon:
             self.weapon = GuardianWeapon(self.session_id, self.id)
 
-        super().choose_act(session)
+        await super().choose_act(session)
         targets = [entity for entity in self.nearby_entities if entity != self and entity.hp > 0]
         if targets:
             target = random.choice(targets)
@@ -50,6 +51,7 @@ class Guardian(Dummy):
                 engine.action_manager.queue_action_instance(attack)
                 return
 
+
 @RegisterWeapon
 class GuardianWeapon(RangedWeapon):
     id = 'Guardian_weapon'
@@ -60,31 +62,33 @@ class GuardianWeapon(RangedWeapon):
     energy_cost = 3
     accuracy_bonus = 0
 
+
 @AttachedAction(GuardianWeapon)
 class GuardianRedHeart(RangedAttack):
     id = 'guardian.red_heart'
     name = ls("guardian.red_heart.name")
     target_type = Enemies()
 
-    def func(self, source, target):
-        self.session.say(ls('guardian.red_heart.text').format())
+    async def func(self, source, target):
+        self.session.say(ls("guardian.red_heart.text").format())
         final_damage = self.calculate_damage(source, target)
 
         source.energy = max(source.energy - self.weapon.energy_cost, 0) #расход энергии
 
-        post_damage = self.publish_post_damage_event(source, target, final_damage)
+        post_damage = await self.publish_post_damage_event(source, target, final_damage)
         target.inbound_dmg.add(source, post_damage, self.session.turn)
         source.outbound_dmg.add(target, post_damage, self.session.turn)
 
         if final_damage > 0:
-            self.session.say(ls('guardian.red_heart.attack.text').format(source.name, target.name, final_damage))
+            self.session.say(ls("guardian.red_heart.attack.text").format(source.name, target.name, final_damage))
         else:
-            self.session.say(ls('guardian.red_heart.attack.text.miss').format(source.name, target.name))
+            self.session.say(ls("guardian.red_heart.attack.text.miss").format(source.name, target.name))
 
-    def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
+    async def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
-        self.event_manager.publish(message)
+        await self.event_manager.publish(message)
         return message.damage
+
 
 @AttachedAction(GuardianWeapon)
 class GuardianCyanHeart(RangedAttack):
@@ -92,33 +96,34 @@ class GuardianCyanHeart(RangedAttack):
     name = ls("guardian.cyan_heart.name")
     target_type = Enemies()
 
-    def func(self, source, target):
-        self.session.say(ls('guardian.cyan_heart.text').format())
+    async def func(self, source, target):
+        self.session.say(ls("guardian.cyan_heart.text").format())
         self.weapon.cubes = 2
 
         source.energy = max(source.energy - self.weapon.energy_cost, 0) #расход энергии
 
         final_damage = self.calculate_damage(source, target)
-        post_damage = self.publish_post_damage_event(source, target, final_damage)
+        post_damage = await self.publish_post_damage_event(source, target, final_damage)
         target.inbound_dmg.add(source, post_damage, self.session.turn)
         source.outbound_dmg.add(target, post_damage, self.session.turn)
 
         if final_damage:
-            self.session.say(ls('guardian.cyan_heart.attack.text').format(source.name, target.name, final_damage))
+            self.session.say(ls("guardian.cyan_heart.attack.text").format(source.name, target.name, final_damage))
 
             if percentage_chance(30):
-                stun_state = target.get_state('stun')
+                stun_state = target.get_state(Stun)
                 stun_state.stun += 2
-                self.session.say(ls('stun').format(target.name))
+                self.session.say(ls("stun").format(target.name))
         else:
-            self.session.say(ls('guardian.cyan_heart.text.miss').format(source.name, target.name))
+            self.session.say(ls("guardian.cyan_heart.text.miss").format(source.name, target.name))
 
         return final_damage
 
-    def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
+    async def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
-        self.event_manager.publish(message)
+        await self.event_manager.publish(message)
         return message.damage
+
 
 @AttachedAction(GuardianWeapon)
 class GuardianOrangeHeart(RangedAttack):
@@ -130,8 +135,8 @@ class GuardianOrangeHeart(RangedAttack):
         super().__init__(session, source, weapon)
         self.targets_count = None
 
-    def func(self, source, target):
-        self.session.say(ls('guardian.orange_heart.text'))
+    async def func(self, source, target):
+        self.session.say(ls("guardian.orange_heart.text"))
         self.weapon.cubes = 2
         self.weapon.damage_bonus = 1
         self.targets_count = 2
@@ -144,18 +149,17 @@ class GuardianOrangeHeart(RangedAttack):
         # Loop through each target and resolve the attack
         for target in targets:
             final_damage = self.calculate_damage(source, target)
-            post_damage = self.publish_post_damage_event(source, target, final_damage)
+            post_damage = await self.publish_post_damage_event(source, target, final_damage)
             target.inbound_dmg.add(source, post_damage, self.session.turn)
             source.outbound_dmg.add(target, post_damage, self.session.turn)
 
             # Report the outcome for each target separately
             if final_damage > 0:
-                self.session.say(ls('guardian.orange_heart.attack.text').format(source.name, target.name, final_damage))
+                self.session.say(ls("guardian.orange_heart.attack.text").format(source.name, target.name, final_damage))
             else:
-                self.session.say(ls('guardian.orange_heart.text.miss').format(source.name, target.name))
+                self.session.say(ls("guardian.orange_heart.text.miss").format(source.name, target.name))
 
         self.weapon.damage_bonus = 0
-
 
     def form_target_list(self, source, target) -> list[Entity]:
         targets = [target]
@@ -169,26 +173,28 @@ class GuardianOrangeHeart(RangedAttack):
 
         return targets
 
-    def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
+    async def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
-        self.event_manager.publish(message)
+        await self.event_manager.publish(message)
         return message.damage
+
 
 @AttachedAction(GuardianWeapon)
 class GuardianBlackHeart(RangedAttack):
     id = 'guardian.black_heart'
-    name = ls('guardian.black_heart.name')
+    name = ls("guardian.black_heart.name")
     target_type = Enemies()
 
-    def func(self, source, target):
-        self.session.say(ls('guardian.black_heart.text').format())
+    async def func(self, source, target):
+        self.session.say(ls("guardian.black_heart.text").format())
         target.hp = max(0, target.hp - 999)
-        self.session.say(ls('guardian.black_heart.attack.text').format(source.name, target.name))
+        self.session.say(ls("guardian.black_heart.attack.text").format(source.name, target.name))
+
 
 @AttachedAction(GuardianWeapon)
 class GuardianYellowHeart(RangedAttack):
     id = 'guardian.yellow_heart'
-    name = ls('guardian.yellow_heart.name')
+    name = ls("guardian.yellow_heart.name")
     target_type = Enemies()
     priority = -1
 
@@ -196,8 +202,8 @@ class GuardianYellowHeart(RangedAttack):
         super().__init__(session, source, weapon)
         self.targets_count = None
 
-    def func(self, source, target):
-        self.session.say(ls('guardian.yellow_heart.text').format())
+    async def func(self, source, target):
+        self.session.say(ls("guardian.yellow_heart.text").format())
         self.weapon.cubes = 2
         self.weapon.damage_bonus = 1
         self.targets_count = 2
@@ -206,13 +212,13 @@ class GuardianYellowHeart(RangedAttack):
 
         for target in targets:
             final_damage = self.calculate_damage(source, target)
-            post_damage = self.publish_post_damage_event(source, target, final_damage)
+            post_damage = await self.publish_post_damage_event(source, target, final_damage)
             target.inbound_dmg.add(source, post_damage, self.session.turn)
             source.outbound_dmg.add(target, post_damage, self.session.turn)
 
-            self.session.say(ls('guardian.yellow_heart.attack.text').format(source.name, target.name, final_damage))
+            self.session.say(ls("guardian.yellow_heart.attack.text").format(source.name, target.name, final_damage))
         else:
-            self.session.say(ls('guardian.yellow_heart.text.miss').format(source.name, target.name))
+            self.session.say(ls("guardian.yellow_heart.text.miss").format(source.name, target.name))
 
         self.weapon.damage_bonus = 0
 
@@ -228,17 +234,16 @@ class GuardianYellowHeart(RangedAttack):
 
         return targets
 
-    def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
+    async def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
-        self.event_manager.publish(message)
+        await self.event_manager.publish(message)
         return message.damage
-
 
 
 @AttachedAction(GuardianWeapon)
 class GuardianGreenHeart(RangedAttack):
     id = 'guardian.green_heart'
-    name = ls('guardian.green_heart.name')
+    name = ls("guardian.green_heart.name")
     target_type = OwnOnly()
     priority = -2
 
@@ -246,11 +251,13 @@ class GuardianGreenHeart(RangedAttack):
         super().__init__(*args)
         self.tags += [ActionTag.MEDICINE]
 
-    def func(self, source, target):
-        target.get_state('armor').remove((2, 100))
+    async def func(self, source, target):
+        # ну ви звісно генії дофіга. будьте обережні з цим
+        target.get_state(Armor).remove((2, 100))
         target.hp = min(target.hp + 1, target.max_hp)
         self.session.say(ls("guardian.green_heart.text").format(source.name))
         self.session.say(ls("guardian.green_heart.effect").format(source.name, source.hp))
+
 
 @AttachedAction(GuardianWeapon)
 class GuardianReload(DecisiveAction):
@@ -260,6 +267,6 @@ class GuardianReload(DecisiveAction):
     energy = 0
     priority = -1
 
-    def func(self, source, target):
+    async def func(self, source, target):
         self.session.say(ls("guardian.reload.text").format(source.name))
         source.energy = source.max_energy

@@ -58,7 +58,7 @@ class Explosion(DecisiveStateAction):
         random_text = random.choice(self.state.preparation_texts)
         self.session.say(random_text.format(source.name))
 
-        stun_state = source.get_state(Stun.id)
+        stun_state = source.get_state(Stun)
         stun_state.stun += 3
 
         self.state.cooldown_turn = self.session.turn + 12
@@ -71,7 +71,7 @@ class Explosion(DecisiveStateAction):
             source.energy = max(0, source.energy - 10)
             self.session.say(ls("skill_explosion_stun_text").format(source.name))
 
-            aflame = target.get_state(Aflame.id)
+            aflame = target.get_state(Aflame)
             aflame.add_flame(self.session, target, source, 6)
             self.session.say(ls("skill_explosion_text").format(source.name))
             self.session.say(ls("skill_explosion_effect_text").format(target.name, displayed_damage, source.name))

@@ -1,21 +1,15 @@
-import random
-
 from VegansDeluxe.core import AttachedAction
 from VegansDeluxe.core import Enemies
 from VegansDeluxe.core import Entity
-from VegansDeluxe.core import PreActionsGameEvent
+from VegansDeluxe.core import MeleeAttack
 from VegansDeluxe.core import RegisterState
 from VegansDeluxe.core import Session
-from VegansDeluxe.core import StateContext, EventContext, At, PostDamageGameEvent, PreDamageGameEvent
+from VegansDeluxe.core import StateContext, PostDamageGameEvent
 from VegansDeluxe.core.Actions.StateAction import DecisiveStateAction
 from VegansDeluxe.core.Skills.Skill import Skill
 from VegansDeluxe.core.Translator.LocalizedString import ls
-
-from VegansDeluxe.core import RegisterEvent
-from VegansDeluxe.core import AttackGameEvent
-
-from VegansDeluxe.core import MeleeAttack
 from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
+
 
 class Dash(Skill):
     id = 'dash'
@@ -28,9 +22,10 @@ class Dash(Skill):
 
 
 @RegisterState(Dash)
-def register(root_context: StateContext[Dash]):
+async def register(root_context: StateContext[Dash]):
     session: Session = root_context.session
     source = root_context.entity
+
 
 @AttachedAction(Dash)
 class DashAction(DecisiveStateAction):
@@ -47,7 +42,7 @@ class DashAction(DecisiveStateAction):
     def hidden(self) -> bool:
         return self.session.turn < self.state.cooldown_turn
 
-    def func(self, source: Entity, target: Entity):
+    async def func(self, source: Entity, target: Entity):
         self.state.cooldown_turn = self.session.turn + 3
 
         # Получаем текущее оружие
@@ -59,7 +54,7 @@ class DashAction(DecisiveStateAction):
             self.session.say(ls("dash_unsupported_weapon_text").format(source.name))
             return
 
-        attack_result = attack_action.attack(source, target)
+        attack_result = await attack_action.attack(source, target)
         total_damage = attack_result.dealt + 100
 
         if total_damage:
@@ -71,7 +66,7 @@ class DashAction(DecisiveStateAction):
                 ls("dash_text_miss").format(source.name, target.name)
             )
 
-        post_damage = self.publish_post_damage_event(source, target, total_damage)
+        post_damage = await self.publish_post_damage_event(source, target, total_damage)
         target.inbound_dmg.add(source, post_damage, self.session.turn)
         source.outbound_dmg.add(target, post_damage, self.session.turn)
 
@@ -86,7 +81,7 @@ class DashAction(DecisiveStateAction):
             if entity != target and entity not in target.nearby_entities:
                 target.nearby_entities.append(entity)
 
-    def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
+    async def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
-        self.event_manager.publish(message)
+        await self.event_manager.publish(message)
         return message.damage

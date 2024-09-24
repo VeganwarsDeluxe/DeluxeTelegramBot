@@ -25,19 +25,11 @@ class SweetCandyAction(FreeItem):
 
     async def func(self, source, target):
         # Retrieve the current state
-        regeneration = target.get_state('regeneration')
+        regeneration = target.get_state(Regeneration)
 
-        if regeneration:
-            # If the state exists, modify it
-            if regeneration.active:
-                regeneration.regeneration -= 1
-            regeneration.active = True
-        else:
-            # If the state does not exist, create and attach it
-            regeneration = Regeneration()
-            regeneration.active = True
-            regeneration.regeneration = 3
-            await target.attach_state(regeneration, self.session.event_manager)
+        if regeneration.active:
+            regeneration.regeneration -= 1
+        regeneration.active = True
 
         # Notify the session about the effect
         self.session.say(ls("sweet_candy_effect").format(source.name))

@@ -63,7 +63,7 @@ class GrenadeLauncherAttack(RangedAttack):
         targets = self.form_target_list(source, target)
 
         for t in targets:
-            aflame = t.get_state(Aflame.id)
+            aflame = t.get_state(Aflame)
             if aflame:
                 aflame.add_flame(self.session, t, source, 1)
 
@@ -75,7 +75,7 @@ class GrenadeLauncherAttack(RangedAttack):
             self.session.say(ls("molotov_grenade_launcher_text")
                              .format(source.name, LocalizedList([t.name for t in targets])))
         else:
-            self.session.say(ls('molotov_grenade_launcher_text_miss')
+            self.session.say(ls("molotov_grenade_launcher_text_miss")
                              .format(source.name, target.name))
 
     def form_target_list(self, source, target) -> list[Entity]:

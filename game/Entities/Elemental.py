@@ -1,6 +1,5 @@
 import random
 
-import VegansDeluxe.rebuild
 from VegansDeluxe.core import AttachedAction, RegisterWeapon, MeleeWeapon, ls
 from VegansDeluxe.core import EventContext
 from VegansDeluxe.core import OwnOnly
@@ -47,12 +46,10 @@ class Elemental(NPC):
             session.say(ls("elemental.anger"))
             context.event.canceled = True
 
-    def choose_act(self, session):
-        super().choose_act(session)
+    async def choose_act(self, session):
+        await super().choose_act(session)
         self.weapon = random.choice(game.content.all_weapons)(session.id, self.id)
-        engine.action_manager.update_entity_actions(session, self)
-
-        print(engine.action_manager.get_attached_actions(VegansDeluxe.rebuild.Adrenaline))
+        await engine.action_manager.update_entity_actions(session, self)
 
         cost = False
         while not cost:

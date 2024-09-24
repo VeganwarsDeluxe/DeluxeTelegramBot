@@ -1,6 +1,7 @@
 from math import ceil
-from VegansDeluxe.core import StateContext, EventContext, Session, Entity
+
 from VegansDeluxe.core import RegisterState, RegisterEvent, AttackGameEvent
+from VegansDeluxe.core import StateContext, EventContext, Session
 from VegansDeluxe.core.Skills.Skill import Skill
 from VegansDeluxe.core.Translator.LocalizedString import ls
 
@@ -17,13 +18,13 @@ class Echo(Skill):
 
 
 @RegisterState(Echo)
-def register(root_context: StateContext[Echo]):
+async def register(root_context: StateContext[Echo]):
     session: Session = root_context.session
     source = root_context.entity
     state = root_context.state
 
     @RegisterEvent(session.id, event=AttackGameEvent, priority=2)
-    def apply_bonus(context: EventContext[AttackGameEvent]):
+    async def apply_bonus(context: EventContext[AttackGameEvent]):
         if context.event.source != source:
             return
 

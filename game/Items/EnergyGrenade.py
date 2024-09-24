@@ -1,11 +1,11 @@
-from VegansDeluxe.core import AttachedAction, RegisterItem, ActionTag
-from VegansDeluxe.core import Entity
-from VegansDeluxe.core import Item
-from VegansDeluxe.core import DecisiveItem
 import random
 
-from VegansDeluxe.core import Session, PostDamageGameEvent
+from VegansDeluxe.core import AttachedAction, RegisterItem, ActionTag
+from VegansDeluxe.core import DecisiveItem
 from VegansDeluxe.core import Enemies
+from VegansDeluxe.core import Entity
+from VegansDeluxe.core import Item
+from VegansDeluxe.core import Session, PostDamageGameEvent
 from VegansDeluxe.core.Translator.LocalizedList import LocalizedList
 from VegansDeluxe.core.Translator.LocalizedString import ls
 
@@ -27,7 +27,7 @@ class EnergyGrenadeAction(DecisiveItem):
         self.tags += [ActionTag.HARMFUL]
         self.range = 1  # Number of targets to hit, set to 1 for now
 
-    def func(self, source, target):
+    async def func(self, source, target):
         targets = []
         for _ in range(self.range):
             target_pool = list(filter(lambda t: t not in targets,
@@ -36,7 +36,7 @@ class EnergyGrenadeAction(DecisiveItem):
                 continue  # Skip if no more valid targets
             selected_target = random.choice(target_pool)
             damage = selected_target.energy  # Damage based on target's energy
-            post_damage = self.publish_post_damage_event(source, selected_target, damage)
+            post_damage = await self.publish_post_damage_event(source, selected_target, damage)
             selected_target.inbound_dmg.add(source, post_damage, self.session.turn)
             source.outbound_dmg.add(source, post_damage, self.session.turn)
             targets.append(selected_target)
@@ -50,9 +50,9 @@ class EnergyGrenadeAction(DecisiveItem):
             .format(source.name, damage, LocalizedList([t.name for t in targets]))
         )
 
-    def publish_post_damage_event(self, source, target, damage):
+    async def publish_post_damage_event(self, source, target, damage):
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
-        self.event_manager.publish(message)
+        await self.event_manager.publish(message)
         return message.damage
 
     @property

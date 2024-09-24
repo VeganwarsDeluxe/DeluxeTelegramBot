@@ -1,11 +1,12 @@
 from VegansDeluxe.core import RegisterState
-from VegansDeluxe.core import StateContext
 from VegansDeluxe.core import Session
+from VegansDeluxe.core import StateContext
 from VegansDeluxe.core.Skills.Skill import Skill
 from VegansDeluxe.core.Translator.LocalizedString import ls
-from game.Items.SweetCandy import SweetCandy
-from game.Items.SourCandy import SourCandy
+
 from game.Items.CaffeineCandy import CaffeineCandy
+from game.Items.SourCandy import SourCandy
+from game.Items.SweetCandy import SweetCandy
 
 
 class SweetTooth(Skill):
@@ -15,7 +16,7 @@ class SweetTooth(Skill):
 
 
 @RegisterState(SweetTooth)
-def register(root_context: StateContext[SweetTooth]):
+async def register(root_context: StateContext[SweetTooth]):
     session: Session = root_context.session
     source = root_context.entity
 

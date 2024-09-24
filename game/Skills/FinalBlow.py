@@ -1,20 +1,19 @@
+import random
+
+from VegansDeluxe.core import AttachedAction
+from VegansDeluxe.core import OwnOnly, ActionTag
+from VegansDeluxe.core import PreActionsGameEvent, At
+from VegansDeluxe.core import RegisterEvent, PreDeathGameEvent, EventContext
 from VegansDeluxe.core import RegisterState
-from VegansDeluxe.core import StateContext
 from VegansDeluxe.core import Session, Enemies
+from VegansDeluxe.core import StateContext
+from VegansDeluxe.core.Actions.StateAction import DecisiveStateAction
+from VegansDeluxe.core.Entities.Entity import Entity
 from VegansDeluxe.core.Skills.Skill import Skill
 from VegansDeluxe.core.Translator.LocalizedList import LocalizedList
 from VegansDeluxe.core.Translator.LocalizedString import ls
-
-from VegansDeluxe.core import AttachedAction
-from VegansDeluxe.core.Actions.StateAction import DecisiveStateAction
-from VegansDeluxe.core.Entities.Entity import Entity
-from VegansDeluxe.core import OwnOnly, ActionTag
-from VegansDeluxe.core import RegisterEvent, PreDeathGameEvent, EventContext
-
-import random
-from VegansDeluxe.core import PreActionsGameEvent, At
-
 from VegansDeluxe.rebuild import Stun
+
 
 class FinalBlow(Skill):
     id = 'final_blow'
@@ -29,13 +28,13 @@ class FinalBlow(Skill):
 
 
 @RegisterState(FinalBlow)
-def register(root_context: StateContext[FinalBlow]):
+async def register(root_context: StateContext[FinalBlow]):
     session: Session = root_context.session
     final_blow = root_context.state
     source = root_context.entity
 
     @RegisterEvent(session.id, event=PreDeathGameEvent, priority=3)
-    def handle_pre_death_event(context: EventContext[PreDeathGameEvent]):
+    async def handle_pre_death_event(context: EventContext[PreDeathGameEvent]):
         if final_blow.active and root_context.entity.id == context.event.entity.id:
             if context.event.canceled:
                 return
@@ -61,7 +60,7 @@ class FinalBlowAction(DecisiveStateAction):
     def hidden(self) -> bool:
         return self.session.turn < self.state.cooldown_turn
 
-    def func(self, source: Entity, target: Entity):
+    async def func(self, source: Entity, target: Entity):
         # Set long cooldown
         self.state.cooldown_turn = self.session.turn + 999
 
@@ -73,11 +72,11 @@ class FinalBlowAction(DecisiveStateAction):
                 target.hp -= 1
                 self.session.say(ls("state.final_blow.hp.decrease").format(source.name, LocalizedList([t.name for t in targets])))
 
-        stun_state = source.get_state(Stun.id)
+        stun_state = source.get_state(Stun)
         stun_state.stun += 3
 
         @At(self.session.id, turn=self.session.turn + 1, event=PreActionsGameEvent)
-        def final_blow_death(context: EventContext[PreActionsGameEvent]):
+        async def final_blow_death(context: EventContext[PreActionsGameEvent]):
             source.hp = -999999
             self.session.say(ls("state.final_blow.death").format(source.name))
 

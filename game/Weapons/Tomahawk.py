@@ -62,10 +62,10 @@ class TomahawkThrow(RangedAttack):
             )
         else:
             self.session.say(
-                ls('tomahawk_throw_text').format(source.name, target.name, total_damage)
+                ls("tomahawk_throw_text").format(source.name, target.name, total_damage)
             )
 
-        state = source.get_state(KnockedWeapon.id)
+        state = source.get_state(KnockedWeapon)
         state.drop_weapon(source)
 
         self.weapon.damage_bonus = 0
