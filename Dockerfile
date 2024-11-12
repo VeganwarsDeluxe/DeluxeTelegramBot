@@ -3,6 +3,8 @@ RUN apk add --no-cache git
 
 WORKDIR /app
 
+RUN apk add build-base libpq libpq-dev
+
 COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 
