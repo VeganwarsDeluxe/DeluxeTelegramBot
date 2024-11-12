@@ -4,3 +4,6 @@ mongoengine
 aiogram
 requests
 urllib3
+
+sqlalchemy
+psycopg2

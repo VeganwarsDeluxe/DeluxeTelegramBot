@@ -15,7 +15,7 @@ class SlimeDungeon(BaseMatch):
         self.slimes = 0
 
     async def join_session(self, user_id, user_name):
-        player = super().join_session(user_id, user_name)
+        player = await super().join_session(user_id, user_name)
         player.team = 'players'
         # if self.slimes == 1:
         #     return

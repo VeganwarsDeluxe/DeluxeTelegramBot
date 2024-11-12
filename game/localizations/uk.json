@@ -207,7 +207,6 @@
   "weapon_shurikens_name": "Сюрікени",
   "weapon_shurikens_description": "Зброя дальнього бою, дає змогу метнути одразу два сюрікени. Сюрікени потрібно підбирати",
   "weapon_shuriken_throw_name": "{0} метає сюрікен і завдає {1} шкоди {2}.",
-  "weapon_double_shuriken_throw_name": "{0} метає сюрікен і завдає {1} шкоди {2}.\n{0} метає сюрікен і завдає {3} шкоди {4}.",
   "shuriken_pickup_name": "Підібрати сюрікени",
   "shuriken_no_ammo_text": "Сюрікенів немає, підбери",
   "shuriken_pickup_text": "{0} підбирає сюрікени",
@@ -243,7 +242,7 @@
   "skill_explosion_delay_text_4": "\uD83D\uDCAC О ти, хто носиш ім'я вибуху, покажи свою справжню силу! Нехай нічого не залишиться на шляху твого руйнування!",
 
   "item_cryo_grenade_name": "Кріо-граната",
-  "item_cryo_grenade_text": "\n\uD83D\uDCA3\uD83E\uDDCA|{0} кидає кріо-гранату! Наступні цілі: {1} оглушені.",
+  "item_cryo_grenade_text": "\uD83D\uDCA3\uD83E\uDDCA|{0} кидає кріо-гранату! Наступні цілі: {1} оглушені.",
 
   "skill_sweet_tooth_name": "Ласун",
   "skill_sweet_tooth_description": "Дає три цукерки! Пам'ятай що багато солодкого шкідливо і будуть боліти зубки",

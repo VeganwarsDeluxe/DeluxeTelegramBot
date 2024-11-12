@@ -15,7 +15,7 @@ class MatchCreationView(View):
         self.match = match
 
     def get_text(self):
-        return (f'{ls("bot.lobby.game").localize(self.match.locale)} {self.match.name}\n\n'
+        return (f'{ls("bot.lobby.game").localize(self.match.locale)} {self.match.name.localize(self.match.locale)}\n\n'
                 f'{ls("bot.lobby.players").localize(self.match.locale)}')
 
     async def get_keyboard(self, bot: Bot):

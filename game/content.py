@@ -1,5 +1,6 @@
 import VegansDeluxe.deluxe as deluxe
 import VegansDeluxe.rebuild as rebuild
+from VegansDeluxe.rebuild.Skills.Weaponsmith import Weaponsmith
 
 from game.Items.CaffeineCandy import CaffeineCandy
 from game.Items.CryoGrenade import CryoGrenade
@@ -22,6 +23,7 @@ from game.States.Dehydration import Dehydration
 from game.States.Emptiness import Emptiness
 from game.States.Hunger import Hunger
 from game.States.Mutilation import Mutilation
+from game.States.Regeneration import Regeneration
 from game.States.Weakness import Weakness
 from game.Weapons.AbyssalBlade import AbyssalBlade
 from game.Weapons.Boomerang import Boomerang
@@ -41,7 +43,7 @@ from game.Weapons.VampiricWhip import VampiricWhip
 # Testing!
 
 all_states = (rebuild.all_states + deluxe.all_states + [Emptiness] + [Weakness, Hunger, Dehydration, Mutilation] +
-              [CorrosiveMucus])
+              [CorrosiveMucus, Regeneration])
 all_items = (rebuild.all_items + [CryoGrenade, CaffeineCandy, SourCandy, SweetCandy, DeathGrenade, EnergyGrenade] +
              [MucusInTheBottle]
              )
@@ -50,7 +52,7 @@ all_weapons = (
         [CursedSword, GrenadeLauncher, Boomerang, Shurikens, NeedleFan, Emitter, Chainsaw, VampiricWhip, Dagger]
 )
 all_skills = (rebuild.all_skills + deluxe.all_skills + [ExplosionMagic, SweetTooth, Echo, Tactician, Dash, Heroism] +
-              [FinalBlow, Toad, Invulnerable]
+              [FinalBlow, Toad, Invulnerable] + [Weaponsmith]
               )
 
 game_items_pool = rebuild.game_items_pool + [CryoGrenade, EnergyGrenade, MucusInTheBottle]

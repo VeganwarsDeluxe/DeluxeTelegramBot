@@ -1,7 +1,7 @@
 import random
 from typing import Union
 
-from VegansDeluxe.core import PreMoveGameEvent, Weapon, Session, ActionTag, EventContext
+from VegansDeluxe.core import PreMoveGameEvent, Weapon, Session, ActionTag, EventContext, RegisterEvent
 from VegansDeluxe.core.Question.QuestionEvents import QuestionGameEvent
 from VegansDeluxe.core.States import State
 from VegansDeluxe.core.Translator.LocalizedString import LocalizedString, ls
@@ -10,9 +10,10 @@ from aiogram import Bot
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 
 import game.content
+from db import db
 from game.Entities.TelegramEntity import TelegramEntity
 from handlers.callbacks.other import (WeaponInfo, StateInfo, ChooseWeapon, ChooseSkill,
-                                      Additional, ActionChoice, TargetChoice, Back)
+                                      Additional, ActionChoice, TargetChoice, Back, AnswerChoice)
 from startup import engine
 from utils import KLineMerger, smartsplit
 
@@ -46,17 +47,29 @@ class BaseMatch:
 
     async def init_async(self):
         self.session: Session[TelegramEntity] = await self.create_session(self.id)
-        engine.event_manager.at_event(event=QuestionGameEvent, session_id=self.session.id,
-                                      unique_type=QuestionGameEvent,
-                                      callback_wrapper=self.handling_question)
 
-    async def handling_question(self, context: EventContext[QuestionGameEvent]):
-        print("Question handled!")
-        player = self.get_player(context.event.entity_id)
-        if player.npc:
-            return
+        @RegisterEvent(self.session.id, QuestionGameEvent, subscription_id="question_handler")
+        async def handling_question(context: EventContext[QuestionGameEvent]):
+            player = self.get_player(context.event.entity_id)
+            if player.npc:
+                # TODO: But really. NPCs also might wanna answer. Maybe something like NPC.choose_act()?
+                return
 
-        await self.bot.send_message(player.user_id, context.event.question.text)
+            text = self.localize_text(context.event.question.text, player.locale)
+            question = context.event.question
+            kb = []
+
+            for choice in question.choices:
+                kb.append([
+                    InlineKeyboardButton(
+                        text=self.localize_text(choice.text, player.locale),
+                        callback_data=
+                        AnswerChoice(game_id=self.id, question_id=question.id, choice_id=choice.id).pack()
+                    )]
+                )
+            kb = InlineKeyboardMarkup(inline_keyboard=kb)
+
+            await self.bot.send_message(player.user_id, text, reply_markup=kb)
 
     @property
     def unready_players(self) -> list[TelegramEntity]:
@@ -84,8 +97,10 @@ class BaseMatch:
         if result:
             return result[0]
 
-    async def join_session(self, user_id, user_name) -> TelegramEntity:
-        player = TelegramEntity(self.session.id, user_name, user_id)
+    async def join_session(self, user_id: int, user_name) -> TelegramEntity:
+        code = db.get_user_locale(user_id)
+
+        player = TelegramEntity(self.session.id, user_name, user_id, code)
         player.energy, player.max_energy, player.hp, player.max_hp = 5, 5, 4, 4
         self.session.attach_entity(player)
         await engine.attach_states(player, game.content.all_states)
@@ -485,7 +500,7 @@ class BaseMatch:
         kb = []
         for skill in skills:
             kb.append([
-                InlineKeyboardButton(text=skill.name.localize(),
+                InlineKeyboardButton(text=self.localize_text(skill.name, code),
                                      callback_data=ChooseSkill(cycle=cycle, game_id=self.id, skill_id=skill.id)
                                      .pack()),
                 InlineKeyboardButton(text=ls("deluxe.buttons.information").localize(code),

@@ -94,7 +94,7 @@ class SwitchShurikenMode(FreeWeaponAction):
 @AttachedAction(Shurikens)
 class PickUpShuriken(FreeWeaponAction):
     id = 'pick_up'
-    name = "shuriken_pickup_name"
+    name = ls("shuriken_pickup_name")
     target_type = OwnOnly()
 
     def __init__(self, session: Session, source: Entity, weapon: Shurikens):

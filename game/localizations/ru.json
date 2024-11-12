@@ -209,7 +209,6 @@
   "weapon_shurikens_name": "Сюрикены",
   "weapon_shurikens_description": "Оружие дальнего боя, позволяет ментуть сразу два сюрикена. Сюрикены нужно подбирать",
   "weapon_shuriken_throw_name": "{0} метает сюрикен и наносит {1} урона {2}.",
-  "weapon_double_shuriken_throw_name": "{0} метает сюрикен и наносит {1} урона {2}.\n{0} метает сюрикен и наносит {3} урона {4}.",
   "shuriken_pickup_name": "Подобрать сюрикены",
   "shuriken_no_ammo_text": "Сюрикенов нет, подбери",
   "shuriken_pickup_text": "{0} подбирает сюрикены",
@@ -245,7 +244,7 @@
   "skill_explosion_delay_text_4": "\uD83D\uDCAC О ты, кто носишь имя взрыва, покажи свою истинную силу! Пусть ничего не останется на пути твоего разрушения!",
 
   "item_cryo_grenade_name": "Крио-граната",
-  "item_cryo_grenade_text": "\n\uD83D\uDCA3\uD83E\uDDCA|{0} кидает крио-гранату! Следующие цели: {1} оглушены.",
+  "item_cryo_grenade_text": "\uD83D\uDCA3\uD83E\uDDCA|{0} кидает крио-гранату! Следующие цели: {1} оглушены.",
 
   "skill_sweet_tooth_name": "Сладкоежка",
   "skill_sweet_tooth_description": "Даёт три конфетки! Помни что много сладкого вредно и будут болеть зубки",

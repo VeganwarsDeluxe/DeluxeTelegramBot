@@ -2,14 +2,16 @@ import random
 
 from VegansDeluxe.core import ls, Own
 from VegansDeluxe.core.ContentManager import content_manager as cm
+from VegansDeluxe.core.Question.QuestionEvents import AnswerGameEvent
 from aiogram import Router
 from aiogram.types import CallbackQuery
 from aiogram.utils.formatting import Text
 
 import game.content
+from db import db
 from flow.MatchStartFlow import MatchStartFlow
 from handlers.callbacks.other import (WeaponInfo, StateInfo, ChooseWeapon, ChooseSkill, StartGame,
-                                      Additional, ActionChoice, TargetChoice, Back)
+                                      Additional, ActionChoice, TargetChoice, Back, AnswerChoice)
 from startup import mm, engine
 
 r = Router()
@@ -17,7 +19,7 @@ r = Router()
 
 @r.callback_query(WeaponInfo.filter())
 async def echo_handler(query: CallbackQuery, callback_data: WeaponInfo) -> None:
-    code = ""  # TODO: PASS CODE HERE
+    code = db.get_user_locale(query.from_user.id)
     response = cm.get_weapon(callback_data.weapon_id).description.localize(code)
 
     await query.answer(response, show_alert=True)
@@ -25,7 +27,7 @@ async def echo_handler(query: CallbackQuery, callback_data: WeaponInfo) -> None:
 
 @r.callback_query(StateInfo.filter())
 async def echo_handler(query: CallbackQuery, callback_data: StateInfo) -> None:
-    code = ""  # TODO: PASS CODE HERE
+    code = db.get_user_locale(query.from_user.id)
     response = cm.get_state(callback_data.state_id).description.localize(code)
 
     await query.answer(response, show_alert=True)
@@ -33,7 +35,7 @@ async def echo_handler(query: CallbackQuery, callback_data: StateInfo) -> None:
 
 @r.callback_query(ChooseWeapon.filter())
 async def echo_handler(query: CallbackQuery, callback_data: ChooseWeapon) -> None:
-    code = ""  # TODO: PASS CODE HERE
+    code = db.get_user_locale(query.from_user.id)
     bot = query.bot
 
     match = mm.get_match(callback_data.game_id)
@@ -70,7 +72,7 @@ async def echo_handler(query: CallbackQuery, callback_data: ChooseWeapon) -> Non
 
 @r.callback_query(ChooseSkill.filter())
 async def h(query: CallbackQuery, callback_data: ChooseSkill) -> None:
-    code = ""  # TODO: PASS CODE HERE
+    code = db.get_user_locale(query.from_user.id)
     bot = query.bot
 
     match = mm.get_match(int(callback_data.game_id))
@@ -118,7 +120,7 @@ async def h(query: CallbackQuery, callback_data: ChooseSkill) -> None:
 
 @r.callback_query(Additional.filter())
 async def h(query: CallbackQuery, callback_data: Additional) -> None:
-    code = ""  # TODO: PASS CODE HERE
+    code = db.get_user_locale(query.from_user.id)
     bot = query.bot
 
     match = mm.get_match(callback_data.game_id)
@@ -138,7 +140,7 @@ async def h(query: CallbackQuery, callback_data: Additional) -> None:
 
 @r.callback_query(ActionChoice.filter())
 async def h(query: CallbackQuery, callback_data: ActionChoice) -> None:
-    code = ""  # TODO: PASS CODE HERE
+    code = db.get_user_locale(query.from_user.id)
     bot = query.bot
 
     match = mm.get_match(callback_data.game_id)
@@ -174,9 +176,35 @@ async def h(query: CallbackQuery, callback_data: ActionChoice) -> None:
     await match.choose_act(query.from_user.id, target.id, callback_data.action_id)
 
 
+@r.callback_query(AnswerChoice.filter())
+async def h(query: CallbackQuery, callback_data: AnswerChoice) -> None:
+    code = db.get_user_locale(query.from_user.id)
+    bot = query.bot
+
+    match = mm.get_match(callback_data.game_id)
+    if not match:
+        await bot.edit_message_text(ls("bot.error.game_not_found").localize(code),
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
+        return
+    player = match.get_player(query.from_user.id)
+    if not player:
+        await bot.edit_message_text(ls("bot.error.player_not_found").localize(code),
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
+        return
+
+    event = AnswerGameEvent(match.id, match.session.turn, player.id, callback_data.question_id, callback_data.choice_id)
+    await engine.event_manager.publish(event)
+
+    # TODO: I think we need Question instance here after all. It may contain localized message to show here. I'll keep
+    #  debug version with IDS for now.
+    await bot.edit_message_text(
+        f"✅{callback_data.question_id} - {callback_data.choice_id}",
+        chat_id=query.message.chat.id, message_id=query.message.message_id)
+
+
 @r.callback_query(TargetChoice.filter())
 async def h(query: CallbackQuery, callback_data: TargetChoice) -> None:
-    code = ""  # TODO: PASS CODE HERE
+    code = db.get_user_locale(query.from_user.id)
     bot = query.bot
 
     match = mm.get_match(callback_data.game_id)
@@ -208,7 +236,7 @@ async def h(query: CallbackQuery, callback_data: TargetChoice) -> None:
 
 @r.callback_query(Back.filter())
 async def h(query: CallbackQuery, callback_data: Back) -> None:
-    code = ""  # TODO: PASS CODE HERE
+    code = db.get_user_locale(query.from_user.id)
     bot = query.bot
 
     match = mm.get_match(callback_data.game_id)
@@ -228,7 +256,7 @@ async def h(query: CallbackQuery, callback_data: Back) -> None:
 
 @r.callback_query(StartGame.filter())
 async def h(query: CallbackQuery):
-    code = ''  # TODO: PASS CODE HERE
+    code = db.get_user_locale(query.from_user.id)
 
     msf = MatchStartFlow(query.message.chat.id, query.from_user.id, mm)
     result = await msf.execute()

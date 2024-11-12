@@ -238,7 +238,7 @@
   "skill_explosion_delay_text_4": "\uD83D\uDCAC O you who bear the name of explosion, show your true power! Let nothing remain in the path of your destruction!",
 
   "item_cryo_grenade_name": "Cryo-grenade",
-  "item_cryo_grenade_text": "\n\uD83D\uDCA3\uD83E\uDDCA|{0} throws a cryo-grenade! The following targets: {1} stunned.",
+  "item_cryo_grenade_text": "\uD83D\uDCA3\uD83E\uDDCA|{0} throws a cryo-grenade! The following targets: {1} stunned.",
 
   "skill_sweet_tooth_name": "Sweet tooth",
   "skill_sweet_tooth_description": "Gives you three candy bars! Remember that too much sweets are bad for you and your teeth will hurt",

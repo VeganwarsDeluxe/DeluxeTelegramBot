@@ -4,13 +4,13 @@ from VegansDeluxe.core.Entities.Entity import Entity
 
 
 class TelegramEntity(Entity):
-    def __init__(self, session_id: str, user_name, user_id):
+    def __init__(self, session_id: str, user_name, user_id, code=''):
         super().__init__(session_id)
         self.id = str(user_id)
 
         self.name = user_name
         self.npc = False  # to differentiate humans and bots
-        self.locale = ''  # TODO: PASS CODE HERE
+        self.locale = code
 
         self.chose_weapon = False
         self.chose_skills = False

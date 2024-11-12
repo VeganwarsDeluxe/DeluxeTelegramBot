@@ -4,6 +4,7 @@ import random
 from VegansDeluxe.core import RegisterWeapon, Entity, Enemies, AttachedAction, MeleeAttack
 from VegansDeluxe.core.Events import PostDamageGameEvent
 from VegansDeluxe.core.Session import Session
+from VegansDeluxe.core.Translator.LocalizedList import LocalizedList
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
 
@@ -75,7 +76,7 @@ class ElectricWhipAttack(MeleeAttack):
                     )
                 )
             else:
-                secondary_targets_name = ', '.join([t.name for t in secondary_targets[:-1]])
+                secondary_targets_name = LocalizedList([t.name for t in secondary_targets[:-1]])
                 tertiary_target_name = secondary_targets[-1].name
                 self.session.say(
                     ls("weapon_electric_whip_tertiary_targets_text")

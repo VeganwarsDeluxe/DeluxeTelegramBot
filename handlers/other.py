@@ -7,6 +7,7 @@ from aiogram.types import Message
 from aiogram.utils.formatting import Text
 
 import config
+from db import db
 from flow.MatchStartFlow import MatchStartFlow
 from startup import mm, engine
 
@@ -29,7 +30,7 @@ async def echo_handler(m: Message) -> None:
 
 @r.message(Command("vd_delete"))
 async def echo_handler(m: Message) -> None:
-    code = ''  # TODO: PASS CODE HERE
+    code = db.get_user_locale(m.from_user.id)
 
     match = mm.get_match(m.chat.id)
     if not match:
@@ -42,7 +43,7 @@ async def echo_handler(m: Message) -> None:
 
 @r.message(Command("vd_join"))
 async def echo_handler(m: Message) -> None:
-    code = ''  # TODO: PASS CODE HERE
+    code = db.get_user_locale(m.from_user.id)
 
     match = mm.get_match(m.chat.id)
     if not match:
@@ -67,7 +68,7 @@ async def echo_handler(m: Message) -> None:
 @r.message(CommandStart(deep_link=True))
 async def handler(m: Message, command: CommandObject):
     args = command.args
-    code = ''  # TODO: PASS CODE HERE
+    code = db.get_user_locale(m.from_user.id)
     bot = m.bot
 
     game_id = int(args.split('_')[-1])
@@ -90,7 +91,7 @@ async def handler(m: Message, command: CommandObject):
 
 @r.message(Command("vd_go"))
 async def h(m: Message) -> None:
-    code = ''  # TODO: PASS CODE HERE
+    code = db.get_user_locale(m.from_user.id)
 
     msf = MatchStartFlow(m.chat.id, m.from_user.id, mm)
     result = await msf.execute()

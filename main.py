@@ -6,12 +6,15 @@ import VegansDeluxe.core
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+from aiogram.types import Update
 
 import config
 import game.content
+from db import db
 from handlers.callback_handlers import r as callbacks_router
 from handlers.matches import r as match_router
 from handlers.other import r as other_router
+from handlers.profile import r as profile_router
 from startup import engine, version
 
 print(f"Imported {game.content}.\n")
@@ -24,7 +27,13 @@ async def main() -> None:
 
     dp.include_router(match_router)
     dp.include_router(callbacks_router)
+    dp.include_router(profile_router)
     dp.include_router(other_router)
+
+    @dp.update.outer_middleware()
+    async def database_middleware(handler, event: Update, data):
+        await db.process_event(event)
+        return await handler(event, data)
 
     await bot.send_message(
         config.boot_chat,
