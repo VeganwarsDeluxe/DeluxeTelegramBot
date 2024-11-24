@@ -1,15 +1,18 @@
 from aiogram import Router
 from aiogram.filters import Command
-from aiogram.types import Message
+from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.formatting import Text
 
 from db import db
+from handlers.callbacks.other import ChangeLocale
+from startup import translator
 
 r = Router()
 
 
 @r.message(Command("profile"))
 async def profile_handler(m: Message) -> None:
+    # TODO: Fix locale for production readiness.
     tts = ''
 
     user = db.get_user(m.from_user.id)
@@ -25,27 +28,20 @@ async def profile_handler(m: Message) -> None:
 
 @r.message(Command("locale"))
 async def profile_handler(m: Message) -> None:
-    # TODO: Rewrite this. Locale choice should be with buttons.
-    #  Also checking for locale in the list is wrong. Overall design was written in a hurry.
+    # TODO: Fix locale for production readiness.
     tts = ''
 
     user = db.get_user(m.from_user.id)
     if not user:
         user = db.create_user(m.from_user.id, m.from_user.first_name)
 
-    if m.text.count(' ') != 1:
-        tts += f'🌍: {user.locale}\n\n'
-        tts += f'🇺🇦: /locale uk\n'
-        tts += f"🇷🇺: /locale ru\n"
-        tts += f'🇬🇧: /locale en\n'
-        await m.answer(**Text(tts).as_kwargs())
-        return
+    tts += f'🌍: {user.locale}\n\n'
 
-    locale = m.text.split(' ')[1]
-    if locale not in ['uk', 'en', 'ru']:
-        await m.answer("❌")
-        return
+    kb = []
+    for locale in translator.locales.keys():
+        kb.append([InlineKeyboardButton(text=locale, callback_data=ChangeLocale(locale=locale).pack())])
 
-    tts += '✅'
-    db.change_locale(m.from_user.id, locale)
-    await m.answer(**Text(tts).as_kwargs())
+    kb = InlineKeyboardMarkup(inline_keyboard=kb)
+
+    await m.answer(tts, reply_markup=kb)
+    return

@@ -12,8 +12,8 @@ from VegansDeluxe.rebuild import KnockedWeapon
 @RegisterWeapon
 class Boomerang(RangedWeapon):
     id = 'boomerang'
-    name = ls("weapon_boomerang_name")
-    description = ls("weapon_boomerang_description")
+    name = ls("weapon.boomerang.name")
+    description = ls("weapon.boomerang.description")
 
     cubes = 3
     accuracy_bonus = 3
@@ -49,7 +49,7 @@ class BoomerangAttack(RangedAttack):
 
     async def attack_boomerang(self, source: Entity, target: Entity):
         if source.energy < self.weapon.energy_cost:
-            self.session.say(ls("boomerang_attack_text_miss").format(source.name, target.name))
+            self.session.say(ls("weapon.boomerang.attack_text_miss").format(source.name, target.name))
             return
 
         self.weapon.throw_energy = source.energy
@@ -62,9 +62,9 @@ class BoomerangAttack(RangedAttack):
         source.outbound_dmg.add(target, post_damage, self.session.turn)
 
         if not total_damage:
-            self.session.say(ls("boomerang_attack_text_miss").format(source.name, target.name))
+            self.session.say(ls("weapon.boomerang.attack_text_miss").format(source.name, target.name))
         else:
-            self.session.say(ls("boomerang_attack_text").format(source.name, target.name, total_damage))
+            self.session.say(ls("weapon.boomerang.attack_text").format(source.name, target.name, total_damage))
 
         self.weapon.is_thrown = True
         self.weapon.return_turn = self.session.turn + self.weapon.turns_until_return
@@ -77,7 +77,7 @@ class BoomerangAttack(RangedAttack):
 
     async def return_boomerang(self, source: Entity):
         if self.weapon.throw_energy == 0:
-            self.session.say(ls("boomerang_return_text_miss").format(source.name, "the wind"))
+            self.session.say(ls("weapon.boomerang.return_text_miss").format(source.name, "the wind"))
             self.weapon.is_thrown = False
             source.current_weapon = self.weapon
             self.weapon.throw_energy = 0
@@ -101,9 +101,9 @@ class BoomerangAttack(RangedAttack):
         source.energy = current_energy
 
         if not total_damage:
-            self.session.say(ls("boomerang_return_text_miss").format(source.name, target.name))
+            self.session.say(ls("weapon.boomerang.return_text_miss").format(source.name, target.name))
         else:
-            self.session.say(ls("boomerang_return_text").format(source.name, target.name, total_damage))
+            self.session.say(ls("weapon.boomerang.return_text").format(source.name, target.name, total_damage))
 
         self.weapon.is_thrown = False
         source.current_weapon = self.weapon

@@ -11,8 +11,8 @@ from game.States.Mutilation import Mutilation
 @RegisterWeapon
 class Dagger(MeleeWeapon):
     id = 'dagger'
-    name = ls("weapon_dagger_name")
-    description = ls("weapon_dagger_description")
+    name = ls("weapon.dagger.name")
+    description = ls("weapon.dagger.description")
 
     cubes = 3
     accuracy_bonus = 2
@@ -23,7 +23,7 @@ class Dagger(MeleeWeapon):
 @AttachedAction(Dagger)
 class DaggerAttack(MeleeAttack):
     async def func(self, source, target):
-        damage = (super().attack(source, target)).dealt
+        damage = (await super().attack(source, target)).dealt
         if not damage:
             return damage
 
@@ -35,9 +35,9 @@ class DaggerAttack(MeleeAttack):
         if mutilation.active:
             mutilation.mutilation += 1
             mutilation.triggered = True  # Set triggered to True when mutilation increases
-            self.session.say(ls("weapon_dagger_increase").format(target.name))
+            self.session.say(ls("weapon.dagger.increase").format(target.name))
         else:
             mutilation.active = True
             mutilation.triggered = True  # Set triggered to True when mutilation activates
-            self.session.say(ls("weapon_dagger_effect").format(target.name))
+            self.session.say(ls("weapon.dagger.effect").format(target.name))
         return damage

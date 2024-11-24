@@ -25,11 +25,12 @@ async def register(root_context: StateContext[Mutilation]):
     @RegisterEvent(session.id, event=PreDamagesGameEvent, filters=[lambda e: state.active])
     async def func(context: EventContext[PreDamagesGameEvent]):
         if state.mutilation >= 3:
-            session.say(ls("state_mutilation_accuracy_bonus_loss").format(target.name)) #, target.weapon.accuracy_bonus - 1
+            session.say(
+                ls("state.mutilation_accuracy_bonus_loss").format(target.name))  # , target.weapon.accuracy_bonus - 1
             target.weapon.accuracy_bonus -= 1
             state.active = False
             state.mutilation = 1
         elif state.triggered:
-            session.say(ls("state_mutilation_timer").format(target.name, max(state.mutilation, 0)))
+            session.say(ls("state.mutilation_timer").format(target.name, max(state.mutilation, 0)))
 
         state.triggered = False

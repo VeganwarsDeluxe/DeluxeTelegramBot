@@ -26,11 +26,11 @@ async def register(root_context: StateContext[Emptiness]):
     @RegisterEvent(session.id, event=PreDamagesGameEvent, filters=[lambda e: state.active])
     async def func(context: EventContext[PreDamagesGameEvent]):
         if state.emptiness >= 3:
-            session.say(ls("state_emptiness_energy_loss").format(target.name, target.max_energy - 1))
+            session.say(ls("state.emptiness.energy_loss").format(target.name, target.max_energy - 1))
             target.max_energy -= 1
             state.active = False
             state.emptiness = 1
         elif state.triggered:
-            session.say(ls("state_emptiness_timer").format(target.name, max(state.emptiness, 0)))
+            session.say(ls("state.emptiness.timer").format(target.name, max(state.emptiness, 0)))
 
         state.triggered = False

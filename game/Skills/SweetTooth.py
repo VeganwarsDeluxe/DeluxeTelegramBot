@@ -11,8 +11,8 @@ from game.Items.SweetCandy import SweetCandy
 
 class SweetTooth(Skill):
     id = 'sweet_tooth'
-    name = ls("skill_sweet_tooth_name")
-    description = ls("skill_sweet_tooth_description")
+    name = ls("skill.sweet_tooth_name")
+    description = ls("skill.sweet_tooth_description")
 
 
 @RegisterState(SweetTooth)

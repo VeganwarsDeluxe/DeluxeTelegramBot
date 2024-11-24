@@ -30,4 +30,4 @@ class MatchStartFlow:
         await match.choose_items()
         await match.choose_weapons()
 
-        await match.lobby_message.reply(ls("bot.start.success").localize())
+        await match.lobby_message.reply(ls("bot.start.success").localize(match.locale))

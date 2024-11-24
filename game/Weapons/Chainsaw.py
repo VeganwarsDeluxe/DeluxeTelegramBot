@@ -9,8 +9,8 @@ from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
 @RegisterWeapon
 class Chainsaw(MeleeWeapon):
     id = 'chainsaw'
-    name = ls("weapon_chainsaw_name")
-    description = ls("weapon_chainsaw_description")
+    name = ls("weapon.chainsaw.name")
+    description = ls("weapon.chainsaw.description")
 
     def __init__(self, session_id: str, entity_id: str):
         super().__init__(session_id, entity_id)
@@ -33,7 +33,7 @@ class ChainsawAttack(MeleeAttack):
 
     async def func(self, source: Entity, target: Entity):
         if percentage_chance(5):
-            self.session.say(ls("weapon_chainsaw_jammed").format(source.name))
+            self.session.say(ls("weapon.chainsaw.jammed").format(source.name))
             self.weapon.WoundUp = False
             self.weapon.turns_active = 0
             self.weapon.reset_stats()
@@ -85,23 +85,21 @@ class WoundUpChainsaw(FreeWeaponAction):
 
     @property
     def name(self):
-        return ls("weapon_chainsaw_enable_name")
+        return ls("weapon.chainsaw.enable_name")
 
     async def func(self, source, target):
         if self.weapon.WoundUp:
-            self.session.say(ls("weapon_chainsaw_active").format(source.name, self.weapon.turns_active))
+            self.session.say(ls("weapon.chainsaw.active").format(source.name, self.weapon.turns_active))
             return
 
         self.weapon.WoundUp = True
         self.weapon.turns_active = 5
         self.weapon.cooldown_turn = self.session.turn + 5
 
-        self.session.say(ls("weapon_chainsaw_switch_text").format(source.name))
+        self.session.say(ls("weapon.chainsaw.switch_text").format(source.name))
 
         @At(self.session.id, turn=self.session.turn + 4, event=PostTickGameEvent)
         async def disable_chainsaw(context: EventContext[PostTickGameEvent]):
             self.weapon.WoundUp = False
             self.weapon.reset_stats()
-            context.session.say(ls("weapon_chainsaw_disable_text").format(source.name))
-
-
+            context.session.say(ls("weapon.chainsaw.disable_text").format(source.name))

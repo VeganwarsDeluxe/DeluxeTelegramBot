@@ -1,4 +1,3 @@
-from VegansDeluxe.core import RegisterState, RegisterEvent
 from VegansDeluxe.core import PostUpdatesGameEvent, PostTickGameEvent
 from VegansDeluxe.core import RegisterState, RegisterEvent
 from VegansDeluxe.core import Session
@@ -69,5 +68,5 @@ async def register(root_context: StateContext[Hunger]):
                         state.hunger -= 3
                     else:
                         state.hunger = 0
-                    session.say(ls("hunger_reduced_by_item").format(source.name, item.name, state.hunger))
+                    session.say(ls("state.hunger.reduced_by_item").format(source.name, item.name, state.hunger))
                     source.inventory.remove(item)

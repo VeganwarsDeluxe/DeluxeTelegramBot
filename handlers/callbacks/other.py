@@ -1,6 +1,13 @@
 from aiogram.filters.callback_data import CallbackData
 
 
+# TODO: Don't keep all handlers in other.py. Refactor.
+
+
+class ChangeLocale(CallbackData, prefix="change_locale"):
+    locale: str
+
+
 class StartGame(CallbackData, prefix="vd_go"):
     pass
 

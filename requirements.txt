@@ -7,3 +7,7 @@ urllib3
 
 sqlalchemy
 psycopg2
+
+tensorflow
+pandas
+numpy

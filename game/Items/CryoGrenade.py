@@ -14,13 +14,13 @@ from VegansDeluxe.rebuild import Stun
 @RegisterItem
 class CryoGrenade(Item):
     id = 'cryo_grenade'
-    name = ls("item_cryo_grenade_name")
+    name = ls("item.cryo.grenade_name")
 
 
 @AttachedAction(CryoGrenade)
 class CryoGrenadeAction(DecisiveItem):
     id = 'cryo_grenade'
-    name = ls("item_cryo_grenade_name")
+    name = ls("item.cryo.grenade_name")
     target_type = Enemies()
 
     def __init__(self, session: Session, source: Entity, item: Item):
@@ -43,7 +43,7 @@ class CryoGrenadeAction(DecisiveItem):
 
         source.energy = max(source.energy - 2, 0)
         self.session.say(
-            ls("item_cryo_grenade_text")
+            ls("item.cryo.grenade_text")
             .format(source.name, LocalizedList([t.name for t in targets]))
         )
 

@@ -1,4 +1,4 @@
-from VegansDeluxe.core import PostUpdatesGameEvent, At
+from VegansDeluxe.core import PostUpdatesGameEvent
 from VegansDeluxe.core import PreDamagesGameEvent
 from VegansDeluxe.core import RegisterState, RegisterEvent, StateContext, EventContext, Session
 from VegansDeluxe.core import State
@@ -24,7 +24,8 @@ async def register(root_context: StateContext[Weakness]):
     async def func_damage(context: EventContext[PreDamagesGameEvent]):
         if state.weakness > 0 and not state.triggered:
             if target.weapon:
-                session.say(ls("state_weakness_energy_cost_increase").format(target.name, target.weapon.energy_cost + 1))
+                session.say(
+                    ls("state.weakness.energy_cost_increase").format(target.name, target.weapon.energy_cost + 1))
                 target.weapon.energy_cost += 1
                 state.weakness += 1
                 state.triggered = True
@@ -33,7 +34,7 @@ async def register(root_context: StateContext[Weakness]):
     async def func_reset(context: EventContext[PostUpdatesGameEvent]):
         if state.weakness == 1:
             if target.weapon:
-                session.say(ls("state_recovery_from_weakness").format(target.name))
+                session.say(ls("state.weakness.recovery").format(target.name))
                 if state.triggered:
                     target.weapon.energy_cost -= 1
 

@@ -9,13 +9,13 @@ from game.States.Regeneration import Regeneration
 @RegisterItem
 class SweetCandy(Item):
     id = 'sweet_candy'
-    name = ls("item_sweet_candy_name")
+    name = ls("item.sweet_candy_name")
 
 
 @AttachedAction(SweetCandy)
 class SweetCandyAction(FreeItem):
     id = 'sweet_candy'
-    name = ls("item_sweet_candy_name")
+    name = ls("item.sweet_candy_name")
     target_type = OwnOnly()
     priority = -2
 
@@ -32,4 +32,4 @@ class SweetCandyAction(FreeItem):
         regeneration.active = True
 
         # Notify the session about the effect
-        self.session.say(ls("sweet_candy_effect").format(source.name))
+        self.session.say(ls("item.sweet_candy.effect").format(source.name))

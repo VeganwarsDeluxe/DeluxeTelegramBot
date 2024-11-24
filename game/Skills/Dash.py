@@ -8,13 +8,12 @@ from VegansDeluxe.core import StateContext, PostDamageGameEvent
 from VegansDeluxe.core.Actions.StateAction import DecisiveStateAction
 from VegansDeluxe.core.Skills.Skill import Skill
 from VegansDeluxe.core.Translator.LocalizedString import ls
-from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
 
 
 class Dash(Skill):
     id = 'dash'
-    name = ls("skill_dash_name")
-    description = ls("skill_dash_description")
+    name = ls("skill.dash_name")
+    description = ls("skill.dash_description")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -30,13 +29,17 @@ async def register(root_context: StateContext[Dash]):
 @AttachedAction(Dash)
 class DashAction(DecisiveStateAction):
     id = 'dash'
-    name = ls("skill_dash_action_name")
+    name = ls("skill.dash_action_name")
     target_type = Enemies()
     priority = 0
 
     def __init__(self, session: Session, source: Entity, skill: Dash):
         super().__init__(session, source, skill)
         self.state = skill
+
+    @property
+    def blocked(self) -> bool:
+        return self.source.weapon.ranged
 
     @property
     def hidden(self) -> bool:
@@ -48,22 +51,18 @@ class DashAction(DecisiveStateAction):
         # Получаем текущее оружие
         weapon = source.weapon
 
-        if isinstance(weapon, MeleeWeapon):
-            attack_action = MeleeAttack(self.session, source, weapon)
-        else:
-            self.session.say(ls("dash_unsupported_weapon_text").format(source.name))
-            return
+        attack_action = MeleeAttack(self.session, source, weapon)
 
         attack_result = await attack_action.attack(source, target)
-        total_damage = attack_result.dealt + 100
+        total_damage = attack_result.dealt + 1
 
         if total_damage:
             self.session.say(
-                ls("dash_text").format(source.name, target.name, total_damage)
+                ls("skill.dash.text").format(source.name, target.name, total_damage)
             )
         else:
             self.session.say(
-                ls("dash_text_miss").format(source.name, target.name)
+                ls("skill.dash.text_miss").format(source.name, target.name)
             )
 
         post_damage = await self.publish_post_damage_event(source, target, total_damage)

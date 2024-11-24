@@ -15,8 +15,8 @@ from VegansDeluxe.rebuild import Aflame, Stun
 
 class ExplosionMagic(Skill):
     id = 'explosion_magic'
-    name = ls("skill_explosion_magic_name")
-    description = ls("skill_explosion_magic_description")
+    name = ls("skill.explosion.magic_name")
+    description = ls("skill.explosion.magic_description")
 
     def __init__(self):
         super().__init__()
@@ -25,10 +25,10 @@ class ExplosionMagic(Skill):
 
         self.cooldown_turn = 0
         self.preparation_texts = [
-            ls("skill_explosion_delay_text_1"),
-            ls("skill_explosion_delay_text_2"),
-            ls("skill_explosion_delay_text_3"),
-            ls("skill_explosion_delay_text_4"),
+            ls("skill.explosion.delay_text_1"),
+            ls("skill.explosion.delay_text_2"),
+            ls("skill.explosion.delay_text_3"),
+            ls("skill.explosion.delay_text_4"),
         ]
 
 
@@ -41,7 +41,7 @@ async def register(root_context: StateContext[ExplosionMagic]):
 @AttachedAction(ExplosionMagic)
 class Explosion(DecisiveStateAction):
     id = 'explosion'
-    name = ls("skill_explosion_action_name")
+    name = ls("skill.explosion.action_name")
     priority = 0
     target_type = Enemies()
 
@@ -54,7 +54,7 @@ class Explosion(DecisiveStateAction):
         return self.session.turn < self.state.cooldown_turn
 
     async def func(self, source: Entity, target: Entity):
-        self.session.say(ls("skill_explosion_staff_text").format(source.name, target.name))
+        self.session.say(ls("skill.explosion.staff_text").format(source.name, target.name))
         random_text = random.choice(self.state.preparation_texts)
         self.session.say(random_text.format(source.name))
 
@@ -69,12 +69,12 @@ class Explosion(DecisiveStateAction):
             displayed_damage = await self.publish_pre_damage_event(source, target, calculated_damage)
 
             source.energy = max(0, source.energy - 10)
-            self.session.say(ls("skill_explosion_stun_text").format(source.name))
+            self.session.say(ls("skill.explosion.stun_text").format(source.name))
 
             aflame = target.get_state(Aflame)
             aflame.add_flame(self.session, target, source, 6)
-            self.session.say(ls("skill_explosion_text").format(source.name))
-            self.session.say(ls("skill_explosion_effect_text").format(target.name, displayed_damage, source.name))
+            self.session.say(ls("skill.explosion.text").format(source.name))
+            self.session.say(ls("skill.explosion.effect_text").format(target.name, displayed_damage, source.name))
 
             dealt_damage = await self.publish_post_damage_event(source, target, displayed_damage)
             target.inbound_dmg.add(source, dealt_damage, self.session.turn)

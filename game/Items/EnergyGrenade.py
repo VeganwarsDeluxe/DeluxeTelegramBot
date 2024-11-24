@@ -13,13 +13,13 @@ from VegansDeluxe.core.Translator.LocalizedString import ls
 @RegisterItem
 class EnergyGrenade(Item):
     id = 'energy_grenade'
-    name = ls("item_energy_grenade_name")
+    name = ls("item.energy_grenade_name")
 
 
 @AttachedAction(EnergyGrenade)
 class EnergyGrenadeAction(DecisiveItem):
     id = 'energy_grenade'
-    name = ls("item_energy_grenade_name")
+    name = ls("item.energy_grenade_name")
     target_type = Enemies()
 
     def __init__(self, session: Session, source: Entity, item: Item):
@@ -46,7 +46,7 @@ class EnergyGrenadeAction(DecisiveItem):
 
         # Announce the action
         self.session.say(
-            ls("item_energy_grenade_text")
+            ls("item.energy_grenade_text")
             .format(source.name, damage, LocalizedList([t.name for t in targets]))
         )
 

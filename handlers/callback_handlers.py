@@ -11,7 +11,7 @@ import game.content
 from db import db
 from flow.MatchStartFlow import MatchStartFlow
 from handlers.callbacks.other import (WeaponInfo, StateInfo, ChooseWeapon, ChooseSkill, StartGame,
-                                      Additional, ActionChoice, TargetChoice, Back, AnswerChoice)
+                                      Additional, ActionChoice, TargetChoice, Back, AnswerChoice, ChangeLocale)
 from startup import mm, engine
 
 r = Router()
@@ -111,10 +111,13 @@ async def h(query: CallbackQuery, callback_data: ChooseSkill) -> None:
                                 chat_id=query.message.chat.id, message_id=query.message.message_id)
 
     if not match.not_chosen_skills:
-        tts = ls("bot.common.game_is_starting").localize(match.locale)
+        tts = ls("deluxe.matches.messages.start")
+        weapon_text = ""
         for player in match.session.alive_entities:
-            tts += f'\n{player.name}: {player.weapon.name}'
-        await bot.send_message(match.chat_id, tts)
+            weapon_text += f'\n{match.localize_text(player.name)}: {match.localize_text(player.weapon.name)}'
+        tts = tts.format(weapon_text)
+
+        await bot.send_message(match.chat_id, match.localize_text(tts))
         await match.start_game()
 
 
@@ -262,3 +265,14 @@ async def h(query: CallbackQuery):
     result = await msf.execute()
     if result:
         await query.message.reply(**Text(result.localize(code)).as_kwargs())
+
+
+@r.callback_query(ChangeLocale.filter())
+async def h(query: CallbackQuery, callback_data: ChangeLocale):
+    code = db.get_user_locale(query.from_user.id)
+
+    # TODO: Fix localisation. Not production ready.
+
+    db.change_locale(query.from_user.id, callback_data.locale)
+    await query.bot.edit_message_text(f"✅{callback_data.locale}",
+                                      chat_id=query.message.chat.id, message_id=query.message.message_id)

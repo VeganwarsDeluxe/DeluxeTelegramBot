@@ -11,8 +11,8 @@ from game.States.Dehydration import Dehydration
 @RegisterWeapon
 class VampiricWhip(MeleeWeapon):
     id = 'vampiric_whip'
-    name = ls("weapon_vampiric_whip_name")
-    description = ls("weapon_vampiric_whip_description")
+    name = ls("weapon.vampiric_whip_name")
+    description = ls("weapon.vampiric_whip_description")
 
     accuracy_bonus = 2
     cubes = 3
@@ -35,11 +35,11 @@ class VampiricWhipAttack(MeleeAttack):
         if dehydration.active:
             dehydration.dehydration += 1
             dehydration.triggered = True  # Отслеживание изменения
-            self.session.say(ls("weapon_vampiric_whip_increase"))
+            self.session.say(ls("weapon.vampiric_whip_increase"))
         else:
             dehydration.active = True
             dehydration.triggered = True  # Отслеживание активации
             dehydration.target = target  # Сохраняем цель в состоянии
-            self.session.say(ls("weapon_vampiric_whip_effect").format(target.name))
+            self.session.say(ls("weapon.vampiric_whip_effect").format(target.name))
 
         return damage

@@ -38,7 +38,7 @@ class InvulnerableAction(DecisiveStateAction):
         """Apply the invulnerable state effect."""
         # Check if the effect triggers with a 10% chance
         if percentage_chance(99):
-            self.session.say(ls("skill.invulnerable.trigger").format(source.name))
+            pass
 
             # Modify damage during the PostDamagesGameEvent
             # This requires hooking into the event system if it allows custom handling

@@ -14,7 +14,6 @@ from game.Skills.Echo import Echo
 from game.Skills.ExplosionMagic import ExplosionMagic
 from game.Skills.FinalBlow import FinalBlow
 from game.Skills.Heroism import Heroism
-from game.Skills.Invulnerable import Invulnerable
 from game.Skills.SweetTooth import SweetTooth
 from game.Skills.Tactician import Tactician
 from game.Skills.Toad import Toad
@@ -52,7 +51,8 @@ all_weapons = (
         [CursedSword, GrenadeLauncher, Boomerang, Shurikens, NeedleFan, Emitter, Chainsaw, VampiricWhip, Dagger]
 )
 all_skills = (rebuild.all_skills + deluxe.all_skills + [ExplosionMagic, SweetTooth, Echo, Tactician, Dash, Heroism] +
-              [FinalBlow, Toad, Invulnerable] + [Weaponsmith]
+              [FinalBlow, Toad] + [Weaponsmith]
+              # + [Invulnerable] Fix it first.
               )
 
 game_items_pool = rebuild.game_items_pool + [CryoGrenade, EnergyGrenade, MucusInTheBottle]

@@ -8,8 +8,8 @@ from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
 @RegisterWeapon
 class Shurikens(RangedWeapon):
     id = 'shurikens'
-    name = ls("weapon_shurikens_name")
-    description = ls("weapon_shurikens_description")
+    name = ls("weapon.shurikens.name")
+    description = ls("weapon.shurikens.description")
 
     cubes = 1
     accuracy_bonus = 2
@@ -36,7 +36,7 @@ class ShurikenAttack(RangedAttack):
             else:
                 await self.perform_single_shuriken_attack(source, target)
         else:
-            self.session.say(ls("shuriken_no_ammo_text").format(source.name))
+            self.session.say(ls("weapon.shurikens.no_ammo_text").format(source.name))
 
     async def shuriken_attack(self, source, target):
         total_damage = self.calculate_damage(source, target)
@@ -76,25 +76,22 @@ class ShurikenAttack(RangedAttack):
 @AttachedAction(Shurikens)
 class SwitchShurikenMode(FreeWeaponAction):
     id = 'switch_shuriken_mode'
+    name = ls("weapon.shurikens.switch_shuriken_mode")
     target_type = OwnOnly()
     priority = -10
-
-    @property
-    def name(self):
-        return ls("switch_shuriken_mode") if not self.weapon.double_shuriken else ls("switch_shuriken_mode")
 
     async def func(self, source, target):
         self.weapon.double_shuriken = not self.weapon.double_shuriken
         if self.weapon.double_shuriken:
-            self.session.say(ls("switch_to_double_shuriken_text").format(source.name))
+            self.session.say(ls("weapon.shurikens.switch_to_double_shuriken_text").format(source.name))
         else:
-            self.session.say(ls("switch_to_single_shuriken_text").format(source.name))
+            self.session.say(ls("weapon.shurikens.switch_to_single_shuriken_text").format(source.name))
 
 
 @AttachedAction(Shurikens)
 class PickUpShuriken(FreeWeaponAction):
     id = 'pick_up'
-    name = ls("shuriken_pickup_name")
+    name = ls("weapon.shurikens.pickup.name")
     target_type = OwnOnly()
 
     def __init__(self, session: Session, source: Entity, weapon: Shurikens):
@@ -107,4 +104,4 @@ class PickUpShuriken(FreeWeaponAction):
 
     async def func(self, source: Entity, target: Entity):
         self.weapon.ammo = 4
-        self.session.say(ls("shuriken_pickup_text").format(source.name))
+        self.session.say(ls("weapon.shurikens.shuriken_pickup_text").format(source.name))

@@ -9,8 +9,8 @@ from game.States.Hunger import Hunger
 @RegisterWeapon
 class Emitter(RangedWeapon):
     id = 'emitter'
-    name = ls("weapon_emitter_name")
-    description = ls("weapon_emitter_description")
+    name = ls("weapon.emitter.name")
+    description = ls("weapon.emitter.description")
 
     cubes = 2
     accuracy_bonus = 2
@@ -28,7 +28,7 @@ class EmitterAttack(RangedAttack):
         if percentage_chance(99):  # 20% шанс, 99 для тестов
             hunger = target.get_state(Hunger)
             hunger.hunger += 1
-            self.session.say(ls("weapon_emitter_effect").format(target.name, hunger.hunger))
+            self.session.say(ls("weapon.emitter.effect").format(target.name, hunger.hunger))
 
         return damage.dealt
 

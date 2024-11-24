@@ -13,8 +13,8 @@ from VegansDeluxe.rebuild import KnockedWeapon
 @RegisterWeapon
 class Tomahawk(MeleeWeapon):
     id = 'tomahawk'
-    name = ls("weapon_tomahawk_name")
-    description = ls("weapon_tomahawk_description")
+    name = ls("weapon.tomahawk.name")
+    description = ls("weapon.tomahawk.description")
 
     cubes = 3
     accuracy_bonus = 2
@@ -34,7 +34,7 @@ class TomahawkAttack(MeleeAttack):
 @AttachedAction(Tomahawk)
 class TomahawkThrow(RangedAttack):
     id = 'tomahawk_throw'
-    name = ls("tomahawk_throw_name")
+    name = ls("weapon.tomahawk.throw_name")
     target_type = Enemies()
 
     @property
@@ -57,12 +57,12 @@ class TomahawkThrow(RangedAttack):
 
         if not total_damage:
             self.session.say(
-                ls("tomahawk_throw_text_miss")
+                ls("weapon.tomahawk.throw_text_miss")
                 .format(source.name, target.name)
             )
         else:
             self.session.say(
-                ls("tomahawk_throw_text").format(source.name, target.name, total_damage)
+                ls("weapon.tomahawk.throw_text").format(source.name, target.name, total_damage)
             )
 
         state = source.get_state(KnockedWeapon)

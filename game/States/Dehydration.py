@@ -29,12 +29,12 @@ async def register(root_context: StateContext[Dehydration]):
         if state.dehydration >= 3:
             health_recovered = min(1, source.max_hp - source.hp)
             source.hp += health_recovered
-            session.say(ls("state_dehydration_hp_recovery").format(source.name, source.hp))
+            session.say(ls("state.dehydration_hp_recovery").format(source.name, source.hp))
 
             state.active = False
             state.dehydration = 1
         elif state.triggered:
-            session.say(ls("state_dehydration_timer").format(target.name, max(state.dehydration, 0)))
+            session.say(ls("state.dehydration_timer").format(target.name, max(state.dehydration, 0)))
 
         state.triggered = False
 

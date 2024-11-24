@@ -4,12 +4,15 @@ from aiogram.types import Message
 
 from db import db
 from flow.MatchCreationFlow import MatchCreationFlow
+from game.Matches.AndroidMatch import AndroidMatch
 from game.Matches.BaseMatch import BaseMatch
 from game.Matches.BeastDungeon import BeastDungeon
 from game.Matches.BotDungeon import BotDungeon
 from game.Matches.DeathMatch import DeathMatch
 from game.Matches.ElementalDungeon import ElementalDungeon
 from game.Matches.GuardianDungeon import GuardianDungeon
+from game.Matches.NeuroRatMatch import NeuroRatMatch
+from game.Matches.NeuroRatTrainingDuel import NeuroRatTrainingDuel
 from game.Matches.SlimeDungeon import SlimeDungeon
 from game.Matches.TestGameMatch import TestGameMatch
 from game.Matches.TestGameMatchTeam import TestGameMatchTeam
@@ -78,3 +81,27 @@ async def echo_handler(m: Message) -> None:
     flow = MatchCreationFlow(m.chat.id, BotDungeon)
     code = db.get_user_locale(m.from_user.id)
     await flow.execute(m.bot, code)
+
+
+@r.message(Command("vd_neurorat"))
+async def echo_handler(m: Message) -> None:
+    flow = MatchCreationFlow(m.chat.id, NeuroRatMatch)
+    code = db.get_user_locale(m.from_user.id)
+    await flow.execute(m.bot, code)
+
+
+@r.message(Command("vd_android"))
+async def echo_handler(m: Message) -> None:
+    flow = MatchCreationFlow(m.chat.id, AndroidMatch)
+    code = db.get_user_locale(m.from_user.id)
+    await flow.execute(m.bot, code)
+
+
+@r.message(Command("vd_neuroturnier"))
+async def echo_handler(m: Message) -> None:
+    match = NeuroRatTrainingDuel(m.bot)
+    await match.init_async()
+
+    await match.add_rats("z", "b")
+
+    await match.start_game()

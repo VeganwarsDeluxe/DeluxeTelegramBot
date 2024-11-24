@@ -9,8 +9,8 @@ from game.States.Weakness import Weakness
 @RegisterWeapon
 class CursedSword(MeleeWeapon):
     id = 'cursed_sword'
-    name = ls("weapon_cursed_sword_name")
-    description = ls("weapon_cursed_sword_description")
+    name = ls("weapon.cursed_sword.name")
+    description = ls("weapon.cursed_sword.description")
 
     accuracy_bonus = 2
     cubes = 3
@@ -28,7 +28,7 @@ class CursedSwordAttack(MeleeAttack):
         if percentage_chance(99):
             weakness = target.get_state(Weakness)
 
-            self.session.say(ls("weapon_cursed_sword_effect").format(target.name))
+            self.session.say(ls("weapon.cursed_sword.effect").format(target.name))
             weakness.weakness += 2  # Increase the weakness stack
             weakness.active = True  # Activate the weakness effect
 

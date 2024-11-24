@@ -12,8 +12,8 @@ from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
 @RegisterWeapon
 class ElectricWhip(MeleeWeapon):
     id = 'electric_whip'
-    name = ls("weapon_electric_whip_name")
-    description = ls("weapon_electric_whip_description")
+    name = ls("weapon.electric_whip.name")
+    description = ls("weapon.electric_whip.description")
 
     cubes = 2
     accuracy_bonus = 0
@@ -54,19 +54,19 @@ class ElectricWhipAttack(MeleeAttack):
 
         if primary_damage == 0 and secondary_damage == 0 and tertiary_damage == 0:
             self.session.say(
-                ls("weapon_electric_whip_text_miss")
+                ls("weapon.electric_whip.text_miss")
                 .format(source.name, target.name)
             )
         else:
             if len(secondary_targets) == 0:
                 self.session.say(
-                    ls("weapon_electric_whip_single_target_text")
+                    ls("weapon.electric_whip.single_target_text")
                     .format(source.name, target.name, primary_damage)
                 )
             elif len(secondary_targets) == 1:
                 secondary_target_name = secondary_targets[0].name
                 self.session.say(
-                    ls("weapon_electric_whip_multiple_targets_text")
+                    ls("weapon.electric_whip.multiple_targets_text")
                     .format(
                         source.name,
                         target.name,
@@ -79,7 +79,7 @@ class ElectricWhipAttack(MeleeAttack):
                 secondary_targets_name = LocalizedList([t.name for t in secondary_targets[:-1]])
                 tertiary_target_name = secondary_targets[-1].name
                 self.session.say(
-                    ls("weapon_electric_whip_tertiary_targets_text")
+                    ls("weapon.electric_whip.tertiary_targets_text")
                     .format(
                         source.name,
                         target.name,

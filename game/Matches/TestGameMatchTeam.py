@@ -31,7 +31,7 @@ class TestGameMatchTeam(BaseMatch):
             player.chose_items = True
             if player.npc:
                 continue
-            await self.bot.send_message(player.user_id, ls("test_game.items").localize(player.locale))
+            await self.bot.send_message(player.user_id, ls("matches.test_game.items").localize(player.locale))
 
     async def join_session(self, user_id, user_name):
         player = super().join_session(user_id, user_name)

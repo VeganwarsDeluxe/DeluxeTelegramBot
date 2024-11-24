@@ -10,8 +10,8 @@ from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
 @RegisterWeapon
 class NeedleFan(RangedWeapon):
     id = 'needle_fan'
-    name = ls("weapon_needle_fan_name")
-    description = ls("weapon_needle_fan_description")
+    name = ls("weapon.needle_fan.name")
+    description = ls("weapon.needle_fan.description")
 
     cubes = 2
     accuracy_bonus = 2

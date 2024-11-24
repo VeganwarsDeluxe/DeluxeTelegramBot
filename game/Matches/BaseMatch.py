@@ -14,7 +14,7 @@ from db import db
 from game.Entities.TelegramEntity import TelegramEntity
 from handlers.callbacks.other import (WeaponInfo, StateInfo, ChooseWeapon, ChooseSkill,
                                       Additional, ActionChoice, TargetChoice, Back, AnswerChoice)
-from startup import engine
+from startup import engine, battle_ai
 from utils import KLineMerger, smartsplit
 
 
@@ -144,6 +144,16 @@ class BaseMatch:
         target = self.session.get_entity(target_id)
         action = engine.action_manager.get_action(self.session, player, act_id)
         queue = engine.action_manager.queue_action(self.session, player, act_id)
+
+        # TODO: Wired AI training here. Please rework, refactor.
+        try:
+            choice_index = engine.action_manager.get_available_actions(self.session, player).index(action)
+            training_data = battle_ai.compile_training_data(self.session, player, choice_index=choice_index)
+            await battle_ai.train([training_data])
+            battle_ai.save()
+        except:
+            pass
+
         action.target = target
 
         if action.type == 'item':
@@ -181,6 +191,9 @@ class BaseMatch:
 
         for tts in smartsplit.smart_split(text):
             try:
+                if self.chat_id == 0:
+                    print(f"[TG]: {text}")
+                    continue
                 await self.bot.send_message(self.chat_id, tts)
             except Exception as e:
                 print(f"Failed to send message to chat {self.chat_id}. Error: {str(e)}")
@@ -214,6 +227,8 @@ class BaseMatch:
         return "".join([self.localize_text(log, code) for log in logs])
 
     def localize_text(self, text: Union[str, LocalizedString], code: str = ''):
+        if not code:
+            code = self.locale
         if isinstance(text, LocalizedString):
             text = text.localize(code)
         return text
@@ -230,13 +245,13 @@ class BaseMatch:
     def get_act_text(self, player: TelegramEntity):
         code = player.locale
 
-        tts = (ls("action_info_turn").format(self.session.turn)
+        tts = (ls("action.info.turn").format(self.session.turn)
                .localize(code) + '\n')
-        tts += (ls("action_info_hp").format(player.hearts, player.hp, player.max_hp)
+        tts += (ls("action.info.hp").format(player.hearts, player.hp, player.max_hp)
                 .localize(code) + '\n')
-        tts += (ls("action_info_energy").format(player.energies, player.energy, player.max_energy)
+        tts += (ls("action.info.energy").format(player.energies, player.energy, player.max_energy)
                 .localize(code) + '\n')
-        tts += (ls("action_info_hit_chance").format(int(player.weapon.hit_chance(player)))
+        tts += (ls("action.info.hit_chance").format(int(player.weapon.hit_chance(player)))
                 .localize(code) + "\n") if player.weapon else ''  # TODO: Maybe check for ATTACK tag?
 
         for notification in player.notifications:
@@ -448,7 +463,7 @@ class BaseMatch:
         if not self.not_chosen_skills:
             weapons_text = '\n' + '\n'.join([f'{player.name}: {self.localize_text(player.weapon.name, self.locale)}'
                                              for player in self.session.alive_entities])
-            text = ls("deluxe.matches.messages.start").format(weapons_text)
+            text = ls("deluxe.matches.messages.start").format(weapons_text).localize(self.locale)
             await self.send_message_to_chat(text)
             await self.pre_move()
 
