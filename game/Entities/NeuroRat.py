@@ -5,7 +5,6 @@ from VegansDeluxe.core import OwnOnly
 from VegansDeluxe.core.Actions.Action import DecisiveAction
 
 import game.content
-from startup import engine, battle_ai, BattleAI
 from .NPC import NPC
 
 
@@ -14,10 +13,10 @@ class NeuroRat(NPC):
         # TODO: Localization!
         super().__init__(session_id, name=name)
 
-        if not rat_id:
-            self.battle_ai = battle_ai
-        else:
-            self.battle_ai = BattleAI(engine, ai_id=rat_id)
+        # if not rat_id:
+        #    self.battle_ai = battle_ai
+        # else:
+        #    self.battle_ai = BattleAI(engine, ai_id=rat_id)
 
         self.weapon = random.choice(game.content.all_weapons)(self.session_id, self.id)
 
@@ -52,7 +51,7 @@ class NeuroRat(NPC):
 
     async def choose_act(self, session):
         await super().choose_act(session)
-
+        """
         training_data = battle_ai.compile_training_data(session, self, choice_index=0)
 
         best_action, chart = battle_ai.predict_action(
@@ -75,6 +74,7 @@ class NeuroRat(NPC):
         engine.action_manager.queue_action_instance(action)
 
         self.output_decision(chart, training_data, best_action)
+        """
 
     def output_decision(self, chart, data, best_action):
         tts = "-" * 14

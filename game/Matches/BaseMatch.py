@@ -14,7 +14,7 @@ from db import db
 from game.Entities.TelegramEntity import TelegramEntity
 from handlers.callbacks.other import (WeaponInfo, StateInfo, ChooseWeapon, ChooseSkill,
                                       Additional, ActionChoice, TargetChoice, Back, AnswerChoice)
-from startup import engine, battle_ai
+from startup import engine
 from utils import KLineMerger, smartsplit
 
 
@@ -146,13 +146,13 @@ class BaseMatch:
         queue = engine.action_manager.queue_action(self.session, player, act_id)
 
         # TODO: Wired AI training here. Please rework, refactor.
-        try:
-            choice_index = engine.action_manager.get_available_actions(self.session, player).index(action)
-            training_data = battle_ai.compile_training_data(self.session, player, choice_index=choice_index)
-            await battle_ai.train([training_data])
-            battle_ai.save()
-        except:
-            pass
+        # try:
+        #    choice_index = engine.action_manager.get_available_actions(self.session, player).index(action)
+        #    training_data = battle_ai.compile_training_data(self.session, player, choice_index=choice_index)
+        #    await battle_ai.train([training_data])
+        #    battle_ai.save()
+        # except:
+        #    pass
 
         action.target = target
 
