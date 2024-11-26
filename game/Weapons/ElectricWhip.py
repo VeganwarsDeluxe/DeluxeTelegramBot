@@ -2,6 +2,7 @@ import math
 import random
 
 from VegansDeluxe.core import RegisterWeapon, Entity, Enemies, AttachedAction, MeleeAttack
+from VegansDeluxe.core.Actions.Action import filter_targets
 from VegansDeluxe.core.Events import PostDamageGameEvent
 from VegansDeluxe.core.Session import Session
 from VegansDeluxe.core.Translator.LocalizedList import LocalizedList
@@ -42,7 +43,9 @@ class ElectricWhipAttack(MeleeAttack):
         targets = [target]
         secondary_targets = []
         while len(targets) < self.targets_count:
-            target_pool = list(filter(lambda t: t not in targets, self.get_targets(source, Enemies())))
+            target_pool = list(filter(lambda t: t not in targets,
+                                      filter_targets(source, Enemies(), self.session.entities)
+                                      ))
             if not target_pool:
                 break
             selected_target = random.choice(target_pool)

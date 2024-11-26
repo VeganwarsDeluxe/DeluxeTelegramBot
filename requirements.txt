@@ -1,6 +1,4 @@
 git+https://onedev.gts.org.ua/vezono/vegans-deluxe#egg=VegansDeluxe
-dnspython
-mongoengine
 aiogram
 requests
 urllib3

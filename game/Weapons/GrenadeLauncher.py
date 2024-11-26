@@ -1,6 +1,7 @@
 import random
 
 from VegansDeluxe.core import RangedAttack, FreeWeaponAction, RegisterWeapon, Entity, Enemies, OwnOnly, AttachedAction
+from VegansDeluxe.core.Actions.Action import filter_targets
 from VegansDeluxe.core.Events import PostDamageGameEvent
 from VegansDeluxe.core.Session import Session
 from VegansDeluxe.core.Translator.LocalizedList import LocalizedList
@@ -82,7 +83,7 @@ class GrenadeLauncherAttack(RangedAttack):
         targets = [target]
 
         while len(targets) < self.targets_count:
-            target_pool = [ta for ta in self.get_targets(source, Enemies()) if ta not in targets]
+            target_pool = [ta for ta in filter_targets(source, Enemies(), self.session.entities) if ta not in targets]
             if not target_pool:
                 break
             selected_target = random.choice(target_pool)

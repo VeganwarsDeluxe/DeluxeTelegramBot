@@ -7,6 +7,7 @@ from VegansDeluxe.core import RegisterEvent, PreDeathGameEvent, EventContext
 from VegansDeluxe.core import RegisterState
 from VegansDeluxe.core import Session, Enemies
 from VegansDeluxe.core import StateContext
+from VegansDeluxe.core.Actions.Action import filter_targets
 from VegansDeluxe.core.Actions.StateAction import DecisiveStateAction
 from VegansDeluxe.core.Entities.Entity import Entity
 from VegansDeluxe.core.Skills.Skill import Skill
@@ -85,7 +86,7 @@ class FinalBlowAction(DecisiveStateAction):
         targets = []
 
         # Get a list of enemies excluding the source (self)
-        target_pool = [enemy for enemy in self.get_targets(source, Enemies()) if enemy != source]
+        target_pool = filter_targets(source, Enemies(), self.session.entities)
 
         # Select two unique enemies if possible
         while len(targets) < self.targets_count:

@@ -7,7 +7,7 @@ from startup import engine
 
 
 class AndroidMatch(BaseMatch):
-    name = ls("android")  # TODO: Localization!
+    name = ls("matches.android")
 
     def __init__(self, chat_id, bot):
         super().__init__(chat_id, bot)
@@ -17,10 +17,9 @@ class AndroidMatch(BaseMatch):
     async def join_session(self, user_id, user_name):
         player = await super().join_session(user_id, user_name)
         player.team = 'players'
-        if self.rats == 1:
-            return
 
         self.rats += 1
-        elemental = Android(self.id, name="🤖|Android".format(self.rats))
-        self.session.attach_entity(elemental)
-        await engine.attach_states(elemental, game.content.all_states)
+        android = Android(self.id, name="🤖|Android {0}".format(self.rats))
+        self.session.attach_entity(android)
+        await engine.attach_states(android, game.content.all_states)
+        await engine.attach_states(android, android.choose_skills())

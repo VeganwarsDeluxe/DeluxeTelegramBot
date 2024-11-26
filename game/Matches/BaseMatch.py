@@ -143,7 +143,6 @@ class BaseMatch:
         player = self.get_player(user_id)
         target = self.session.get_entity(target_id)
         action = engine.action_manager.get_action(self.session, player, act_id)
-        queue = engine.action_manager.queue_action(self.session, player, act_id)
 
         # TODO: Wired AI training here. Please rework, refactor.
         # try:
@@ -158,6 +157,14 @@ class BaseMatch:
 
         if action.type == 'item':
             player.items.remove(action.item)
+
+        if action.cost == -1:
+            queue = True
+            await action.execute()
+        else:
+            queue = engine.action_manager.queue_action_instance(action)
+
+        await engine.action_manager.update_actions(self.session)
 
         if queue:
             await self.send_act_buttons(player)

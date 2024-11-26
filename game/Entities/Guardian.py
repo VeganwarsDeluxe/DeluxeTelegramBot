@@ -5,7 +5,7 @@ from VegansDeluxe.core import (
     Entity, Enemies, Session,
     ls, PostDamageGameEvent, OwnOnly, ActionTag
 )
-from VegansDeluxe.core.Actions.Action import DecisiveAction
+from VegansDeluxe.core.Actions.Action import DecisiveAction, filter_targets
 from VegansDeluxe.core.utils import percentage_chance
 from VegansDeluxe.rebuild import DamageThreshold, Armor, Stun
 
@@ -165,7 +165,7 @@ class GuardianOrangeHeart(RangedAttack):
         targets = [target]
 
         while len(targets) < self.targets_count:
-            target_pool = [ta for ta in self.get_targets(source, Enemies()) if ta not in targets]
+            target_pool = [ta for ta in filter_targets(source, Enemies(), self.session.entities) if ta not in targets]
             if not target_pool:
                 break
             selected_target = random.choice(target_pool)
@@ -226,7 +226,7 @@ class GuardianYellowHeart(RangedAttack):
         targets = [target]
 
         while len(targets) < self.targets_count:
-            target_pool = [ta for ta in self.get_targets(source, Enemies()) if ta not in targets]
+            target_pool = [ta for ta in filter_targets(source, Enemies(), self.session.entities) if ta not in targets]
             if not target_pool:
                 break
             selected_target = random.choice(target_pool)

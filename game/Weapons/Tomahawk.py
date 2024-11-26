@@ -7,7 +7,7 @@ from VegansDeluxe.core import Session
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Weapons.Weapon import MeleeWeapon
 
-from VegansDeluxe.rebuild import KnockedWeapon
+from VegansDeluxe.rebuild import DroppedWeapon
 
 
 @RegisterWeapon
@@ -65,7 +65,7 @@ class TomahawkThrow(RangedAttack):
                 ls("weapon.tomahawk.throw_text").format(source.name, target.name, total_damage)
             )
 
-        state = source.get_state(KnockedWeapon)
+        state = source.get_state(DroppedWeapon)
         state.drop_weapon(source)
 
         self.weapon.damage_bonus = 0

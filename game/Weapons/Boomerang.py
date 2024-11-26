@@ -2,11 +2,12 @@ import random
 
 from VegansDeluxe.core import EventContext
 from VegansDeluxe.core import RangedAttack, RegisterWeapon, Entity, Enemies, AttachedAction, At
+from VegansDeluxe.core.Actions.Action import filter_targets
 from VegansDeluxe.core.Events import PostDamageGameEvent, PreActionsGameEvent
 from VegansDeluxe.core.Session import Session
 from VegansDeluxe.core.Translator.LocalizedString import ls
 from VegansDeluxe.core.Weapons.Weapon import RangedWeapon
-from VegansDeluxe.rebuild import KnockedWeapon
+from VegansDeluxe.rebuild import DroppedWeapon
 
 
 @RegisterWeapon
@@ -68,7 +69,7 @@ class BoomerangAttack(RangedAttack):
 
         self.weapon.is_thrown = True
         self.weapon.return_turn = self.session.turn + self.weapon.turns_until_return
-        state = source.get_state(KnockedWeapon)
+        state = source.get_state(DroppedWeapon)
         state.drop_weapon(source)
 
         @At(self.session.id, turn=self.weapon.return_turn, event=PreActionsGameEvent)
@@ -83,7 +84,7 @@ class BoomerangAttack(RangedAttack):
             self.weapon.throw_energy = 0
             return
 
-        target_pool = list(self.get_targets(source, Enemies()))
+        target_pool = list(filter_targets(source, Enemies(), self.session.entities))
         if not target_pool:
             target_pool = [source]  # Fallback to self-target if no enemies found
         target = random.choice(target_pool)
