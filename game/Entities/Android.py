@@ -22,9 +22,9 @@ from VegansDeluxe.rebuild.States.DroppedWeapon import PickUp
 from VegansDeluxe.rebuild.States.KnockDown import StandUp
 from VegansDeluxe.rebuild.Weapons.Bow import FireArrow
 from VegansDeluxe.rebuild.Weapons.Chain import KnockWeapon
-from VegansDeluxe.rebuild.Weapons.Kuvalda import SledgehammerCrush
 from VegansDeluxe.rebuild.Weapons.Molot import TrueStrike
 from VegansDeluxe.rebuild.Weapons.Shaft import KnockDown
+from VegansDeluxe.rebuild.Weapons.Sledgehammer import SledgehammerCrush
 from VegansDeluxe.rebuild.Weapons.Spear import CounterAttack
 
 from startup import engine
