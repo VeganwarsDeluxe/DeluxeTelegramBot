@@ -223,10 +223,9 @@ async def h(query: CallbackQuery, callback_data: RefreshTeamList) -> None:
                                     chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
 
-    # TODO: Localization!
     tts, kb = match.form_team_selection_menu(player.locale, bool(player.team))
 
-    await bot.answer_callback_query(query.id, "Success!")
+    await bot.answer_callback_query(query.id, "✅")
 
     await bot.edit_message_text(
         tts,
@@ -250,12 +249,11 @@ async def h(query: CallbackQuery, callback_data: LeaveTeam) -> None:
         return
 
     player.team = None
-    await bot.send_message(match.chat_id, f"{player.name} now fights alone!")
+    await match.send_message_to_chat(ls("bot.teams.left_team").format(player.name))
 
-    # TODO: Localization!
     tts, kb = match.form_team_selection_menu(player.locale, bool(player.team))
 
-    await bot.answer_callback_query(query.id, "Success!")
+    await bot.answer_callback_query(query.id, "✅")
 
     await bot.edit_message_text(
         tts,
@@ -272,6 +270,10 @@ async def h(query: CallbackQuery, callback_data: JoinTeam) -> None:
         await bot.edit_message_text(ls("bot.error.game_not_found").localize(code),
                                     chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
+    if not match.lobby:
+        await bot.edit_message_text(ls("bot.error.game_already_launched").localize(code),
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
+        return
     player = match.get_player(query.from_user.id)
     if not player:
         await bot.edit_message_text(ls("bot.error.player_not_found").localize(code),
@@ -279,7 +281,7 @@ async def h(query: CallbackQuery, callback_data: JoinTeam) -> None:
         return
 
     if player.team == callback_data.team_id:
-        await bot.answer_callback_query(query.id, "You already in this team!")
+        await bot.answer_callback_query(query.id, ls("bot.teams.already_joined").localize(code))
         return
 
     if callback_data.team_type == "t":
@@ -287,16 +289,16 @@ async def h(query: CallbackQuery, callback_data: JoinTeam) -> None:
     elif callback_data.team_type == "p":
         teammate = match.get_player(callback_data.team_id)
         if teammate.id == player.id:
-            await bot.answer_callback_query(query.id, "You already in this team!")
+            await bot.answer_callback_query(query.id, ls("bot.teams.already_joined").localize(code))
             return
         player.team = teammate.id
         teammate.team = teammate.id
 
     teammate = match.session.get_team(player.team)[0]
-    await bot.send_message(match.chat_id, f"{player.team}. {callback_data.team_id}, {callback_data.team_type}!")
-    await bot.send_message(match.chat_id, f"{player.name} now fights for {teammate.name}!")
+    join_message = ls("bot.teams.player_joined").format(player.name, teammate.name)
+    await match.broadcast_to_players(join_message)
+    await match.send_message_to_chat(join_message)
 
-    # TODO: Localization!
     tts, kb = match.form_team_selection_menu(player.locale, bool(player.team))
 
     await bot.edit_message_text(
@@ -369,10 +371,6 @@ async def h(query: CallbackQuery):
 
 @r.callback_query(ChangeLocale.filter())
 async def h(query: CallbackQuery, callback_data: ChangeLocale):
-    code = db.get_user_locale(query.from_user.id)
-
-    # TODO: Fix localisation. Not production ready.
-
     db.change_locale(query.from_user.id, callback_data.locale)
     await query.bot.edit_message_text(
         ls("bot.common.changed_locale").format(callback_data.locale).localize(callback_data.locale),

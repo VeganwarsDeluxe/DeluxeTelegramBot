@@ -29,7 +29,6 @@ async def profile_handler(m: Message) -> None:
 
 @r.message(Command("locale"))
 async def profile_handler(m: Message) -> None:
-    # TODO: Fix locale for production readiness.
     tts = ''
 
     user = db.get_user(m.from_user.id)

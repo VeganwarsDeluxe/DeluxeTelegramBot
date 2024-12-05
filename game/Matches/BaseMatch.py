@@ -300,6 +300,7 @@ class BaseMatch:
 
     def get_info_for_player(self, player: TelegramEntity):
         # TODO: Incomplete.
+        #  I forgot what it is for already. Visor? Info button?
         code = player.locale
 
         text = f"{self.localize_text(player.name)}\n"
@@ -499,15 +500,14 @@ class BaseMatch:
         return teams
 
     def format_team_list(self, code: str = ""):
-        # TODO: don't forget locale
-        tts = "teams:\n\n"
+        tts = ls("bot.teams.team_list").localize(code)
         teams = self.form_team_lists()
 
         for team_index, team in teams.items():
             player_names = [self.localize_text(entity.name, code) for entity in team]
             player_name = ", ".join(player_names)
 
-            tts += f"team {team_index}: {player_name}\n"
+            tts += ls("bot.teams.team_info").format(team_index, player_name).localize(code)
         return tts, teams
 
     async def send_team_selection_menu(self, player):
@@ -515,7 +515,6 @@ class BaseMatch:
         await self.bot.send_message(player.user_id, tts, reply_markup=kb)
 
     def form_team_selection_menu(self, code: str = "", show_leave_button=True):
-        # TODO: Locale
         tts, teams = self.format_team_list(code)
 
         kb = []
@@ -525,19 +524,21 @@ class BaseMatch:
                 team_id, team_type = f"{team[0].id}", "p"
 
             kb.append([
-                InlineKeyboardButton(text=f"Team {team_index} | {len(team)}",
+                InlineKeyboardButton(text=ls("bot.teams.join_button").format(team_index, len(team)).localize(code),
                                      callback_data=JoinTeam(game_id=self.id,
                                                             team_id=team_id,
                                                             team_type=team_type).pack())
             ])
 
         kb.append([
-            InlineKeyboardButton(text=f"♻️Refresh", callback_data=RefreshTeamList(game_id=self.id).pack())
+            InlineKeyboardButton(text=ls("bot.teams.refresh_button").localize(code),
+                                 callback_data=RefreshTeamList(game_id=self.id).pack())
         ])
 
         if show_leave_button:
             kb.append([
-                InlineKeyboardButton(text=f"Leave team", callback_data=LeaveTeam(game_id=self.id).pack())
+                InlineKeyboardButton(text=ls("bot.teams.leave_button").localize(code),
+                                     callback_data=LeaveTeam(game_id=self.id).pack())
             ])
 
         kb = InlineKeyboardMarkup(inline_keyboard=kb)
