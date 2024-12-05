@@ -11,7 +11,8 @@ import game.content
 from db import db
 from flow.MatchStartFlow import MatchStartFlow
 from handlers.callbacks.other import (WeaponInfo, StateInfo, ChooseWeapon, ChooseSkill, StartGame,
-                                      Additional, ActionChoice, TargetChoice, Back, AnswerChoice, ChangeLocale)
+                                      Additional, ActionChoice, TargetChoice, Back, AnswerChoice, ChangeLocale,
+                                      JoinTeam, RefreshTeamList, LeaveTeam)
 from startup import mm, engine
 
 r = Router()
@@ -44,7 +45,7 @@ async def echo_handler(query: CallbackQuery, callback_data: ChooseWeapon) -> Non
                                     chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     if match.lobby:
-        await bot.edit_message_text(ls("bow.cw.do_not_hurry").localize(code),
+        await bot.edit_message_text(ls("bot.cw.do_not_hurry").localize(code),
                                     chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     player = match.get_player(query.from_user.id)
@@ -81,7 +82,7 @@ async def h(query: CallbackQuery, callback_data: ChooseSkill) -> None:
                                     chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     if match.lobby:
-        await bot.edit_message_text(ls("bow.cw.do_not_hurry").localize(code),
+        await bot.edit_message_text(ls("bot.cw.do_not_hurry").localize(code),
                                     chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     player = match.get_player(query.from_user.id)
@@ -118,6 +119,7 @@ async def h(query: CallbackQuery, callback_data: ChooseSkill) -> None:
         tts = tts.format(weapon_text)
 
         await bot.send_message(match.chat_id, match.localize_text(tts))
+        await match.broadcast_to_players(tts)
         await match.start_game()
 
 
@@ -205,6 +207,101 @@ async def h(query: CallbackQuery, callback_data: AnswerChoice) -> None:
         chat_id=query.message.chat.id, message_id=query.message.message_id)
 
 
+@r.callback_query(RefreshTeamList.filter())
+async def h(query: CallbackQuery, callback_data: RefreshTeamList) -> None:
+    code = db.get_user_locale(query.from_user.id)
+    bot = query.bot
+
+    match = mm.get_match(callback_data.game_id)
+    if not match:
+        await bot.edit_message_text(ls("bot.error.game_not_found").localize(code),
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
+        return
+    player = match.get_player(query.from_user.id)
+    if not player:
+        await bot.edit_message_text(ls("bot.error.player_not_found").localize(code),
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
+        return
+
+    # TODO: Localization!
+    tts, kb = match.form_team_selection_menu(player.locale, bool(player.team))
+
+    await bot.answer_callback_query(query.id, "Success!")
+
+    await bot.edit_message_text(
+        tts,
+        chat_id=query.message.chat.id, message_id=query.message.message_id, reply_markup=kb)
+
+
+@r.callback_query(LeaveTeam.filter())
+async def h(query: CallbackQuery, callback_data: LeaveTeam) -> None:
+    code = db.get_user_locale(query.from_user.id)
+    bot = query.bot
+
+    match = mm.get_match(callback_data.game_id)
+    if not match:
+        await bot.edit_message_text(ls("bot.error.game_not_found").localize(code),
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
+        return
+    player = match.get_player(query.from_user.id)
+    if not player:
+        await bot.edit_message_text(ls("bot.error.player_not_found").localize(code),
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
+        return
+
+    player.team = None
+    await bot.send_message(match.chat_id, f"{player.name} now fights alone!")
+
+    # TODO: Localization!
+    tts, kb = match.form_team_selection_menu(player.locale, bool(player.team))
+
+    await bot.answer_callback_query(query.id, "Success!")
+
+    await bot.edit_message_text(
+        tts,
+        chat_id=query.message.chat.id, message_id=query.message.message_id, reply_markup=kb)
+
+
+@r.callback_query(JoinTeam.filter())
+async def h(query: CallbackQuery, callback_data: JoinTeam) -> None:
+    code = db.get_user_locale(query.from_user.id)
+    bot = query.bot
+
+    match = mm.get_match(callback_data.game_id)
+    if not match:
+        await bot.edit_message_text(ls("bot.error.game_not_found").localize(code),
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
+        return
+    player = match.get_player(query.from_user.id)
+    if not player:
+        await bot.edit_message_text(ls("bot.error.player_not_found").localize(code),
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
+        return
+
+    if player.team == callback_data.team_id:
+        await bot.answer_callback_query(query.id, "You already in this team!")
+        return
+
+    if callback_data.team_type == "t":
+        player.team = callback_data.team_id
+    elif callback_data.team_id == "p":
+        teammate = match.get_player(callback_data.team_id)
+        player.team = callback_data.team_id
+        teammate.team = callback_data.team_id
+
+    print(player.team)
+
+    teammate = match.session.get_team(callback_data.team_id)[0]
+    await bot.send_message(match.chat_id, f"{player.name} now fights for {teammate.name}!")
+
+    # TODO: Localization!
+    tts, kb = match.form_team_selection_menu(player.locale, bool(player.team))
+
+    await bot.edit_message_text(
+        tts,
+        chat_id=query.message.chat.id, message_id=query.message.message_id, reply_markup=kb)
+
+
 @r.callback_query(TargetChoice.filter())
 async def h(query: CallbackQuery, callback_data: TargetChoice) -> None:
     code = db.get_user_locale(query.from_user.id)
@@ -254,7 +351,8 @@ async def h(query: CallbackQuery, callback_data: Back) -> None:
         return
     kb = await match.get_act_buttons(player)
     tts = match.get_act_text(player)
-    await bot.edit_message_text(tts, chat_id=query.message.chat.id, message_id=query.message.message_id, reply_markup=kb)
+    await bot.edit_message_text(tts, chat_id=query.message.chat.id, message_id=query.message.message_id,
+                                reply_markup=kb)
 
 
 @r.callback_query(StartGame.filter())
@@ -274,5 +372,6 @@ async def h(query: CallbackQuery, callback_data: ChangeLocale):
     # TODO: Fix localisation. Not production ready.
 
     db.change_locale(query.from_user.id, callback_data.locale)
-    await query.bot.edit_message_text(f"✅{callback_data.locale}",
-                                      chat_id=query.message.chat.id, message_id=query.message.message_id)
+    await query.bot.edit_message_text(
+        ls("bot.common.changed_locale").format(callback_data.locale).localize(callback_data.locale),
+        chat_id=query.message.chat.id, message_id=query.message.message_id)

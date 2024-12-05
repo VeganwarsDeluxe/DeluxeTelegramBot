@@ -1,3 +1,4 @@
+from VegansDeluxe.core import ls
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
@@ -35,11 +36,12 @@ async def profile_handler(m: Message) -> None:
     if not user:
         user = db.create_user(m.from_user.id, m.from_user.first_name)
 
-    tts += f'🌍: {user.locale}\n\n'
+    tts += ls("bot.common.locale.menu").format(ls(f"bot.locale.name.{user.locale}")).localize(user.locale)
 
     kb = []
     for locale in translator.locales.keys():
-        kb.append([InlineKeyboardButton(text=locale, callback_data=ChangeLocale(locale=locale).pack())])
+        locale_text = ls(f"bot.locale.name.{locale}").localize(locale)
+        kb.append([InlineKeyboardButton(text=locale_text, callback_data=ChangeLocale(locale=locale).pack())])
 
     kb = InlineKeyboardMarkup(inline_keyboard=kb)
 

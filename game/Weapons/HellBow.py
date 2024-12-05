@@ -57,7 +57,7 @@ class ExplosionArrow(RangedAttack):
         primary_damage = self.calculate_damage(source, target)
         secondary_damage = math.ceil(primary_damage * 0.5)
 
-        post_damage = self.publish_post_damage_event(source, target, primary_damage)
+        post_damage = await self.publish_post_damage_event(source, target, primary_damage)
         target.inbound_dmg.add(source, post_damage, self.session.turn)
         source.outbound_dmg.add(target, post_damage, self.session.turn)
 

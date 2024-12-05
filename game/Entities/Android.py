@@ -1,7 +1,8 @@
 import random
 
 from VegansDeluxe import rebuild
-from VegansDeluxe.core import AttachedAction, Session, ls, percentage_chance, Action
+from VegansDeluxe.core import AttachedAction, Session, ls, percentage_chance, Action, Enemies, Distance
+from VegansDeluxe.core.Actions.Action import filter_targets
 from VegansDeluxe.core.Actions.EntityActions import ReloadAction
 from VegansDeluxe.rebuild import Bleeding, ZombieState, Stun, DroppedWeapon, ThrowingKnife, Berserk, \
     Knockdown, Grenade, Molotov, Aflame, Rifle, Ninja, Chitin, FlashGrenade, GasMask, Stimulator, Armor, \
@@ -47,7 +48,8 @@ class Android(NPC):
         self.items.extend(self.choose_items())
 
         self.hp = 4
-        self.max_hp = 5
+        self.max_hp = 4
+        self.energy = 5
         self.max_energy = 5
 
         self.team = 'android'
@@ -68,6 +70,7 @@ class Android(NPC):
         return pool[0](), pool[1]()
 
     def can_entity_attack_me(self, target: TelegramEntity, session) -> bool:
+        # TODO: Detect attacks.
         return self in engine.action_manager.get_action(session, target, "attack").targets
 
     def can_i_attack_entity(self, target: TelegramEntity, session) -> bool:
@@ -93,13 +96,12 @@ class Android(NPC):
 
         acts = []
         dopitems = []
-        enemies = []
-        enemies_close = []
+        enemies = filter_targets(self, Enemies(), session.entities)
+        enemies_close = filter_targets(self, Enemies(Distance.NEARBY_ONLY), session.entities)
         enemies_can_attack_me = []
         enemies_i_can_attack = []
         enemies_zombie = []
         enemies_stunned = []
-        enemies_hitin = []
         enemies_lostweapon = []
 
         lowest_health = 100
@@ -115,10 +117,9 @@ class Android(NPC):
         for entity in session.entities:
             target = entity
             if not self.is_ally(target) and not target.dead:
-                if target not in enemies:
-                    enemies.append(target)
-                if target in self.nearby_entities:
-                    enemies_close.append(target)
+                lowest_health = min(lowest_health, target.hp)
+                highest_health = max(highest_health, target.hp)
+
                 if self.can_entity_attack_me(target, session):
                     enemies_can_attack_me.append(target)
                 if self.can_i_attack_entity(target, session):
@@ -128,12 +129,6 @@ class Android(NPC):
                     enemies_zombie.append(target)
                 if target.get_state(Stun).stun > 0:
                     enemies_stunned.append(target)
-                if target.get_state(Armor).armor_sum > 0:
-                    enemies_hitin.append(target)
-                if target.hp < lowest_health:
-                    lowest_health = target.hp
-                if target.hp > highest_health:
-                    highest_health = target.hp
                 if target.get_state(DroppedWeapon).weapon:
                     enemies_lostweapon.append(target)
 
@@ -153,10 +148,10 @@ class Android(NPC):
 
         can_attack = bool(enemies_i_can_attack)
 
-        hitins = []
+        enemies_armored = []
         for entity in session.entities:
             if entity.get_state(Armor).armor_sum > 0 and entity in enemies_i_can_attack:
-                hitins.append(entity)
+                enemies_armored.append(entity)
 
         low = False
         for entity in enemies_i_can_attack:
@@ -169,7 +164,7 @@ class Android(NPC):
             acts.append(self.targeted_action(ThrowingKnifeAction.id, session))
         if not low:
             hit_chance -= 40
-        if len(hitins) == len(enemies_i_can_attack):
+        if len(enemies_armored) == len(enemies_i_can_attack):
             hit_chance -= 50
         if base_hit_chance < 70:
             hit_chance -= 20
@@ -211,94 +206,60 @@ class Android(NPC):
                     if debuff <= 1 and not self.get_state(Knockdown).active:
                         dopitems.append(self.targeted_action(AdrenalineAction.id, session, self))
 
-        flashtargets = []
         for entity in enemies:
             target = entity
-            targethitchance = target.hit_chance
+            target_hit_chance = target.hit_chance
             if target.weapon.id == Rifle.id:
                 target_weapon: Rifle = target.weapon
                 if target.energy > 0:
-                    targethitchance += (target_weapon.main_target[1] * 50)
+                    target_hit_chance += (target_weapon.main_target[1] * 50)
             if target.get_state(Stun).stun > 0 or target.get_state(Knockdown).active:
-                targethitchance = 0
-            perekatchance = targethitchance - 30
-            shieldchance = targethitchance - 30
-            flashchance = targethitchance - 30
-            hypnotistchance = targethitchance - 30
-            counterattackchance = targethitchance
-            molitvachance = 0
-            if near_death:
-                molitvachance += targethitchance
-            if self.get_state(Knockdown).active and near_death and targethitchance > 50:
-                shieldchance += 40
-                flashchance += 40
-                hypnotistchance += 40
-            if targethitchance > 98 and not self.get_state(Ninja):
-                perekatchance = 0
-            if targethitchance < 70:
-                if not near_death:
-                    shieldchance = 0
-                    flashchance = 0
-                    perekatchance = 0
-                    counterattackchance = 0
-                else:
-                    if targethitchance < 50:
-                        shieldchance = 0
-                        flashchance = 0
-                        perekatchance = 0
-                        counterattackchance = 0
-            if target.get_state(Aflame).timer > 1 and target.get_state(Aflame).flame > 1:
-                perekatchance = 0
-                shieldchance = 0
-                flashchance = 0
-                counterattackchance = 0
-                molitvachance = 0
-            if self.get_state(Armor).armor_sum > 0:
-                perekatchance = 0
-                shieldchance = 0
-                flashchance = 0
-                counterattackchance = 0
-                molitvachance = 0
-            if target.energy < 4:
-                flashchance = 0
-            if len(enemies_can_attack_me) == 0:
-                perekatchance = 0
-                shieldchance = 0
-                flashchance = 0
-                counterattackchance = 0
-                molitvachance = 0
-            if len(enemies_lostweapon) == len(enemies_can_attack_me):
-                perekatchance = 0
-                shieldchance = 0
-                flashchance = 0
-                hypnotistchance = 0
-                molitvachance = 0
-            if target in enemies_zombie and target.energy > 1:
-                perekatchance = 100
-                shieldchance = 100
-                flashchance = 100
-                counterattackchance = 100
-                if near_death:
-                    molitvachance = 100
-            if self.get_state(ZombieState).active:
-                perekatchance = 0
-                shieldchance = 0
-                flashchance = 0
-                counterattackchance = 0
-                molitvachance = 0
-            if len(enemies_stunned) == len(enemies_can_attack_me):
-                perekatchance = 0
-                shieldchance = 0
-                flashchance = 0
-                molitvachance = 0
-            if self.get_state(Knockdown).active:
-                perekatchance = 0
-                counterattackchance = 0
+                target_hit_chance = 0
 
-            if percentage_chance(perekatchance):
+            base_chance = target_hit_chance - 30
+            dodge_chance = shield_chance = flash_chance = base_chance
+            counterattack_chance = target_hit_chance
+            pray_chance = target_hit_chance if near_death else 0
+
+            knockdown_active = self.get_state(Knockdown).active
+            ninja_active = self.get_state(Ninja)
+            aflame_state = target.get_state(Aflame)
+            armor_state = self.get_state(Armor)
+            zombie_state = self.get_state(ZombieState).active
+
+            # Adjust chances based on various conditions
+            if knockdown_active and near_death and target_hit_chance > 50:
+                shield_chance += 40
+                flash_chance += 40
+
+            if target_hit_chance > 98 and not ninja_active:
+                dodge_chance = 0
+
+            if target_hit_chance < 70 and (not near_death or target_hit_chance < 50):
+                dodge_chance = shield_chance = flash_chance = counterattack_chance = 0
+
+            if (aflame_state.timer > 1 and aflame_state.flame > 1) or armor_state.armor_sum > 0 \
+                    or not enemies_can_attack_me or zombie_state:
+                dodge_chance = shield_chance = flash_chance = counterattack_chance = pray_chance = 0
+
+            if target.energy < 4:
+                flash_chance = 0
+
+            if len(enemies_can_attack_me) in [len(enemies_lostweapon), len(enemies_stunned)]:
+                dodge_chance = shield_chance = flash_chance = pray_chance = 0
+
+            if target in enemies_zombie and target.energy > 1:
+                dodge_chance = shield_chance = flash_chance = counterattack_chance = 100
+                if near_death:
+                    pray_chance = 100
+
+            if knockdown_active:
+                dodge_chance = counterattack_chance = 0
+
+            if percentage_chance(dodge_chance):
                 if engine.action_manager.is_action_available(session, self, DodgeAction.id):
                     acts.append(self.targeted_action(DodgeAction.id, session, self))
-            if percentage_chance(shieldchance):
+            if percentage_chance(shield_chance):
                 if engine.action_manager.is_action_available(session, self, ShieldGenAction.id):
                     acts.append(self.targeted_action(ShieldGenAction.id, session, self))
                 elif engine.action_manager.is_action_available(session, self, ShieldAction.id):
@@ -306,18 +267,17 @@ class Android(NPC):
                 elif (self.get_item(Chitin.id) and self.targeted_action(DodgeAction.id, session) not in acts
                       and percentage_chance(60)):
                     dopitems.append(self.targeted_action(Chitin.id, session, self))
-            if percentage_chance(counterattackchance):
+            if percentage_chance(counterattack_chance):
                 if engine.action_manager.is_action_available(session, self, CounterAttack.id):
                     if base_hit_chance >= 70 and percentage_chance(base_hit_chance):
                         acts.append(self.targeted_action(CounterAttack.id, session))
-            if percentage_chance(molitvachance) and engine.action_manager.is_action_available(session, self, Pray.id):
+            if percentage_chance(pray_chance) and engine.action_manager.is_action_available(session, self, Pray.id):
                 acts.append(self.targeted_action(Pray.id, session, self))
-            if percentage_chance(flashchance):
+            if percentage_chance(flash_chance):
                 if self.get_item(FlashGrenade.id):
                     if target in enemies_can_attack_me:
                         if not target.get_state(GasMask):
-                            acts.append(self.targeted_action(FlashGrenadeAction.id, session))
-                            flashtargets.append(target)
+                            acts.append(self.targeted_action(FlashGrenadeAction.id, session, target))
             if target.hp == 1:
                 if self.get_item(Adrenaline.id) and self.energy <= 3:
                     if debuff <= 1:
@@ -335,28 +295,29 @@ class Android(NPC):
             if len(enemies_stunned) != len(enemies):
                 acts.append(self.targeted_action(StimulatorAction.id, session, self))
 
-        if self.get_state(Aflame).timer > 1 > self.get_state(Armor).armor_sum:
-            if (not self.get_state(ZombieState).active
-                    and self.targeted_action(Chitin.id, session, self) not in dopitems):
-                acts.append(self.targeted_action(SkipTurnAction.id, session))
-                dodge = self.targeted_action(DodgeAction.id, session)
-                if dodge in acts:
-                    acts.remove(dodge)
-                flash_grenade_act = self.targeted_action(FlashGrenadeAction.id, session)
-                if flash_grenade_act in acts:
-                    acts.remove(flash_grenade_act)
+        if (
+                self.get_state(Aflame).timer > 1 > self.get_state(Armor).armor_sum
+                and (not self.get_state(ZombieState).active and self.targeted_action(Chitin.id, session, self)
+                     not in dopitems)
+        ):
+            acts.append(self.targeted_action(SkipTurnAction.id, session))
+            dodge = self.targeted_action(DodgeAction.id, session)
+            if dodge in acts:
+                acts.remove(dodge)
+            flash_grenade_act = self.targeted_action(FlashGrenadeAction.id, session)
+            if flash_grenade_act in acts:
+                acts.remove(flash_grenade_act)
 
         if not acts:
             if self.energy <= 2 and self.energy < self.max_energy:
                 if can_regen:
                     acts.append(self.targeted_action(ReloadAction.id, session))
+                elif self.energy > 0:
+                    # TODO: Fix it or !!
+                    acts.append(self.targeted_action("attack", session))
                 else:
-                    if self.energy > 0:
-                        # TODO: Fix it or !!
-                        acts.append(self.targeted_action("attack", session))
-                    else:
-                        acts.append(self.targeted_action(SkipTurnAction.id, session))
-                        print("Skipping 5")
+                    acts.append(self.targeted_action(SkipTurnAction.id, session))
+                    print("Skipping 5")
             else:
                 # TODO: Fix it or !!
                 acts.append(self.targeted_action("attack", session))
@@ -436,7 +397,7 @@ class Android(NPC):
                     targets.append(entity)
                     if entity.hp == lowest_health:
                         targets.append(entity)
-            elif len(hitins) == len(enemies_i_can_attack):
+            elif len(enemies_armored) == len(enemies_i_can_attack):
                 for entity in enemies_i_can_attack:
                     if entity not in enemies_zombie:
                         targets.append(entity)

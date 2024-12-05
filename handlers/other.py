@@ -41,6 +41,31 @@ async def echo_handler(m: Message) -> None:
     await m.reply(**Text(ls("bot.delete.success").localize(code)).as_kwargs())
 
 
+@r.message(Command("vd_skill_amount"))
+async def echo_handler(m: Message) -> None:
+    code = db.get_user_locale(m.from_user.id)
+
+    if not m.text.count(' ') == 1:
+        return
+    skill_amount = m.text.split(' ', 1)[1]
+    if not skill_amount.isnumeric():
+        return
+    skill_amount = int(skill_amount)
+    if skill_amount < 0:
+        return
+
+    match = mm.get_match(m.chat.id)
+    if not match:
+        await m.reply(**Text(ls("bot.join.game_not_started").localize(code)).as_kwargs())
+        return
+    if not match.lobby:
+        await m.reply(**Text(ls("bot.join.game_already_started").localize(code)).as_kwargs())
+        return
+
+    match.skill_cycles = skill_amount
+    await m.bot.send_message(m.chat.id, ls("bot.skill_amount.text").format(skill_amount).localize(code))
+
+
 @r.message(Command("vd_join"))
 async def echo_handler(m: Message) -> None:
     code = db.get_user_locale(m.from_user.id)

@@ -13,7 +13,8 @@ import game.content
 from db import db
 from game.Entities.TelegramEntity import TelegramEntity
 from handlers.callbacks.other import (WeaponInfo, StateInfo, ChooseWeapon, ChooseSkill,
-                                      Additional, ActionChoice, TargetChoice, Back, AnswerChoice)
+                                      Additional, ActionChoice, TargetChoice, Back, AnswerChoice, JoinTeam,
+                                      RefreshTeamList, LeaveTeam)
 from startup import engine
 from utils import KLineMerger, smartsplit
 
@@ -104,6 +105,7 @@ class BaseMatch:
         player.energy, player.max_energy, player.hp, player.max_hp = 5, 5, 4, 4
         self.session.attach_entity(player)
         await engine.attach_states(player, game.content.all_states)
+        await self.send_team_selection_menu(player)
         return player
 
     async def create_session(self, chat_id: str) -> Session[TelegramEntity]:
@@ -205,13 +207,14 @@ class BaseMatch:
             except Exception as e:
                 print(f"Failed to send message to chat {self.chat_id}. Error: {str(e)}")
 
-    async def send_message_to_player(self, text: Union[str, LocalizedString], player: TelegramEntity):
+    async def send_message_to_player(self, text: Union[str, LocalizedString], player: TelegramEntity,
+                                     ignore_dm_game: bool = False):
         text = self.localize_text(text, code=player.locale)
 
         for tts in smartsplit.smart_split(text):
             try:
                 # Skip if the player is an NPC or if the game is in DMs
-                if player.user_id == self.chat_id or player.npc:
+                if (not ignore_dm_game and self.chat_id == player.user_id) or player.npc:
                     return
                 await self.bot.send_message(player.user_id, tts)
             except Exception as e:
@@ -409,6 +412,8 @@ class BaseMatch:
         """Checks the status of the game and sends end game messages if needed."""
         if not self.session.active:
             if self.detached:
+                # TODO: As i remember, this is a bad bugfix.
+                #  This function executes multiple times. Which it shouldn't.
                 return
             self.detached = True
 
@@ -448,10 +453,10 @@ class BaseMatch:
                 given.append(item.id)
                 player.items.append(item)
             player.chose_items = True
-            if player.npc:
-                continue
+
             items = ", ".join([self.localize_text(item.name, code) for item in player.items])
-            await self.send_message_to_player(ls("deluxe.matches.messages.your_items").format(items), player)
+            await self.send_message_to_player(ls("deluxe.matches.messages.your_items").format(items), player,
+                                              ignore_dm_game=True)
 
     async def choose_weapons(self):
         for player in self.not_chosen_weapon:
@@ -465,14 +470,78 @@ class BaseMatch:
     async def choose_skills(self):
         for player in self.not_chosen_skills:
             if player.npc:
+                # TODO: But again. Maybe they also should choose skills like any other?
+                continue
+            if self.skill_cycles == 0:
+                player.chose_skills = True
                 continue
             await self.send_skill_choice_buttons(player)
         if not self.not_chosen_skills:
             weapons_text = '\n' + '\n'.join([f'{player.name}: {self.localize_text(player.weapon.name, self.locale)}'
                                              for player in self.session.alive_entities])
-            text = ls("deluxe.matches.messages.start").format(weapons_text).localize(self.locale)
+            text = ls("deluxe.matches.messages.start").format(weapons_text)
+            await self.broadcast_to_players(text)
             await self.send_message_to_chat(text)
             await self.pre_move()
+
+    def form_team_lists(self) -> dict[int, list[TelegramEntity]]:
+        teams = {}
+        team_index = 0
+
+        for team in self.session.alive_teams:
+            if team:
+                team_index += 1
+                teams.update({team_index: self.session.get_team(team)})
+            else:
+                for entity in self.session.get_team(team):
+                    team_index += 1
+                    teams.update({team_index: [entity]})
+        return teams
+
+    def format_team_list(self, code: str = ""):
+        # TODO: don't forget locale
+        tts = "teams:\n\n"
+        teams = self.form_team_lists()
+
+        for team_index, team in teams.items():
+            player_names = [self.localize_text(entity.name, code) for entity in team]
+            player_name = ",".join(player_names)
+
+            tts += f"team {team_index}: {player_name}\n"
+        return tts, teams
+
+    async def send_team_selection_menu(self, player):
+        tts, kb = self.form_team_selection_menu(player.locale, bool(player.team))
+        await self.bot.send_message(player.user_id, tts, reply_markup=kb)
+
+    def form_team_selection_menu(self, code: str = "", show_leave_button=True):
+        # TODO: Locale
+        tts, teams = self.format_team_list(code)
+
+        kb = []
+        for team_index, team in teams.items():
+            team_id, team_type = f"{team[0].team}", "t"
+            if not team[0].team:
+                team_id, team_type = f"{team[0].id}", "p"
+
+            kb.append([
+                InlineKeyboardButton(text=f"Team {team_index} | {len(team)}",
+                                     callback_data=JoinTeam(game_id=self.id,
+                                                            team_id=team_id,
+                                                            team_type=team_type).pack())
+            ])
+
+        kb.append([
+            InlineKeyboardButton(text=f"♻️Refresh", callback_data=RefreshTeamList(game_id=self.id).pack())
+        ])
+
+        if show_leave_button:
+            kb.append([
+                InlineKeyboardButton(text=f"Leave team", callback_data=LeaveTeam(game_id=self.id).pack())
+            ])
+
+        kb = InlineKeyboardMarkup(inline_keyboard=kb)
+        return tts, kb
 
     async def send_weapon_choice_buttons(self, player):
         code = player.locale

@@ -4,12 +4,26 @@ from aiogram.filters.callback_data import CallbackData
 # TODO: Don't keep all handlers in other.py. Refactor.
 
 
+class JoinTeam(CallbackData, prefix="join_team"):
+    game_id: str
+    team_id: str
+    team_type: str
+
+
 class ChangeLocale(CallbackData, prefix="change_locale"):
     locale: str
 
 
 class StartGame(CallbackData, prefix="vd_go"):
     pass
+
+
+class RefreshTeamList(CallbackData, prefix="refresh_teams"):
+    game_id: str
+
+
+class LeaveTeam(CallbackData, prefix="leave_team"):
+    game_id: str
 
 
 class WeaponInfo(CallbackData, prefix="wi"):

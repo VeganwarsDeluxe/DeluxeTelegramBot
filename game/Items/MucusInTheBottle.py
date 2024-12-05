@@ -1,6 +1,6 @@
-from VegansDeluxe.core import Enemies
+from VegansDeluxe.core import Enemies, DecisiveItem
 from VegansDeluxe.core import Entity
-from VegansDeluxe.core import Item, FreeItem, AttachedAction, ActionTag
+from VegansDeluxe.core import Item, AttachedAction, ActionTag
 from VegansDeluxe.core import RegisterItem
 from VegansDeluxe.core import Session
 from VegansDeluxe.core.Translator.LocalizedString import ls
@@ -15,7 +15,7 @@ class MucusInTheBottle(Item):
 
 
 @AttachedAction(MucusInTheBottle)
-class MucusInTheBottleAction(FreeItem):
+class MucusInTheBottleAction(DecisiveItem):
     id = 'mucus_in_the_bottle'
     name = ls("item.mucus_in_the_bottle.name")
     target_type = Enemies()
