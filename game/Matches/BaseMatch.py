@@ -505,7 +505,7 @@ class BaseMatch:
 
         for team_index, team in teams.items():
             player_names = [self.localize_text(entity.name, code) for entity in team]
-            player_name = ",".join(player_names)
+            player_name = ", ".join(player_names)
 
             tts += f"team {team_index}: {player_name}\n"
         return tts, teams

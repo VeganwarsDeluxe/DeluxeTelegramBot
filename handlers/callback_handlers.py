@@ -284,14 +284,16 @@ async def h(query: CallbackQuery, callback_data: JoinTeam) -> None:
 
     if callback_data.team_type == "t":
         player.team = callback_data.team_id
-    elif callback_data.team_id == "p":
+    elif callback_data.team_type == "p":
         teammate = match.get_player(callback_data.team_id)
-        player.team = callback_data.team_id
-        teammate.team = callback_data.team_id
+        if teammate.id == player.id:
+            await bot.answer_callback_query(query.id, "You already in this team!")
+            return
+        player.team = teammate.id
+        teammate.team = teammate.id
 
-    print(player.team)
-
-    teammate = match.session.get_team(callback_data.team_id)[0]
+    teammate = match.session.get_team(player.team)[0]
+    await bot.send_message(match.chat_id, f"{player.team}. {callback_data.team_id}, {callback_data.team_type}!")
     await bot.send_message(match.chat_id, f"{player.name} now fights for {teammate.name}!")
 
     # TODO: Localization!
