@@ -1,7 +1,7 @@
 from aiogram import Bot
 
 from game.Matches.BaseMatch import BaseMatch
-from startup import mm
+from startup import mm, engine
 from views.MatchCreationView import MatchCreationView
 from views.MatchExistsView import MatchExistsView
 
@@ -20,7 +20,7 @@ class MatchCreationFlow:
             await match.lobby_message.reply(view.get_text())
             return
 
-        match = self.match(self.chat_id, bot)
+        match = self.match(self.chat_id, bot, engine)
         await match.init_async()
 
         match.locale = locale

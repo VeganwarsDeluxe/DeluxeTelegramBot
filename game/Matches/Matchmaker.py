@@ -1,3 +1,8 @@
+from typing import Optional
+
+from game.Matches.BaseMatch import BaseMatch
+
+
 class Matchmaker:
     """Matchmaker Class: Handles matches.."""
 
@@ -14,7 +19,7 @@ class Matchmaker:
     def attach_match(self, match):
         self.matches.update({match.id: match})
 
-    def get_match(self, chat_id):
+    def get_match(self, chat_id) -> Optional[BaseMatch]:
         match = self.matches.get(str(chat_id))
         if not match:
             return

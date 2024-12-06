@@ -1,7 +1,8 @@
 import random
 from typing import Union
 
-from VegansDeluxe.core import PreMoveGameEvent, Weapon, Session, ActionTag, EventContext, RegisterEvent
+from VegansDeluxe.core import PreMoveGameEvent, Weapon, Session, ActionTag, EventContext, RegisterEvent, Engine
+from VegansDeluxe.core.Question.Question import Question
 from VegansDeluxe.core.Question.QuestionEvents import QuestionGameEvent
 from VegansDeluxe.core.States import State
 from VegansDeluxe.core.Translator.LocalizedString import LocalizedString, ls
@@ -15,15 +16,15 @@ from game.Entities.TelegramEntity import TelegramEntity
 from handlers.callbacks.other import (WeaponInfo, StateInfo, ChooseWeapon, ChooseSkill,
                                       Additional, ActionChoice, TargetChoice, Back, AnswerChoice, JoinTeam,
                                       RefreshTeamList, LeaveTeam)
-from startup import engine
 from utils import KLineMerger, smartsplit
 
 
 class BaseMatch:
     name: str | LocalizedString = ls("matches.basic")
 
-    def __init__(self, chat_id: int, bot: Bot):
+    def __init__(self, chat_id: int, bot: Bot, engine: Engine):
         self.bot: Bot = bot
+        self.engine: Engine = engine
 
         self.id: str = str(chat_id)
         self.session: Session = Session(engine.event_manager)
@@ -46,11 +47,19 @@ class BaseMatch:
 
         self.detached = False  # TODO: Temporary fix. Figure out why are we detaching session for every entity.
 
+        # TODO: Worst decision ever. Please find normal solution. We are becoming Rebuild.
+        #  At least we have typehints!
+        self.question_cache: dict[str, Question] = {}
+
     async def init_async(self):
         self.session: Session[TelegramEntity] = await self.create_session(self.id)
 
         @RegisterEvent(self.session.id, QuestionGameEvent, subscription_id="question_handler")
         async def handling_question(context: EventContext[QuestionGameEvent]):
+            """
+            Event handler.
+            If there's a Question event, sends a keyboard to the player.
+            """
             player = self.get_player(context.event.entity_id)
             if player.npc:
                 # TODO: But really. NPCs also might wanna answer. Maybe something like NPC.choose_act()?
@@ -58,8 +67,9 @@ class BaseMatch:
 
             text = self.localize_text(context.event.question.text, player.locale)
             question = context.event.question
-            kb = []
+            self.question_cache.update({question.id: question})
 
+            kb = []
             for choice in question.choices:
                 kb.append([
                     InlineKeyboardButton(
@@ -104,14 +114,14 @@ class BaseMatch:
         player = TelegramEntity(self.session.id, user_name, user_id, code)
         player.energy, player.max_energy, player.hp, player.max_hp = 5, 5, 4, 4
         self.session.attach_entity(player)
-        await engine.attach_states(player, game.content.all_states)
+        await self.engine.attach_states(player, game.content.all_states)
         await self.send_team_selection_menu(player)
         return player
 
     async def create_session(self, chat_id: str) -> Session[TelegramEntity]:
-        session = Session(engine.event_manager)
+        session = Session(self.engine.event_manager)
         session.id = chat_id
-        await engine.attach_session(session)
+        await self.engine.attach_session(session)
         return session
 
     async def send_end_game_messages(self):
@@ -144,7 +154,7 @@ class BaseMatch:
     async def choose_act(self, user_id, target_id, act_id):
         player = self.get_player(user_id)
         target = self.session.get_entity(target_id)
-        action = engine.action_manager.get_action(self.session, player, act_id)
+        action = self.engine.action_manager.get_action(self.session, player, act_id)
 
         # TODO: Wired AI training here. Please rework, refactor.
         # try:
@@ -164,9 +174,9 @@ class BaseMatch:
             queue = True
             await action.execute()
         else:
-            queue = engine.action_manager.queue_action_instance(action)
+            queue = self.engine.action_manager.queue_action_instance(action)
 
-        await engine.action_manager.update_actions(self.session)
+        await self.engine.action_manager.update_actions(self.session)
 
         if queue:
             await self.send_act_buttons(player)
@@ -276,20 +286,20 @@ class BaseMatch:
 
     async def update_game_actions(self):
         """Updates actions for a game."""
-        await engine.action_manager.update_actions(self.session)
+        await self.engine.action_manager.update_actions(self.session)
         self.action_indexes = []
 
     async def handle_pre_move_events(self):
         """Handles events before a move."""
         self.session.pre_move()
-        await engine.event_manager.publish(PreMoveGameEvent(self.session.id, self.session.turn))
+        await self.engine.event_manager.publish(PreMoveGameEvent(self.session.id, self.session.turn))
 
     async def execute_actions(self):
         """Executes actions for all alive entities."""
         for entity in self.session.alive_entities:
             entity: TelegramEntity
             if entity.get_state(Stun).stun:  # TODO: Hardcoded. It can be done better
-                engine.action_manager.queue_action(self.session, entity, 'lay_stun')
+                self.engine.action_manager.queue_action(self.session, entity, 'lay_stun')
                 entity.ready = True
                 if not self.unready_players:
                     await self.cycle()
@@ -300,7 +310,7 @@ class BaseMatch:
 
     def get_info_for_player(self, player: TelegramEntity):
         # TODO: Incomplete.
-        #  I forgot what it is for already. Visor? Info button?
+        #  I forgot what it is for already. Info button?
         code = player.locale
 
         text = f"{self.localize_text(player.name)}\n"
@@ -310,7 +320,7 @@ class BaseMatch:
                           player: TelegramEntity):  # TODO: Rethink this function. Maybe we can use action tags here?
         code = player.locale
 
-        await engine.action_manager.update_entity_actions(self.session, player)
+        await self.engine.action_manager.update_entity_actions(self.session, player)
 
         buttons = {
             'first_row': [],
@@ -320,7 +330,7 @@ class BaseMatch:
             'skip_row': []
         }
 
-        for action in engine.action_manager.get_available_actions(self.session, player):
+        for action in self.engine.action_manager.get_available_actions(self.session, player):
             action_name = self.localize_text(action.name, code)
             action_selection = ActionChoice(game_id=self.id, action_id=action.id).pack()
             button = InlineKeyboardButton(text=action_name, callback_data=action_selection)
@@ -364,11 +374,11 @@ class BaseMatch:
     async def get_additional_buttons(self, player: TelegramEntity):
         code = player.locale
 
-        await engine.action_manager.update_entity_actions(self.session, player)
+        await self.engine.action_manager.update_entity_actions(self.session, player)
 
         all_buttons = []
         items = []
-        for action in engine.action_manager.get_available_actions(self.session, player):
+        for action in self.engine.action_manager.get_available_actions(self.session, player):
             name = self.localize_text(action.name, code)
             if action.type == 'item':
                 items.append(action)
@@ -414,12 +424,12 @@ class BaseMatch:
         if not self.session.active:
             if self.detached:
                 # TODO: As i remember, this is a bad bugfix.
-                #  This function executes multiple times. Which it shouldn't.
+                #  This function tries to detach the session multiple times. Which it shouldn't.
                 return
             self.detached = True
 
             await self.send_end_game_messages()
-            engine.detach_session(self.session)
+            self.engine.detach_session(self.session)
             return False
         return True
 
@@ -484,6 +494,9 @@ class BaseMatch:
             await self.broadcast_to_players(text)
             await self.send_message_to_chat(text)
             await self.pre_move()
+
+    async def announce_team_positions(self):
+        await self.send_message_to_chat(self.format_team_list(self.locale)[0])
 
     def form_team_lists(self) -> dict[int, list[TelegramEntity]]:
         teams = {}

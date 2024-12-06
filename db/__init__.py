@@ -8,26 +8,26 @@ class Database:
     def __init__(self):
         Base.metadata.create_all(bind=engine)
 
+        self.__sl: SessionLocal = SessionLocal()
+
+    def commit(self):
+        self.__sl.commit()
+
+    def get_top_players_by_tickets(self, limit=10):
+        return self.__sl.query(User).order_by(User.tickets.desc()).limit(limit).all()
+
     def create_user(self, user_id: int, name: str):
-        sl = SessionLocal()
-
         new_user = User(id=user_id, name=name)
-        sl.add(new_user)
-        sl.commit()  # Commit the transaction
-        sl.refresh(new_user)  # Reload the instance with the new data from the database
-
-        sl.close()
+        self.__sl.add(new_user)
+        self.__sl.commit()  # Commit the transaction
+        self.__sl.refresh(new_user)  # Reload the instance with the new data from the database
 
         return new_user
 
     def change_locale(self, user_id: int, locale: str):
-        sl = SessionLocal()
-
-        user = sl.query(User).filter(User.id == user_id).first()
+        user = self.__sl.query(User).filter(User.id == user_id).first()
         user.locale = locale
-        sl.commit()
-
-        sl.close()
+        self.__sl.commit()
 
         return user
 
@@ -35,13 +35,7 @@ class Database:
         return self.get_user(user_id).locale
 
     def get_user(self, user_id):
-        sl = SessionLocal()
-
-        user = sl.query(User).filter(User.id == user_id).first()
-
-        sl.close()
-
-        return user
+        return self.__sl.query(User).filter(User.id == user_id).first()
 
     async def process_event(self, event: Update):
         if event.message:

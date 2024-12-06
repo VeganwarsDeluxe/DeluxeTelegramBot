@@ -3,14 +3,13 @@ from VegansDeluxe.core import ls
 import game.content
 from game.Entities.Android import Android
 from game.Matches.BaseMatch import BaseMatch
-from startup import engine
 
 
 class AndroidMatch(BaseMatch):
     name = ls("matches.android")
 
-    def __init__(self, chat_id, bot):
-        super().__init__(chat_id, bot)
+    def __init__(self, chat_id, bot, engine):
+        super().__init__(chat_id, bot, engine)
 
         self.rats = 0
 
@@ -21,5 +20,5 @@ class AndroidMatch(BaseMatch):
         self.rats += 1
         android = Android(self.id, name="🤖|Android {0}".format(self.rats))
         self.session.attach_entity(android)
-        await engine.attach_states(android, game.content.all_states)
-        await engine.attach_states(android, android.choose_skills())
+        await self.engine.attach_states(android, game.content.all_states)
+        await self.engine.attach_states(android, android.choose_skills())

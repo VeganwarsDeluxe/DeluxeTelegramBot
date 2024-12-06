@@ -3,14 +3,13 @@ from VegansDeluxe.core import ls
 import game.content
 from game.Entities.Cow import Cow
 from game.Matches.BaseMatch import BaseMatch
-from startup import engine
 
 
 class TestGameMatch(BaseMatch):
     name = ls("matches.test_game")
 
-    def __init__(self, chat_id, bot):
-        super().__init__(chat_id, bot)
+    def __init__(self, chat_id, bot, engine):
+        super().__init__(chat_id, bot, engine)
 
         self.skill_number = len(game.content.all_skills)
         self.weapon_number = len(game.content.all_weapons)
@@ -19,7 +18,7 @@ class TestGameMatch(BaseMatch):
         await super().init_async()
         cow = Cow(self.id)
         self.session.attach_entity(cow)
-        await engine.attach_states(cow, game.content.all_states)
+        await self.engine.attach_states(cow, game.content.all_states)
 
     async def choose_items(self):
         for player in self.not_chosen_items:

@@ -3,14 +3,13 @@ from VegansDeluxe.core import ls
 import game.content
 from game.Entities.NeuroRat import NeuroRat
 from game.Matches.BaseMatch import BaseMatch
-from startup import engine
 
 
 class NeuroRatMatch(BaseMatch):
     name = ls("neuro")  # TODO: Localization!
 
-    def __init__(self, chat_id, bot):
-        super().__init__(chat_id, bot)
+    def __init__(self, chat_id, bot, engine):
+        super().__init__(chat_id, bot, engine)
 
         self.rats = 0
 
@@ -23,4 +22,4 @@ class NeuroRatMatch(BaseMatch):
         self.rats += 1
         elemental = NeuroRat(self.id, name="NeuroRat 1.0".format(self.rats))
         self.session.attach_entity(elemental)
-        await engine.attach_states(elemental, game.content.all_states)
+        await self.engine.attach_states(elemental, game.content.all_states)

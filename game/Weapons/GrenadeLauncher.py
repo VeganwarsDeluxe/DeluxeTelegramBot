@@ -65,12 +65,13 @@ class GrenadeLauncherAttack(RangedAttack):
 
         for t in targets:
             aflame = t.get_state(Aflame)
-            if aflame:
-                aflame.add_flame(self.session, t, source, 1)
+            if not base_damage:
+                break
+            aflame.add_flame(self.session, t, source, 1)
 
-                post_damage = await self.publish_post_damage_event(source, t, 0)
-                t.inbound_dmg.add(source, post_damage, self.session.turn)
-                source.outbound_dmg.add(source, post_damage, self.session.turn)
+            post_damage = await self.publish_post_damage_event(source, t, 0)
+            t.inbound_dmg.add(source, post_damage, self.session.turn)
+            source.outbound_dmg.add(source, post_damage, self.session.turn)
 
         if base_damage:
             self.session.say(ls("weapon.grenade_launcher.molotov.text")

@@ -27,6 +27,7 @@ class MatchStartFlow:
 
         match.lobby = False
 
+        await match.announce_team_positions()
         await match.choose_items()
         await match.choose_weapons()
 

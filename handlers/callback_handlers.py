@@ -18,6 +18,9 @@ from startup import mm, engine
 r = Router()
 
 
+# TODO: Maybe refactor this as well?
+
+
 @r.callback_query(WeaponInfo.filter())
 async def echo_handler(query: CallbackQuery, callback_data: WeaponInfo) -> None:
     code = db.get_user_locale(query.from_user.id)
@@ -196,15 +199,21 @@ async def h(query: CallbackQuery, callback_data: AnswerChoice) -> None:
         await bot.edit_message_text(ls("bot.error.player_not_found").localize(code),
                                     chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
+    question = match.question_cache.get(callback_data.question_id)
+    if not question:
+        # TODO: Just a small chore. Shouldn't we have another message for this? Not just error.game_not_found?
+        await bot.edit_message_text(ls("bot.error.game_not_found").localize(code),
+                                    chat_id=query.message.chat.id, message_id=query.message.message_id)
+        return
+    choice = question.get_choice(callback_data.choice_id)
 
-    event = AnswerGameEvent(match.id, match.session.turn, player.id, callback_data.question_id, callback_data.choice_id)
+    event = AnswerGameEvent(match.id, match.session.turn, player.id, question.id, choice.id)
     await engine.event_manager.publish(event)
 
     # TODO: I think we need Question instance here after all. It may contain localized message to show here. I'll keep
     #  debug version with IDS for now.
-    await bot.edit_message_text(
-        f"✅{callback_data.question_id} - {callback_data.choice_id}",
-        chat_id=query.message.chat.id, message_id=query.message.message_id)
+    await bot.edit_message_text(choice.result_text.localize(code),
+                                chat_id=query.message.chat.id, message_id=query.message.message_id)
 
 
 @r.callback_query(RefreshTeamList.filter())
@@ -227,9 +236,12 @@ async def h(query: CallbackQuery, callback_data: RefreshTeamList) -> None:
 
     await bot.answer_callback_query(query.id, "✅")
 
-    await bot.edit_message_text(
-        tts,
-        chat_id=query.message.chat.id, message_id=query.message.message_id, reply_markup=kb)
+    try:
+        await bot.edit_message_text(
+            tts,
+            chat_id=query.message.chat.id, message_id=query.message.message_id, reply_markup=kb)
+    except:
+        pass
 
 
 @r.callback_query(LeaveTeam.filter())
@@ -294,16 +306,19 @@ async def h(query: CallbackQuery, callback_data: JoinTeam) -> None:
         player.team = teammate.id
         teammate.team = teammate.id
 
-    teammate = match.session.get_team(player.team)[0]
+    teammate = [entity for entity in match.session.get_team(player.team) if entity.id != player.id][0]
     join_message = ls("bot.teams.player_joined").format(player.name, teammate.name)
     await match.broadcast_to_players(join_message)
     await match.send_message_to_chat(join_message)
 
     tts, kb = match.form_team_selection_menu(player.locale, bool(player.team))
 
-    await bot.edit_message_text(
-        tts,
-        chat_id=query.message.chat.id, message_id=query.message.message_id, reply_markup=kb)
+    try:
+        await bot.edit_message_text(
+            tts,
+            chat_id=query.message.chat.id, message_id=query.message.message_id, reply_markup=kb)
+    except:
+        pass
 
 
 @r.callback_query(TargetChoice.filter())
