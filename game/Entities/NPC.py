@@ -13,13 +13,5 @@ class NPC(TelegramEntity):
         self.chose_skills = True
         self.chose_items = False
 
-    @property
-    def ready(self):
-        return True
-
-    @ready.setter
-    def ready(self, value):
-        pass
-
     async def choose_act(self, session):
         self.ready = True

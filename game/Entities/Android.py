@@ -71,11 +71,17 @@ class Android(NPC):
 
     def can_entity_attack_me(self, target: TelegramEntity, session) -> bool:
         # TODO: Detect attacks.
-        return self in engine.action_manager.get_action(session, target, "attack").targets
+        attack = engine.action_manager.get_action(session, target, "attack")
+        if not attack:
+            return False
+        return self in attack.targets
 
     def can_i_attack_entity(self, target: TelegramEntity, session) -> bool:
         # TODO: Detect attacks.
-        return target in engine.action_manager.get_action(session, self, "attack").targets
+        attack = engine.action_manager.get_action(session, self, "attack")
+        if not attack:
+            return False
+        return target in attack.targets
 
     def targeted_action(self, action_id: str, session: Session[TelegramEntity],
                         target: TelegramEntity | None = None):

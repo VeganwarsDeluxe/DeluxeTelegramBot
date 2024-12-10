@@ -9,6 +9,8 @@ from aiogram.utils.formatting import Text
 import config
 from db import db
 from flow.MatchStartFlow import MatchStartFlow
+from game import content
+from game.Entities.Android import Android
 from startup import mm, engine
 
 r = Router()
@@ -64,6 +66,26 @@ async def echo_handler(m: Message) -> None:
 
     match.skill_cycles = skill_amount
     await m.bot.send_message(m.chat.id, ls("bot.skill_amount.text").format(skill_amount).localize(code))
+
+
+@r.message(Command("vd_add_android"))
+async def echo_handler(m: Message) -> None:
+    code = db.get_user_locale(m.from_user.id)
+
+    match = mm.get_match(m.chat.id)
+    if not match:
+        await m.reply(**Text(ls("bot.join.game_not_started").localize(code)).as_kwargs())
+        return
+    if not match.lobby:
+        await m.reply(**Text(ls("bot.join.game_already_started").localize(code)).as_kwargs())
+        return
+
+    android = Android(match.session.id, name="🤖|Android")
+    match.session.attach_entity(android)
+    await engine.attach_states(android, content.all_states)
+    await engine.attach_states(android, android.choose_skills())
+
+    await m.bot.send_message(m.chat.id, "✅")
 
 
 @r.message(Command("vd_join"))

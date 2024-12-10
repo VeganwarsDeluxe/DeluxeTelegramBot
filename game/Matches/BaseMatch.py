@@ -303,7 +303,9 @@ class BaseMatch:
                 entity.ready = True
                 if not self.unready_players:
                     await self.cycle()
-            elif entity.npc:
+                    return
+                continue
+            if entity.npc:
                 await entity.choose_act(self.session)
             else:
                 await self.send_act_buttons(entity)
