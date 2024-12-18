@@ -39,6 +39,7 @@ class BaseMatch:
 
         self.weapon_number = 3
 
+        self.item_choice_pool = game.content.game_items_pool
         self.items_given = 2
 
         self.cowed = False
@@ -318,8 +319,7 @@ class BaseMatch:
         text = f"{self.localize_text(player.name)}\n"
         text += f""
 
-    async def map_buttons(self,
-                          player: TelegramEntity):  # TODO: Rethink this function. Maybe we can use action tags here?
+    async def map_buttons(self, player: TelegramEntity):
         code = player.locale
 
         await self.engine.action_manager.update_entity_actions(self.session, player)
@@ -358,8 +358,9 @@ class BaseMatch:
         buttons['first_row'].reverse()
         buttons['second_row'].append(
             InlineKeyboardButton(text=ls("deluxe.buttons.info").localize(code),
-                                 callback_data=StateInfo(state_id='777').pack())
+                                 callback_data=StateInfo(state_id='0').pack())
             # TODO: Huh?? 777? Pasyuk much?
+            #  This is actually about info. We can combine answerless questions to finally write Visor and info button.
         )
 
         kb.append(buttons['first_row'])
@@ -459,8 +460,8 @@ class BaseMatch:
 
             given = []
             for _ in range(self.items_given):
-                item = random.choice(game.content.game_items_pool)()
-                pool = list(filter(lambda i: i.id not in given, game.content.game_items_pool))
+                item = random.choice(self.item_choice_pool)()
+                pool = list(filter(lambda i: i.id not in given, self.item_choice_pool))
                 if pool:
                     item = random.choice(pool)()
                 given.append(item.id)

@@ -35,15 +35,8 @@ class BoomerangAttack(RangedAttack):
     def __init__(self, session: Session, source: Entity, weapon: Boomerang):
         super().__init__(session, source, weapon)
 
-    @property
-    def hidden(self) -> bool:
-        is_hidden = self.session.turn < self.weapon.return_turn + 1
-        if is_hidden:
-            self.source.current_weapon = self.weapon
-        return is_hidden
-
     async def func(self, source: Entity, target: Entity):
-        if self.hidden or self.weapon.is_thrown:
+        if self.session.turn < self.weapon.return_turn + 1 or self.weapon.is_thrown:
             return
 
         await self.attack_boomerang(source, target)
@@ -77,29 +70,16 @@ class BoomerangAttack(RangedAttack):
             await self.return_boomerang(source)
 
     async def return_boomerang(self, source: Entity):
-        if self.weapon.throw_energy == 0:
-            self.session.say(ls("weapon.boomerang.return_text_miss").format(source.name, "the wind"))
-            self.weapon.is_thrown = False
-            source.current_weapon = self.weapon
-            self.weapon.throw_energy = 0
-            return
-
         target_pool = list(filter_targets(source, Enemies(), self.session.entities))
         if not target_pool:
             target_pool = [source]  # Fallback to self-target if no enemies found
         target = random.choice(target_pool)
 
-        original_energy = self.weapon.throw_energy
-        current_energy = source.energy
-        source.energy = original_energy
-
-        total_damage = self.calculate_damage(source, target)
+        total_damage = self.calculate_damage(source, target, self.weapon.throw_energy)
 
         post_damage = await self.publish_post_damage_event(source, target, total_damage)
         target.inbound_dmg.add(source, post_damage, self.session.turn)
         source.outbound_dmg.add(target, post_damage, self.session.turn)
-
-        source.energy = current_energy
 
         if not total_damage:
             self.session.say(ls("weapon.boomerang.return_text_miss").format(source.name, target.name))
@@ -107,8 +87,6 @@ class BoomerangAttack(RangedAttack):
             self.session.say(ls("weapon.boomerang.return_text").format(source.name, target.name, total_damage))
 
         self.weapon.is_thrown = False
-        source.current_weapon = self.weapon
-
         self.weapon.throw_energy = 0
 
     async def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:

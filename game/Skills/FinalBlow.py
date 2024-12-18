@@ -78,7 +78,7 @@ class FinalBlowAction(DecisiveStateAction):
 
         @At(self.session.id, turn=self.session.turn + 1, event=PreActionsGameEvent)
         async def final_blow_death(context: EventContext[PreActionsGameEvent]):
-            source.hp = -999999
+            source.dead = True
             self.session.say(ls("state.final_blow.death").format(source.name))
 
     def select_random_targets(self, source: Entity) -> list[Entity]:

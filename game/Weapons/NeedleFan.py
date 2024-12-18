@@ -1,5 +1,5 @@
-from VegansDeluxe.core import EventContext
-from VegansDeluxe.core import PostActionsGameEvent, At
+from VegansDeluxe.core import EventContext, DamageData, RegisterEvent, PreMoveGameEvent
+from VegansDeluxe.core import PostActionsGameEvent
 from VegansDeluxe.core import PostDamageGameEvent
 from VegansDeluxe.core import RangedAttack, RegisterWeapon, Entity, AttachedAction
 from VegansDeluxe.core.Session import Session
@@ -21,51 +21,50 @@ class NeedleFan(RangedWeapon):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.current_needles = 1
-        self.max_needles = 10
+        self.max_needles = 4
+
+        @RegisterEvent(self.session_id, event=PostActionsGameEvent)
+        async def handle_needle_recovery(context: EventContext[PostActionsGameEvent]):
+            if self.current_needles < self.max_needles:
+                self.current_needles += 1
+
+        @RegisterEvent(self.session_id, event=PreMoveGameEvent)
+        async def pre_move(context: EventContext[PreMoveGameEvent]):
+            source = context.session.get_entity(self.entity_id)
+            source.notifications.append(
+                ls("weapon.needle_fan.notification").format(self.current_needles)
+            )
 
 
 @AttachedAction(NeedleFan)
 class NeedleFanAttack(RangedAttack):
-
     def __init__(self, session: Session, source: Entity, weapon: NeedleFan):
         super().__init__(session, source, weapon)
-        self.register_event_handlers()
 
-    async def func(self, source: Entity, target: Entity):
-        if self.weapon.current_needles > 0:
-            used_needles = self.weapon.current_needles
-            total_damage = (self.calculate_damage(source, target) * used_needles)
-
+    async def attack(self, source: Entity, target, pay_energy=True) -> DamageData:
+        """
+        Actually performs attack on target, dealing damage.
+        """
+        calculated_damage = self.calculate_damage(source, target)
+        if pay_energy:
             source.energy = max(source.energy - self.weapon.energy_cost, 0)
 
-            post_damage = await self.publish_post_damage_event(source, target, total_damage)
-            target.inbound_dmg.add(source, post_damage, self.session.turn)
-            source.outbound_dmg.add(target, post_damage, self.session.turn)
+        if self.weapon.current_needles > 0:
+            used_needles = self.weapon.current_needles
+            calculated_damage = calculated_damage * used_needles
+            self.weapon.current_needles = 0
+        else:
+            target = target if target in source.nearby_entities else source
 
-            if not total_damage:
-                self.session.say(
-                    self.MISS_MESSAGE.format(source_name=source.name, attack_text=self.ATTACK_TEXT, target_name=target.name,
-                                             weapon_name=self.weapon.name)
-                )
-            else:
-                self.session.say(
-                    self.ATTACK_MESSAGE.format(attack_emoji=self.ATTACK_EMOJI, source_name=source.name,
-                                               attack_text=self.ATTACK_TEXT,
-                                               target_name=target.name, weapon_name=self.weapon.name, damage=total_damage)
-                )
+        displayed_damage = await self.publish_attack_event(source, target, calculated_damage)
+        self.send_attack_message(source, target, displayed_damage)
+        dealt_damage = await self.publish_post_attack_event(source, target, displayed_damage)
 
-                self.weapon.current_needles = 0
+        target.inbound_dmg.add(source, dealt_damage, self.session.turn)
+        source.outbound_dmg.add(target, dealt_damage, self.session.turn)
+        return DamageData(calculated_damage, displayed_damage, dealt_damage)
 
     async def publish_post_damage_event(self, source: Entity, target: Entity, damage: int) -> int:
         message = PostDamageGameEvent(self.session.id, self.session.turn, source, target, damage)
         await self.event_manager.publish(message)
         return message.damage
-
-    def register_event_handlers(self):
-        @At(self.session.id, turn=self.session.turn, event=PostActionsGameEvent)
-        async def handle_needle_recovery(context: EventContext[PostActionsGameEvent]):
-            self.recovery_needles()
-
-    def recovery_needles(self):
-        if self.weapon.current_needles < self.weapon.max_needles:
-            self.weapon.current_needles += 1

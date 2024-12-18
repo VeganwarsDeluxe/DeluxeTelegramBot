@@ -25,7 +25,7 @@ class AbyssalBladeAttack(MeleeAttack):
         if not damage.dealt:
             return damage
 
-        if percentage_chance(99):
+        if percentage_chance(45):
             return damage
 
         emptiness = target.get_state(Emptiness)

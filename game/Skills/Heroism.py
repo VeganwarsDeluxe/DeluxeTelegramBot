@@ -1,8 +1,9 @@
-from VegansDeluxe.core import AttachedAction
+from VegansDeluxe.core import AttachedAction, Allies, Own
 from VegansDeluxe.core import OwnOnly
 from VegansDeluxe.core import RegisterState
 from VegansDeluxe.core import Session
 from VegansDeluxe.core import StateContext
+from VegansDeluxe.core.Actions.Action import filter_targets
 from VegansDeluxe.core.Actions.StateAction import DecisiveStateAction
 from VegansDeluxe.core.Entities.Entity import Entity
 from VegansDeluxe.core.Skills.Skill import Skill
@@ -41,8 +42,7 @@ class HeroismAction(DecisiveStateAction):
         return self.session.turn < self.state.cooldown_turn
 
     def get_allies(self, source: Entity) -> list[Entity]:
-        # Retrieve all allies except the source
-        return [entity for entity in self.session.entities if entity.team == source.team and entity != source and not entity.dead]
+        return filter_targets(source, Allies(own=Own.SELF_EXCLUDED), self.session.entities)
 
     async def func(self, source: Entity, target: Entity):
         # Set long cooldown
