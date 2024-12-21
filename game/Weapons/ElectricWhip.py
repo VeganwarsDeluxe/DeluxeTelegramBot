@@ -49,7 +49,7 @@ class ElectricWhipAttack(MeleeAttack):
             if not target_pool:
                 break
             selected_target = random.choice(target_pool)
-            post_damage = self.publish_post_damage_event(source, selected_target, secondary_damage)
+            post_damage = await self.publish_post_damage_event(source, selected_target, secondary_damage)
             selected_target.inbound_dmg.add(source, post_damage, self.session.turn)
             source.outbound_dmg.add(selected_target, post_damage, self.session.turn)
             secondary_targets.append(selected_target)
