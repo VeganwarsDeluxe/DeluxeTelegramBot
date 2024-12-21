@@ -67,11 +67,11 @@ async def profile_handler(m: Message) -> None:
     if not user:
         user = db.create_user(m.from_user.id, m.from_user.first_name)
 
-    tts += ls("bot.common.locale.menu").format(ls(f"bot.locale.name.{user.locale}")).localize(user.locale)
+    tts += ls("bot.common.locale.menu").format(ls(f"bot.locale.name")).localize(user.locale)
 
     kb = []
     for locale in translator.locales.keys():
-        locale_text = ls(f"bot.locale.name.{locale}").localize(locale)
+        locale_text = ls(f"bot.locale.name").localize(locale)
         kb.append([InlineKeyboardButton(text=locale_text, callback_data=ChangeLocale(locale=locale).pack())])
 
     kb = InlineKeyboardMarkup(inline_keyboard=kb)
