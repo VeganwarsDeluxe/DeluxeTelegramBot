@@ -1,5 +1,6 @@
 import random
 
+import DeluxeMod.content
 from VegansDeluxe.core import ls, Own
 from VegansDeluxe.core.ContentManager import content_manager as cm
 from VegansDeluxe.core.Question.QuestionEvents import AnswerGameEvent
@@ -7,7 +8,6 @@ from aiogram import Router
 from aiogram.types import CallbackQuery
 from aiogram.utils.formatting import Text
 
-import game.content
 from db import db
 from flow.MatchStartFlow import MatchStartFlow
 from handlers.callbacks.other import (WeaponInfo, StateInfo, ChooseWeapon, ChooseSkill, StartGame,
@@ -56,19 +56,17 @@ async def echo_handler(query: CallbackQuery, callback_data: ChooseWeapon) -> Non
         await bot.edit_message_text(ls("bot.cw.not_in_game").localize(code),
                                     chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
-    if player.chose_weapon:
+    if player in match.chosen_weapon:
         await bot.edit_message_text(ls("bot.cw.stop_doing_that").localize(code),
                                     chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     if callback_data.weapon_id == 'random':
-        weapon = random.choice(game.content.all_weapons)(callback_data.game_id, player.id)
+        weapon = random.choice(DeluxeMod.content.all_weapons)(callback_data.game_id, player.id)
     else:
         weapon = cm.get_weapon(callback_data.weapon_id)(callback_data.game_id, player.id)
     player.weapon = weapon
-    player.chose_weapon = True
-    if not match.not_chosen_weapon:
-        await bot.send_message(match.chat_id, ls("bot.cw.weapons_chosen").localize(match.locale))
-        await match.choose_skills()
+    match.chosen_weapon.append(player)
+    await match.attempt_finish_weapon_choice()
 
     await bot.edit_message_text(ls("bot.cw.weapon_chosen").format(weapon.name).localize(code),
                                 chat_id=query.message.chat.id, message_id=query.message.message_id)
@@ -93,37 +91,28 @@ async def h(query: CallbackQuery, callback_data: ChooseSkill) -> None:
         await bot.edit_message_text(ls("bot.cw.not_in_game").localize(code),
                                     chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
-    if player.chose_skills or player.skill_cycle == callback_data.cycle:
+    if player in match.chosen_skills or player.skill_cycle == callback_data.cycle:
         await bot.edit_message_text(ls("bot.cw.stop_doing_that").localize(code),
                                     chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     skill = cm.get_state(callback_data.skill_id)
     if callback_data.skill_id == 'random':
-        variants = list(filter(lambda s: s.id not in [s.id for s in player.states], game.content.all_skills))
+        variants = list(filter(lambda s: s.id not in [s.id for s in player.states], DeluxeMod.content.all_skills))
         if not variants:
-            variants = game.content.all_skills
+            variants = DeluxeMod.content.all_skills
         skill = random.choice(variants)
     await engine.attach_states(player, [skill])
     player.skill_cycle = callback_data.cycle
 
     if callback_data.cycle >= match.skill_cycles:
-        player.chose_skills = True
+        match.chosen_skills.append(player)
     else:
         await match.send_skill_choice_buttons(player, callback_data.cycle + 1)
 
     await bot.edit_message_text(ls("bot.cs.skill_chosen").format(skill.name).localize(code),
                                 chat_id=query.message.chat.id, message_id=query.message.message_id)
 
-    if not match.not_chosen_skills:
-        tts = ls("deluxe.matches.messages.start")
-        weapon_text = ""
-        for player in match.session.alive_entities:
-            weapon_text += f'\n{match.localize_text(player.name)}: {match.localize_text(player.weapon.name)}'
-        tts = tts.format(weapon_text)
-
-        await bot.send_message(match.chat_id, match.localize_text(tts))
-        await match.broadcast_to_players(tts)
-        await match.start_game()
+    await match.attempt_finish_skill_choice()
 
 
 @r.callback_query(Additional.filter())

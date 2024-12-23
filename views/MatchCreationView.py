@@ -3,7 +3,7 @@ from aiogram import Bot
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils import deep_linking
 
-from game.Matches.BaseMatch import BaseMatch
+from Matches.BaseMatch import BaseMatch
 from handlers.callbacks.other import StartGame
 from views.View import View
 

@@ -1,8 +1,8 @@
 from VegansDeluxe.core.Translator.LocalizedString import LocalizedString, ls
 
 import config
-from game.Matches.BaseMatch import BaseMatch
-from game.Matches.Matchmaker import Matchmaker
+from Matches import Matchmaker
+from Matches.BaseMatch import BaseMatch
 
 
 class MatchStartFlow:
@@ -28,7 +28,7 @@ class MatchStartFlow:
         match.lobby = False
 
         await match.announce_team_positions()
-        await match.choose_items()
+        await match.distribute_starting_items()
         await match.choose_weapons()
 
         await match.lobby_message.reply(ls("bot.start.success").localize(match.locale))

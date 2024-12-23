@@ -2,19 +2,18 @@ from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
 
+from Matches.AndroidMatch import AndroidMatch
+from Matches.BaseMatch import BaseMatch
+from Matches.BeastDungeon import BeastDungeon
+from Matches.BotDungeon import BotDungeon
+from Matches.DeathMatch import DeathMatch
+from Matches.ElementalDungeon import ElementalDungeon
+from Matches.GuardianDungeon import GuardianDungeon
+from Matches.NeuroRatMatch import NeuroRatMatch
+from Matches.SlimeDungeon import SlimeDungeon
+from Matches.TestGameMatch import TestGameMatch
 from db import db
 from flow.MatchCreationFlow import MatchCreationFlow
-from game.Matches.AndroidMatch import AndroidMatch
-from game.Matches.BaseMatch import BaseMatch
-from game.Matches.BeastDungeon import BeastDungeon
-from game.Matches.BotDungeon import BotDungeon
-from game.Matches.DeathMatch import DeathMatch
-from game.Matches.ElementalDungeon import ElementalDungeon
-from game.Matches.GuardianDungeon import GuardianDungeon
-from game.Matches.NeuroRatMatch import NeuroRatMatch
-from game.Matches.NeuroRatTrainingDuel import NeuroRatTrainingDuel
-from game.Matches.SlimeDungeon import SlimeDungeon
-from game.Matches.TestGameMatch import TestGameMatch
 
 r = Router()
 
@@ -88,12 +87,3 @@ async def echo_handler(m: Message) -> None:
     code = db.get_user_locale(m.from_user.id)
     await flow.execute(m.bot, code)
 
-
-@r.message(Command("vd_neuroturnier"))
-async def echo_handler(m: Message) -> None:
-    match = NeuroRatTrainingDuel(m.bot)
-    await match.init_async()
-
-    await match.add_rats("z", "b")
-
-    await match.start_game()

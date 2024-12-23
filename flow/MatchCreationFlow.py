@@ -1,6 +1,6 @@
 from aiogram import Bot
 
-from game.Matches.BaseMatch import BaseMatch
+from Matches.BaseMatch import BaseMatch
 from startup import mm, engine
 from views.MatchCreationView import MatchCreationView
 from views.MatchExistsView import MatchExistsView

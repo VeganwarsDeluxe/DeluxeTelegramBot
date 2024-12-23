@@ -2,4 +2,4 @@
 .idea
 *.env
 __pycache__
-tests
+tools

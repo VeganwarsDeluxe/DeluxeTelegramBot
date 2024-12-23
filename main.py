@@ -2,6 +2,7 @@ import asyncio
 import logging
 import sys
 
+import DeluxeMod.content
 import VegansDeluxe.core
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
@@ -9,7 +10,6 @@ from aiogram.enums import ParseMode
 from aiogram.types import Update
 
 import config
-import game.content
 from db import db
 from handlers.callback_handlers import r as callbacks_router
 from handlers.matches import r as match_router
@@ -17,7 +17,7 @@ from handlers.other import r as other_router
 from handlers.profile import r as profile_router
 from startup import engine, version
 
-print(f"Imported {game.content}.\n")
+print(f"Imported {DeluxeMod.content}.\n")
 
 dp = Dispatcher()
 

@@ -1,0 +1,25 @@
+import DeluxeMod.content
+from DeluxeMod.Entities.Elemental import Elemental
+from VegansDeluxe.core import ls
+
+from Matches.BaseMatch import BaseMatch
+
+
+class ElementalDungeon(BaseMatch):
+    name = ls("matches.elemental")
+
+    def __init__(self, chat_id, bot, engine):
+        super().__init__(chat_id, bot, engine)
+
+        self.elementals = 0
+
+    async def join_session(self, user_id, user_name):
+        player = await super().join_session(user_id, user_name)
+        player.team = 'players'
+        if self.elementals == 1:
+            return
+
+        self.elementals += 1
+        elemental = Elemental(self.id, name=ls("elemental.name_number").format(self.elementals))
+        self.session.attach_entity(elemental)
+        await self.engine.attach_states(elemental, DeluxeMod.content.all_states)

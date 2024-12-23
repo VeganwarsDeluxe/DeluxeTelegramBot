@@ -1,5 +1,7 @@
 import traceback
 
+from DeluxeMod import content
+from DeluxeMod.Entities.Android import Android
 from VegansDeluxe.core import ls
 from aiogram import Router
 from aiogram.filters import Command, CommandStart, CommandObject
@@ -9,8 +11,6 @@ from aiogram.utils.formatting import Text
 import config
 from db import db
 from flow.MatchStartFlow import MatchStartFlow
-from game import content
-from game.Entities.Android import Android
 from startup import mm, engine
 
 r = Router()

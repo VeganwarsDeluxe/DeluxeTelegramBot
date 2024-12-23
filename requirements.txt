@@ -1,4 +1,6 @@
 git+https://onedev.gts.org.ua/vezono/vegans-deluxe#egg=VegansDeluxe
+git+https://github.com/VeganwarsDeluxe/DeluxeMod#egg=DeluxeMod
+
 aiogram
 requests
 urllib3

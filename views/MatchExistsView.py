@@ -1,6 +1,6 @@
 from VegansDeluxe.core import ls
 
-from game.Matches.BaseMatch import BaseMatch
+from Matches.BaseMatch import BaseMatch
 from views.View import View
 
 
