@@ -1,7 +1,6 @@
 import DeluxeMod.content
 from DeluxeMod.Entities.Cow import Cow
 from VegansDeluxe.core import ls
-from VegansDeluxe.deluxe.Entities.Confucius import Confucius
 
 from Matches.BaseMatch import BaseMatch
 
@@ -21,9 +20,9 @@ class TestGameMatch(BaseMatch):
         self.session.attach_entity(cow)
         await self.engine.attach_states(cow, DeluxeMod.content.all_states)
 
-        confucius = Confucius(session_id=self.session.id)
-        self.session.attach_entity(confucius)
-        await self.engine.attach_states(confucius, DeluxeMod.content.all_states)
+        # confucius = FireAutomaton(session_id=self.session.id)
+        # self.session.attach_entity(confucius)
+        # await self.engine.attach_states(confucius, DeluxeMod.content.all_states)
 
     async def distribute_starting_items(self):
         for player in self.session.entities:
