@@ -35,9 +35,13 @@ class BaseMatch:
         self.lobby_message: Message | None = None
         self.lobby = True
 
+        self.state_pool = DeluxeMod.content.all_states
+
+        self.skill_choice_pool = DeluxeMod.content.all_skills
         self.skill_cycles = 2
         self.skill_number = 5
 
+        self.weapon_choice_pool = DeluxeMod.content.all_weapons
         self.weapon_number = 3
 
         self.item_choice_pool = DeluxeMod.content.game_items_pool
@@ -124,7 +128,7 @@ class BaseMatch:
         player = TelegramEntity(self.session.id, user_name, user_id, code)
         player.energy, player.max_energy, player.hp, player.max_hp = 5, 5, 4, 4
         self.session.attach_entity(player)
-        await self.engine.attach_states(player, DeluxeMod.content.all_states)
+        await self.engine.attach_states(player, self.state_pool)
         await self.send_team_selection_menu(player)
         return player
 
@@ -577,7 +581,7 @@ class BaseMatch:
 
         weapons: list[Weapon] = []
         for _ in range(self.weapon_number):
-            variants = list(filter(lambda w: w.id not in [w.id for w in weapons], DeluxeMod.content.all_weapons))
+            variants = list(filter(lambda w: w.id not in [w.id for w in weapons], self.weapon_choice_pool))
             if not variants:
                 break
             choice = random.choice(variants)
@@ -608,7 +612,7 @@ class BaseMatch:
 
         skills: list[State] = []
         for _ in range(self.skill_number):
-            variants = list(filter(lambda s: s.id not in [s.id for s in skills], DeluxeMod.content.all_skills))
+            variants = list(filter(lambda s: s.id not in [s.id for s in skills], self.skill_choice_pool))
             variants = list(filter(lambda s: s.id not in [s.id for s in player.states], variants))
             if not variants:
                 break

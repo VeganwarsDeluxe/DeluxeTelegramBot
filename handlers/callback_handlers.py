@@ -1,6 +1,5 @@
 import random
 
-import DeluxeMod.content
 from VegansDeluxe.core import ls, Own
 from VegansDeluxe.core.ContentManager import content_manager as cm
 from VegansDeluxe.core.Question.QuestionEvents import AnswerGameEvent
@@ -61,7 +60,7 @@ async def echo_handler(query: CallbackQuery, callback_data: ChooseWeapon) -> Non
                                     chat_id=query.message.chat.id, message_id=query.message.message_id)
         return
     if callback_data.weapon_id == 'random':
-        weapon = random.choice(DeluxeMod.content.all_weapons)(callback_data.game_id, player.id)
+        weapon = random.choice(match.weapon_choice_pool)(callback_data.game_id, player.id)
     else:
         weapon = cm.get_weapon(callback_data.weapon_id)(callback_data.game_id, player.id)
     player.weapon = weapon
@@ -97,9 +96,9 @@ async def h(query: CallbackQuery, callback_data: ChooseSkill) -> None:
         return
     skill = cm.get_state(callback_data.skill_id)
     if callback_data.skill_id == 'random':
-        variants = list(filter(lambda s: s.id not in [s.id for s in player.states], DeluxeMod.content.all_skills))
+        variants = list(filter(lambda s: s.id not in [s.id for s in player.states], match.skill_choice_pool))
         if not variants:
-            variants = DeluxeMod.content.all_skills
+            variants = match.skill_choice_pool
         skill = random.choice(variants)
     await engine.attach_states(player, [skill])
     player.skill_cycle = callback_data.cycle
@@ -109,7 +108,7 @@ async def h(query: CallbackQuery, callback_data: ChooseSkill) -> None:
     else:
         await match.send_skill_choice_buttons(player, callback_data.cycle + 1)
 
-    await bot.edit_message_text(ls("bot.cs.skill_chosen").format(skill.name).localize(code),
+    await bot.edit_message_text(ls("bot.cs.skill_chosen").format(skill.name, callback_data.cycle).localize(code),
                                 chat_id=query.message.chat.id, message_id=query.message.message_id)
 
     await match.attempt_finish_skill_choice()
