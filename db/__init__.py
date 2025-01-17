@@ -16,8 +16,11 @@ class Database:
     def get_top_players_by_tickets(self, limit=10):
         return self.__sl.query(User).order_by(User.tickets.desc()).limit(limit).all()
 
-    def create_user(self, user_id: int, name: str):
-        new_user = User(id=user_id, name=name)
+    def get_top_players_by_rating(self, limit=10):
+        return self.__sl.query(User).order_by(User.rating.desc()).limit(limit).all()
+
+    def create_user(self, user_id: int, name: str, username: str):
+        new_user = User(id=user_id, name=name, username=username)
         self.__sl.add(new_user)
         self.__sl.commit()  # Commit the transaction
         self.__sl.refresh(new_user)  # Reload the instance with the new data from the database
@@ -37,6 +40,9 @@ class Database:
     def get_user(self, user_id):
         return self.__sl.query(User).filter(User.id == user_id).first()
 
+    def get_user_by_username(self, username: str):
+        return self.__sl.query(User).filter(User.username == username).first()
+
     async def process_event(self, event: Update):
         if event.message:
             await self.process_message_event(event)
@@ -48,7 +54,10 @@ class Database:
     async def process_user(self, tg_user: User):
         user = self.get_user(tg_user.id)
         if not user:
-            user = self.create_user(tg_user.id, tg_user.full_name)
+            user = self.create_user(tg_user.id, tg_user.full_name, str(tg_user.username))
+        elif user.username != str(tg_user.username):
+            user.username = str(tg_user.username)
+            self.__sl.commit()
         return user
 
 

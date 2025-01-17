@@ -16,10 +16,11 @@ r = Router()
 async def profile_handler(m: Message) -> None:
     # TODO: Fix locale for production readiness.
     tts = ''
+    tg_user = m.from_user
+    if m.reply_to_message:
+        tg_user = m.reply_to_message.from_user
 
-    user = db.get_user(m.from_user.id)
-    if not user:
-        user = db.create_user(m.from_user.id, m.from_user.first_name)
+    user = await db.process_user(tg_user)
     tts += f'👤: {user.name} | 🆔: {user.id}\n'
     tts += f'🎟: {user.tickets}\n'
     tts += f'📈: {user.rating}\n'
@@ -65,7 +66,7 @@ async def profile_handler(m: Message) -> None:
 
     user = db.get_user(m.from_user.id)
     if not user:
-        user = db.create_user(m.from_user.id, m.from_user.first_name)
+        user = db.create_user(m.from_user.id, m.from_user.first_name, str(m.from_user.username))
 
     tts += ls("bot.common.locale.menu").format(ls(f"bot.locale.name")).localize(user.locale)
 

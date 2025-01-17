@@ -15,6 +15,7 @@ from handlers.callback_handlers import r as callbacks_router
 from handlers.matches import r as match_router
 from handlers.other import r as other_router
 from handlers.profile import r as profile_router
+from handlers.rating import r as rating_router
 from startup import engine, version
 
 print(f"Imported {DeluxeMod.content}.\n")
@@ -28,6 +29,7 @@ async def main() -> None:
     dp.include_router(match_router)
     dp.include_router(callbacks_router)
     dp.include_router(profile_router)
+    dp.include_router(rating_router)
     dp.include_router(other_router)
 
     @dp.update.outer_middleware()

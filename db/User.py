@@ -8,6 +8,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
+    username = Column(String, index=True)
     tickets = Column(Integer, index=True, default=0)
     rating = Column(Integer, index=True, default=1000)
 
