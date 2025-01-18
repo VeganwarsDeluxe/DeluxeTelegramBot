@@ -80,4 +80,6 @@ async def h(m: Message) -> None:
     a.rating = int(r_a)
     b.rating = int(r_b)
 
+    db.submit_match_result(a.id, b.id, a_s, b_s)
+
     db.commit()
