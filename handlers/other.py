@@ -158,6 +158,6 @@ async def h(m: Message) -> None:
         return
     player.dead = True
     player.hp = 0
-    if not match.unready_players:
+    if len(match.ready_players) == len(match.session.entities):
         match.session.say(ls("bot.suicide.text").format(player.name))
         await match.cycle()

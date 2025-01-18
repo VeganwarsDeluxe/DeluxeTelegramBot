@@ -1,8 +1,10 @@
 import DeluxeMod.content
+from DeluxeMod.Skills.Dash import Dash
 from DeluxeMod.Skills.Echo import Echo
 from DeluxeMod.Skills.ExplosionMagic import ExplosionMagic
 from DeluxeMod.Skills.Heroism import Heroism
 from DeluxeMod.Skills.Tactician import Tactician
+from DeluxeMod.Weapons.Emitter import Emitter
 from DeluxeMod.Weapons.Tomahawk import Tomahawk
 from VegansDeluxe.core import ls
 from VegansDeluxe.rebuild import Necromancer, Visor
@@ -23,6 +25,8 @@ class TournierMatch(BaseMatch):
         self.skill_choice_pool.remove(Tactician)
         self.skill_choice_pool.remove(Visor)
         self.skill_choice_pool.remove(Echo)
+        self.skill_choice_pool.remove(Dash)
 
         self.weapon_choice_pool = DeluxeMod.content.all_weapons.copy()
         self.weapon_choice_pool.remove(Tomahawk)
+        self.weapon_choice_pool.remove(Emitter)
