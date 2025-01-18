@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Date
+from sqlalchemy import Column, Integer, BIGINT, NUMERIC
 
 from db.startup import Base
 
@@ -6,10 +6,10 @@ from db.startup import Base
 class TournierMatchResult(Base):
     __tablename__ = "results"
 
-    opponent_a_id = Column(Integer, index=True)
-    opponent_b_id = Column(Integer, index=True)
+    opponent_a_id = Column(BIGINT, index=True)
+    opponent_b_id = Column(BIGINT, index=True)
 
     opponent_a_score = Column(Integer, index=True)
     opponent_b_score = Column(Integer, index=True)
 
-    date = Column(Date, primary_key=True, index=True)
+    date = Column(NUMERIC, primary_key=True, index=True)
