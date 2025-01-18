@@ -51,7 +51,7 @@ class Database:
                                      opponent_b_id=user_b_id,
                                      opponent_a_score=user_a_score,
                                      opponent_b_score=user_b_score,
-                                     date=datetime.datetime.now(datetime.UTC).timestamp())
+                                     date=datetime.datetime.now(datetime.UTC))
         self.__sl.add(result)
         self.__sl.commit()  # Commit the transaction
 
