@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
@@ -19,6 +21,56 @@ async def profile_handler(m: Message) -> None:
     for user in top:
         index += 1
         tts += f"{index}. {user.username} - {user.rating}\n"
+
+    await m.answer(**Text(tts).as_kwargs())
+
+
+@r.message(Command("revert"))
+async def h(m: Message) -> None:
+    if m.from_user.id not in config.admin_ids:
+        return
+    if m.text.count(' ') != 1:
+        return
+    _, datestamp = m.text.split(' ')
+    datestamp = int(datestamp)
+    db.delete_match_result_by_date(datestamp)
+    await m.answer("Done. You may want to /recompile.")
+
+
+@r.message(Command("recompile"))
+async def h(m: Message) -> None:
+    if m.from_user.id not in config.admin_ids:
+        return
+    db.erase_ratings()
+
+    top = db.get_match_results()
+    for match in top:
+        a = db.get_user(match.opponent_a_id)
+        b = db.get_user(match.opponent_b_id)
+
+        r_a, r_b = outcome(a, b, match.opponent_a_score, match.opponent_b_score)
+        a.rating = r_a
+        b.rating = r_b
+        db.commit()
+    await m.answer("Recompiled.")
+
+
+@r.message(Command("matches"))
+async def profile_handler(m: Message) -> None:
+    tts = ''
+
+    top = db.get_match_results()
+    index = 0
+    for match in top:
+        a = db.get_user(match.opponent_a_id)
+        b = db.get_user(match.opponent_b_id)
+
+        date = datetime.fromtimestamp(match.date).strftime('%d.%m.%Y')
+
+        index += 1
+        tts += f"{index}. {a.username} vs {b.username}\n"
+        tts += f"{match.opponent_a_score}:{match.opponent_b_score}\n"
+        tts += f"[{match.date}] ({date})\n\n"
 
     await m.answer(**Text(tts).as_kwargs())
 
@@ -73,13 +125,14 @@ async def h(m: Message) -> None:
     r_a, r_b = outcome(a, b, a_s, b_s)
     a_emoji = '📈' if r_a > a.rating else '📉'
     b_emoji = '📈' if r_b > b.rating else '📉'
+
+    result, dt = db.submit_match_result(a.id, b.id, a_s, b_s)
+
     await m.reply(f'Бій: {a.name} ({a.rating}) vs {b.name} ({b.rating}): {a_s} - {b_s}\n\n'
                   f'Результат: \n'
                   f'{a.name} - {r_a}{a_emoji} \n'
-                  f'{b.name} - {r_b}{b_emoji}')
+                  f'{b.name} - {r_b}{b_emoji}\n\nR-ID: {dt}')
+
     a.rating = int(r_a)
     b.rating = int(r_b)
-
-    db.submit_match_result(a.id, b.id, a_s, b_s)
-
     db.commit()

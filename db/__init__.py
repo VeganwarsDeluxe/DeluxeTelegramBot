@@ -13,6 +13,13 @@ class Database:
 
         self.__sl: SessionLocal = SessionLocal()
 
+    def erase_ratings(self):
+        self.__sl.query(User).update({User.rating: 1000})
+        self.commit()
+
+    def delete_match_result_by_date(self, datestamp: int):
+        self.__sl.query(TournierMatchResult).filter(TournierMatchResult.date == datestamp).delete()
+
     def commit(self):
         self.__sl.commit()
 
@@ -21,6 +28,9 @@ class Database:
 
     def get_top_players_by_rating(self, limit=10):
         return self.__sl.query(User).order_by(User.rating.desc()).limit(limit).all()
+
+    def get_match_results(self):
+        return self.__sl.query(TournierMatchResult).order_by(TournierMatchResult.date.desc()).all()
 
     def create_user(self, user_id: int, name: str, username: str):
         new_user = User(id=user_id, name=name, username=username)
@@ -47,15 +57,16 @@ class Database:
         return self.__sl.query(User).filter(User.username == username).first()
 
     def submit_match_result(self, user_a_id, user_b_id, user_a_score, user_b_score):
+        datestamp = int(datetime.datetime.now(datetime.UTC).timestamp())
         result = TournierMatchResult(opponent_a_id=user_a_id,
                                      opponent_b_id=user_b_id,
                                      opponent_a_score=user_a_score,
                                      opponent_b_score=user_b_score,
-                                     date=datetime.datetime.now(datetime.UTC).timestamp())
+                                     date=datestamp)
         self.__sl.add(result)
         self.__sl.commit()  # Commit the transaction
 
-        return result
+        return result, datestamp
 
     async def process_event(self, event: Update):
         if event.message:
