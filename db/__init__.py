@@ -30,7 +30,7 @@ class Database:
         return self.__sl.query(User).order_by(User.rating.desc()).limit(limit).all()
 
     def get_match_results(self):
-        return self.__sl.query(TournierMatchResult).order_by(TournierMatchResult.date.desc()).all()
+        return self.__sl.query(TournierMatchResult).order_by(TournierMatchResult.date.asc()).all()
 
     def create_user(self, user_id: int, name: str, username: str):
         new_user = User(id=user_id, name=name, username=username)
