@@ -19,8 +19,6 @@ async def profile_handler(m: Message) -> None:
     top = db.get_top_players_by_rating()
     index = 0
     for user in top:
-        if not db.is_player_in_results(user.id):
-            continue
         if index > 15:
             break
         index += 1
