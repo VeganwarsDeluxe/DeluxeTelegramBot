@@ -26,8 +26,8 @@ class Database:
     def get_top_players_by_tickets(self, limit=10):
         return self.__sl.query(User).order_by(User.tickets.desc()).limit(limit).all()
 
-    def get_top_players_by_rating(self, limit=10):
-        return self.__sl.query(User).order_by(User.rating.desc()).limit(limit).all()
+    def get_top_players_by_rating(self):
+        return self.__sl.query(User).order_by(User.rating.desc()).all()
 
     def is_player_in_results(self, user_id: int):
         return (self.__sl.query(TournierMatchResult).filter(TournierMatchResult.opponent_a_id == user_id).first()
