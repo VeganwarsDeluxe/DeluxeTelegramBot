@@ -19,6 +19,8 @@ async def profile_handler(m: Message) -> None:
     top = db.get_top_players_by_rating(15)
     index = 0
     for user in top:
+        if not db.is_player_in_results(user.id):
+            continue
         index += 1
         tts += f"{index}. {user.username} - {user.rating}\n"
 
