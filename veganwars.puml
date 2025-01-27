@@ -1,0 +1,72 @@
+@startuml VeganWars
+
+'Telegram Match-making'
+set separator ::
+
+class VegansDeluxe::Telegram::TelegramInterfaceProvider {
+
+}
+
+VegansDeluxe::UserInterface::BaseMatch o-- VegansDeluxe::Core::Engine
+TelegramInterfaceProvider o-- Aiogram::Bot
+VegansDeluxe::UserInterface::InterfaceProvider <|-- TelegramInterfaceProvider
+VegansDeluxe::UserInterface::BaseMatch o-- VegansDeluxe::UserInterface::InterfaceProvider
+
+VegansDeluxe::UserInterface::Matchmaker *-- VegansDeluxe::UserInterface::BaseMatch
+
+class VegansDeluxe::UserInterface::Matchmaker {
+   __init__(engine: Engine)
+   void attach_match(match: BaseMatch)
+   BaseMatch get_match()
+}
+
+VegansDeluxe::UserInterface::Matchmaker o-- VegansDeluxe::Core::Engine
+
+class VegansDeluxe::UserInterface::InterfaceProvider {
+    void show_to(player: Player, view: View);
+    void broadcast(view: View);
+}
+
+class VegansDeluxe::UserInterface::Player {
+    locale: String
+}
+
+InterfaceProvider -> Player
+
+class VegansDeluxe::UserInterface::View {
+    ViewContent render()
+}
+
+class VegansDeluxe::UserInterface::ActionMenuView {
+    __init__(player: Player, actions: list[Action]  )
+}
+
+View <|-- ActionMenuView
+
+class VegansDeluxe::UserInterface::ViewContent {
+    action_menu: Optional[ViewMenu]
+    title: String
+    text: String
+    locale: String
+    type: 'actions' | 'logs'
+    metadata: dict[String, String]
+}
+
+class VegansDeluxe::UserInterface::ViewMenu {
+    identifier: String
+    buttons: list[Button]
+    metadata: dict[String, String]
+}
+
+class VegansDeluxe::UserInterface::ViewMenuButton {
+    identifier: String
+    title: String
+    metadata: dict[String, String]
+}
+
+InterfaceProvider -> View
+View -> ViewContent
+ViewContent *-- ViewMenu
+ViewMenu *-- ViewMenuButton
+
+@enduml

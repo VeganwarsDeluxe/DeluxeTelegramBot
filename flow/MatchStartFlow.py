@@ -3,9 +3,10 @@ from VegansDeluxe.core.Translator.LocalizedString import LocalizedString, ls
 import config
 from Matches import Matchmaker
 from Matches.BaseMatch import BaseMatch
+from flow.Flow import Flow
 
 
-class MatchStartFlow:
+class MatchStartFlow(Flow):
     def __init__(self, chat_id: int, user_id: int, mm: Matchmaker):
         self.chat_id = chat_id
         self.user_id = user_id

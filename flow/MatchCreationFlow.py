@@ -1,12 +1,13 @@
 from aiogram import Bot
 
 from Matches.BaseMatch import BaseMatch
+from flow.Flow import Flow
 from startup import mm, engine
 from views.MatchCreationView import MatchCreationView
 from views.MatchExistsView import MatchExistsView
 
 
-class MatchCreationFlow:
+class MatchCreationFlow(Flow):
     def __init__(self, chat_id: int, match: type[BaseMatch]):
         self.chat_id = chat_id
         self.mm = mm
