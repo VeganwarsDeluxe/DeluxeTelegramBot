@@ -106,10 +106,14 @@ async def h(m: Message) -> None:
     r_a, r_b = outcome(a.rating, b.rating, a_s, b_s)
     a_emoji = '📈' if r_a > a.rating else '📉'
     b_emoji = '📈' if r_b > b.rating else '📉'
+
+    a_sign = '+' if r_a > a.rating else ''
+    b_sign = '+' if r_b > b.rating else ''
+
     await m.reply(f'ПРОГНОЗ:\n\nБій: {a.name} ({a.rating}) vs {b.name} ({b.rating}): {a_s} - {b_s}\n\n'
                   f'Результат: \n'
-                  f'{a.name} - {r_a}{a_emoji} \n'
-                  f'{b.name} - {r_b}{b_emoji}')
+                  f'{a.name} - {r_a}{a_emoji} ({a_sign}{r_a - a.rating})\n'
+                  f'{b.name} - {r_b}{b_emoji} ({b_sign}{r_b - b.rating})')
 
 
 @r.message(Command("vs"))
@@ -128,12 +132,15 @@ async def h(m: Message) -> None:
     a_emoji = '📈' if r_a > a.rating else '📉'
     b_emoji = '📈' if r_b > b.rating else '📉'
 
+    a_sign = '+' if r_a > a.rating else ''
+    b_sign = '+' if r_b > b.rating else ''
+
     result, dt = db.submit_match_result(a.id, b.id, a_s, b_s)
 
     await m.reply(f'Бій: {a.name} ({a.rating}) vs {b.name} ({b.rating}): {a_s} - {b_s}\n\n'
                   f'Результат: \n'
-                  f'{a.name} - {r_a}{a_emoji} \n'
-                  f'{b.name} - {r_b}{b_emoji}\n\nR-ID: {dt}')
+                  f'{a.name} - {r_a}{a_emoji} ({a_sign}{r_a - a.rating})\n'
+                  f'{b.name} - {r_b}{b_emoji} ({b_sign}{r_b - b.rating})\n\nR-ID: {dt}')
 
     a.rating = int(r_a)
     b.rating = int(r_b)
