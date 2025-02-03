@@ -50,7 +50,7 @@ async def h(m: Message) -> None:
         a = db.get_user(match.opponent_a_id)
         b = db.get_user(match.opponent_b_id)
 
-        r_a, r_b = outcome(a, b, match.opponent_a_score, match.opponent_b_score)
+        r_a, r_b = outcome(a.rating, b.rating, match.opponent_a_score, match.opponent_b_score)
         a.rating = r_a
         b.rating = r_b
         db.commit()
@@ -103,7 +103,7 @@ async def h(m: Message) -> None:
     if not (a and b):
         await m.reply('Ні!!!')
         return
-    r_a, r_b = outcome(a, b, a_s, b_s)
+    r_a, r_b = outcome(a.rating, b.rating, a_s, b_s)
     a_emoji = '📈' if r_a > a.rating else '📉'
     b_emoji = '📈' if r_b > b.rating else '📉'
     await m.reply(f'ПРОГНОЗ:\n\nБій: {a.name} ({a.rating}) vs {b.name} ({b.rating}): {a_s} - {b_s}\n\n'
@@ -124,7 +124,7 @@ async def h(m: Message) -> None:
     if not (a and b):
         await m.reply('Ні!!!')
         return
-    r_a, r_b = outcome(a, b, a_s, b_s)
+    r_a, r_b = outcome(a.rating, b.rating, a_s, b_s)
     a_emoji = '📈' if r_a > a.rating else '📉'
     b_emoji = '📈' if r_b > b.rating else '📉'
 
