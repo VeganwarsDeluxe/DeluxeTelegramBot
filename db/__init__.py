@@ -33,7 +33,6 @@ class Database:
                 .distinct().order_by(User.rating.desc()).limit(15))
 
     def get_match_results(self):
-        self.__sl.query(User).join()
         return self.__sl.query(TournierMatchResult).order_by(TournierMatchResult.date.asc()).all()
 
     def create_user(self, user_id: int, name: str, username: str):
