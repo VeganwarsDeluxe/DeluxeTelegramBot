@@ -2,6 +2,7 @@ import datetime
 
 from aiogram.types import Update
 
+from db.Chat import Chat
 from db.TournierMatchResult import TournierMatchResult
 from db.User import User
 from db.startup import SessionLocal, Base, engine
@@ -78,6 +79,20 @@ class Database:
     async def process_message_event(self, event: Update):
         if event.message.from_user:
             await self.process_user(event.message.from_user)
+        if event.message.chat:
+            await self.process_chat(event.message.chat)
+
+    async def process_chat(self, tg_chat):
+        chat = self.__sl.query(Chat).filter(Chat.id == tg_chat.id).first()
+        if not chat:
+            chat = Chat(id=tg_chat.id, name=tg_chat.title)
+            self.__sl.add(chat)
+            self.__sl.commit()  # Commit the transaction
+            self.__sl.refresh(chat)  # Reload the instance with the new data from the database
+        chat.last_message = int(datetime.datetime.now(datetime.UTC).timestamp())
+        chat.name = tg_chat.title
+        self.__sl.commit()
+        return chat
 
     async def process_user(self, tg_user: User):
         user = self.get_user(tg_user.id)
