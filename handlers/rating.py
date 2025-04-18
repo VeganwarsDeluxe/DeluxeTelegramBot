@@ -118,6 +118,7 @@ async def h(m: Message) -> None:
 
 @r.message(Command("vs"))
 async def h(m: Message) -> None:
+    dt = None
     if m.from_user.id not in config.admin_ids:
         return
     if m.text.count(' ') == 4:
@@ -139,7 +140,9 @@ async def h(m: Message) -> None:
     a_sign = '+' if r_a > a.rating else ''
     b_sign = '+' if r_b > b.rating else ''
 
-    result, dt = db.submit_match_result(a.id, b.id, a_s, b_s)
+    result, dt0 = db.submit_match_result(a.id, b.id, a_s, b_s)
+    if not dt:
+        dt = dt0
 
     await m.reply(f'Бій: {a.name} ({a.rating}) vs {b.name} ({b.rating}): {a_s} - {b_s}\n\n'
                   f'Результат: \n'
