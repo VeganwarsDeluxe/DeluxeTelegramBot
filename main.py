@@ -41,7 +41,7 @@ async def main() -> None:
         config.boot_chat,
         f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
         f"🤖Bot: `{version}`\n\n"
-        f"📄Changelog: [here](https://github.com/VeganwarsDeluxe/VeganwarsDeluxe/blob/master/CHANGELOG.md)",
+        f"📄Changelog: [here](https://t.me/VeganWarsCapital/14597)",
         parse_mode="Markdown"
     )
     print(engine.stats())

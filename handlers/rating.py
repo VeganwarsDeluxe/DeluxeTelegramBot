@@ -120,9 +120,13 @@ async def h(m: Message) -> None:
 async def h(m: Message) -> None:
     if m.from_user.id not in config.admin_ids:
         return
-    if m.text.count(' ') != 4:
+    if m.text.count(' ') == 4:
+        _, a, b, a_s, b_s = m.text.split(' ')
+    elif m.text.count(' ') == 5:
+        _, a, b, a_s, b_s, dt = m.text.split(' ')
+        dt = int(dt)
+    else:
         return
-    _, a, b, a_s, b_s = m.text.split(' ')
     a_s, b_s = int(a_s), int(b_s)
     a, b = db.get_user_by_username(a), db.get_user_by_username(b)
     if not (a and b):
