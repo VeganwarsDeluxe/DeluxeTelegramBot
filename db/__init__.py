@@ -70,7 +70,7 @@ class Database:
         self.__sl.add(result)
         self.__sl.commit()  # Commit the transaction
 
-        return result, datestamp
+        return result
 
     async def process_event(self, event: Update):
         if event.message:
