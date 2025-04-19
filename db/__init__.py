@@ -60,8 +60,8 @@ class Database:
     def get_user_by_username(self, username: str):
         return self.__sl.query(User).filter(User.username == username).first()
 
-    def submit_match_result(self, user_a_id, user_b_id, user_a_score, user_b_score):
-        datestamp = int(datetime.datetime.now(datetime.UTC).timestamp())
+    def submit_match_result(self, user_a_id, user_b_id, user_a_score, user_b_score, dt=None):
+        datestamp = dt or int(datetime.datetime.now(datetime.UTC).timestamp())
         result = TournierMatchResult(opponent_a_id=user_a_id,
                                      opponent_b_id=user_b_id,
                                      opponent_a_score=user_a_score,
