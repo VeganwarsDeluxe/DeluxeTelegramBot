@@ -61,7 +61,7 @@ class Database:
         return self.__sl.query(User).filter(User.username == username).first()
 
     def submit_match_result(self, user_a_id, user_b_id, user_a_score, user_b_score, dt=None):
-        datestamp = dt or int(datetime.datetime.now(datetime.UTC).timestamp())
+        datestamp = int(datetime.datetime.now(datetime.UTC).timestamp()) if not dt else dt
         result = TournierMatchResult(opponent_a_id=user_a_id,
                                      opponent_b_id=user_b_id,
                                      opponent_a_score=user_a_score,

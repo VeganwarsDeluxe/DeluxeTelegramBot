@@ -140,9 +140,8 @@ async def h(m: Message) -> None:
     a_sign = '+' if r_a > a.rating else ''
     b_sign = '+' if r_b > b.rating else ''
 
-    result, dt0 = db.submit_match_result(a.id, b.id, a_s, b_s)
-    if not dt:
-        dt = dt0
+    result = db.submit_match_result(a.id, b.id, a_s, b_s, dt)
+    dt = result.datetime
 
     await m.reply(f'Бій: {a.name} ({a.rating}) vs {b.name} ({b.rating}): {a_s} - {b_s}\n\n'
                   f'Результат: \n'
