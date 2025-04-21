@@ -110,7 +110,7 @@ class BaseMatch:
     # --- INFO, GETTERS & PROPERTIES ---
 
     def is_everyone_ready(self):
-        return len(self.ready_players) == len(self.session.entities)
+        return len(self.ready_players) == len(self.session.alive_entities)
 
     @property
     def player_ids(self):
@@ -357,12 +357,6 @@ class BaseMatch:
 
         kb = []
         buttons['first_row'].reverse()
-        buttons['second_row'].append(
-            InlineKeyboardButton(text=ls("deluxe.buttons.info").localize(code),
-                                 callback_data=StateInfo(state_id='0').pack())
-            # TODO: Huh?? 777? Pasyuk much?
-            #  This is actually about info. We can combine answer-less questions to finally write Visor and info button.
-        )
 
         kb.append(buttons['first_row'])
         kb.append(buttons['second_row'])
