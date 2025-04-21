@@ -67,7 +67,7 @@ async def profile_handler(m: Message) -> None:
         a = db.get_user(match.opponent_a_id)
         b = db.get_user(match.opponent_b_id)
 
-        date = datetime.fromtimestamp(match.date).strftime('%d.%m.%Y')
+        date = datetime.datetime.fromtimestamp(match.date).strftime('%d.%m.%Y')
 
         index += 1
         tts += f"{index}. {a.username} vs {b.username}\n"

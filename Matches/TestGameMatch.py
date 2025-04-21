@@ -11,6 +11,8 @@ class TestGameMatch(BaseMatch):
     def __init__(self, chat_id, bot, engine):
         super().__init__(chat_id, bot, engine)
 
+        self.weapon_choice_pool = DeluxeMod.content.all_weapons
+
         self.skill_number = len(DeluxeMod.content.all_skills)
         self.weapon_number = len(DeluxeMod.content.all_weapons)
 

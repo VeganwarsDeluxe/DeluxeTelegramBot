@@ -10,6 +10,7 @@ from VegansDeluxe.core.Question.Question import Question
 from VegansDeluxe.core.Question.QuestionEvents import QuestionGameEvent
 from VegansDeluxe.core.States import State
 from VegansDeluxe.core.Translator.LocalizedString import LocalizedString, ls
+from VegansDeluxe.rebuild.Weapons.Fist import Fist
 from aiogram import Bot
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 
@@ -41,7 +42,8 @@ class BaseMatch:
         self.skill_cycles = 2
         self.skill_number = 5
 
-        self.weapon_choice_pool = DeluxeMod.content.all_weapons
+        self.weapon_choice_pool = DeluxeMod.content.all_weapons.copy()
+        self.weapon_choice_pool.remove(Fist)
         self.weapon_number = 3
 
         self.item_choice_pool = DeluxeMod.content.game_items_pool
