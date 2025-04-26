@@ -340,7 +340,7 @@ class BaseMatch:
 
             if ActionTag.ATTACK in action.tags or ActionTag.RELOAD in action.tags:
                 buttons['first_row'].append(button)
-            elif action.id in ['dodge']:
+            elif action.id in ['dodge', 'info']:
                 buttons['second_row'].append(button)
             elif action.id in ['approach']:
                 buttons['approach_row'].append(button)
