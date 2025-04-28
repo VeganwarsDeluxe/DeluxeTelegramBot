@@ -9,6 +9,7 @@ from VegansDeluxe.core.Events.NPCEvents import NPCChooseAction
 from VegansDeluxe.core.Question.Question import Question
 from VegansDeluxe.core.Question.QuestionEvents import QuestionGameEvent
 from VegansDeluxe.core.States import State
+from VegansDeluxe.core.Translator.LocalizedList import LocalizedList
 from VegansDeluxe.core.Translator.LocalizedString import LocalizedString, ls
 from VegansDeluxe.rebuild.Weapons.Fist import Fist
 from aiogram import Bot
@@ -488,9 +489,10 @@ class BaseMatch:
 
     async def attempt_finish_skill_choice(self):
         if len(self.chosen_skills) == len(self.session.entities):
-            weapons_text = '\n' + '\n'.join([f'{player.name}: {self.localize_text(player.weapon.name, self.locale)}'
-                                             for player in self.session.alive_entities])
-            text = ls("deluxe.matches.messages.start").format(weapons_text)
+            weapons_text = LocalizedList([
+                ls("bot.common.player_weapon").format(player.name, player.weapon.name)
+                for player in self.session.alive_entities], separator="\n")
+            text = ls("bot.matches.messages.start").format(weapons_text)
             await self.broadcast_to_players(text)
             await self.send_message_to_chat(text)
             await self.start_game()
