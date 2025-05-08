@@ -5,8 +5,10 @@ RUN addgroup -g 2000 app && adduser -u 2000 -G app -s /bin/sh -D app && mkdir /a
 USER 2000
 WORKDIR /app
 
-COPY . /app/
-RUN python3 -m venv venv && /app/venv/bin/pip3 install --no-cache-dir -r requirements.txt && rm -rf .cache/pip
+COPY . .
+RUN python3 -m venv venv 
+RUN python3 /app/venv/bin/pip install --no-cache-dir -r requirements.txt
+RUN rm -rf .cache/pip
 
-ENTRYPOINT [ "/app/venv/bin/python3", "main.py" ]
+ENTRYPOINT [ "/app/venv/bin/python", "main.py" ]
 
