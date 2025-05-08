@@ -1,14 +1,15 @@
 FROM python:3.12.2-alpine3.19
 RUN apk add --no-cache git build-base libpq libpq-dev
 
-RUN addgroup -g 2000 app && adduser -u 2000 -G app -s /bin/sh -D app && mkdir /app && chown 2000:2000 /app
-USER 2000
 WORKDIR /app
 
-COPY . .
-RUN python3 -m venv venv 
-RUN python3 /app/venv/bin/pip install --no-cache-dir -r requirements.txt
-RUN rm -rf .cache/pip
+COPY requirements.txt requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-ENTRYPOINT [ "/app/venv/bin/python", "main.py" ]
+COPY . /app
+
+RUN addgroup -g 2000 app && adduser -u 2000 -G app -s /bin/sh -D app && chown -R 2000:2000 /app
+USER 2000
+
+ENTRYPOINT [ "python3", "main.py" ]
 
