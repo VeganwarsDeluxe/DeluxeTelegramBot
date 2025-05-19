@@ -26,6 +26,13 @@ async def profile_handler(m: Message) -> None:
     tts += f'📈: {user.rating}\n'
     tts += f'🌍: {user.locale} (/locale)\n'
 
+    if user.karma == 1:
+        tts += ''
+    elif user.karma == 0:
+        tts += ''
+    elif user.karma == -1:
+        tts += ''
+
     await m.answer(**Text(tts).as_kwargs())
 
 

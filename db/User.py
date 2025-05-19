@@ -14,3 +14,5 @@ class User(Base):
     rating = Column(Integer, index=True, default=1000)
 
     locale = Column(String, index=True, default='uk')
+
+    karma = Column(Integer, index=True, default=0)

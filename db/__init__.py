@@ -2,6 +2,7 @@ import datetime
 
 from aiogram.types import Update
 
+import config
 from db.Chat import Chat
 from db.TournierMatchResult import TournierMatchResult
 from db.User import User
@@ -10,7 +11,12 @@ from db.startup import SessionLocal, Base, engine
 
 class Database:
     def __init__(self):
-        Base.metadata.create_all(bind=engine)
+        self.nodb = False
+        try:
+            Base.metadata.create_all(bind=engine)
+        except:
+            print("Running in no db mode. Beware.")
+            self.nodb = True
 
         self.__sl: SessionLocal = SessionLocal()
 
@@ -55,6 +61,8 @@ class Database:
         return user
 
     def get_user_locale(self, user_id: int):
+        if self.nodb:
+            return config.default_locale
         return self.get_user(user_id).locale
 
     def get_user(self, user_id):
@@ -75,16 +83,22 @@ class Database:
         return result
 
     async def process_event(self, event: Update):
+        if self.nodb:
+            return
         if event.message:
             await self.process_message_event(event)
 
     async def process_message_event(self, event: Update):
+        if self.nodb:
+            return
         if event.message.from_user:
             await self.process_user(event.message.from_user)
         if event.message.chat:
             await self.process_chat(event.message.chat)
 
     async def process_chat(self, tg_chat):
+        if self.nodb:
+            return
         chat = self.__sl.query(Chat).filter(Chat.id == tg_chat.id).first()
         if not chat:
             chat = Chat(id=tg_chat.id, name=tg_chat.title)
@@ -97,6 +111,8 @@ class Database:
         return chat
 
     async def process_user(self, tg_user: User):
+        if self.nodb:
+            return
         user = self.get_user(tg_user.id)
         if not user:
             user = self.create_user(tg_user.id, tg_user.full_name, str(tg_user.username))
