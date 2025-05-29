@@ -10,6 +10,7 @@ from aiogram.enums import ParseMode
 from aiogram.types import Update
 
 import config
+from config import custom_version
 from db import db
 from handlers.callback_handlers import r as callbacks_router
 from handlers.matches import r as match_router
@@ -40,7 +41,7 @@ async def main() -> None:
     await bot.send_message(
         config.boot_chat,
         f"♻️Core: `{VegansDeluxe.core.__version__}`\n"
-        f"🤖Bot: `{version}`\n\n"
+        f"🤖Bot: `{custom_version if custom_version else version}`\n\n"
         f"📄Changelog: [here](https://t.me/VeganWarsCapital/14597)",
         parse_mode="Markdown"
     )
